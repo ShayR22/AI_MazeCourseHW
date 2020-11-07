@@ -113,16 +113,15 @@ void Maze::drawMaze()
 		}
 	}
 
-	Cell::setOpenGLStartColor();
 	for (unsigned int i = 0; i < starts.size(); i++) {
-		cout << "starts[" << i << "] is: " << *starts[i];
 		x = 2 * (starts[i]->getRow() / (double)numRows) - 1;
 		y = 2 * (starts[i]->getCol() / (double)numCols) - 1;
+		Cell::setOpenGLStartColor();
 		drawCell(x, y, sx, sy);
 	}
-	Cell::setOpenGLTargetColor();
-	cout << "target is: " << *target;
+
 	x = 2 * (target->getRow() / (double)numRows) - 1;
 	y = 2 * (target->getCol() / (double)numCols) - 1;
+	Cell::setOpenGLTargetColor();
 	drawCell(x, y, sx, sy);
 }

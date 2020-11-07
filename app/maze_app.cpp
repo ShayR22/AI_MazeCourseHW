@@ -6,12 +6,6 @@ constexpr int MSIZE = 25;
 
 Maze* maze;
 
-//int main(int argc, const char* argv[])
-//{
-//	int mSize = 100;
-//	Maze m(mSize, mSize);
-//}
-
 void display()
 {
 	glClear(GL_COLOR_BUFFER_BIT); // clean frame buffer
