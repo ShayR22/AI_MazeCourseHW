@@ -7,7 +7,8 @@
 
 enum class CellState {
 	wall,
-	space
+	space,
+	path
 };
 
 class Cell {
@@ -15,6 +16,7 @@ class Cell {
 private:
 	int row;
 	int col;
+	Cell* parent;
 	bool visited;
 	bool visiting;
 	CellState state;
@@ -25,11 +27,14 @@ public:
 	inline int getRow() const { return row; }
 	inline int getCol() const { return col; }
 
-	inline bool setVisiting(bool v) { visiting = v; }
+	inline void setVisiting(bool v) { visiting = v; }
 	inline bool getVisiting() const { return visiting; }
 	
-	inline bool setVisited(bool v) { visited = v; }
+	inline void setVisited(bool v) { visited = v; }
 	inline bool getVisited() const { return visited; }
+
+	inline void setParent(Cell* p) { parent = p; }
+	inline Cell* getParent() const { return parent; }
 
 	void setLocation(int r, int c);
 	
@@ -48,10 +53,6 @@ public:
 	static inline void setOpenGLTargetColor()
 	{
 		glColor3d(1, 0, 0);   // red
-	}
-	static inline void setOpenGLPathColor()
-	{
-		glColor3d(0.8, 0.4, 1);   // magenta
 	}
 
 	friend std::ostream& operator<<(std::ostream& os, const Cell& c);

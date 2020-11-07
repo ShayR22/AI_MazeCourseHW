@@ -5,11 +5,11 @@
 using namespace std;
 
 Cell::Cell() : 
-	row(0), col(0), state(CellState::wall), 
+	row(0), col(0), parent(nullptr), state(CellState::wall), 
 	visiting(false), visited(false) {}
 
 Cell::Cell(int row, int col, const CellState& state) :
-	row(row), col(col), state(state), 
+	row(row), col(col), parent(nullptr), state(state), 
 	visiting(false), visited(false) {}
 
 void Cell::setLocation(int r, int c)
@@ -20,6 +20,11 @@ void Cell::setLocation(int r, int c)
 
 void Cell::setOpenGLColor()
 {
+	if (state == CellState::path) {
+		glColor3d(0.8, 0.4, 1);   // magenta
+		return;
+	}
+
 	if (visiting) { // gray cell
 		glColor3d(1, 1, 0);   // yellow
 		return;
