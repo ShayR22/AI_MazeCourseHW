@@ -6,17 +6,6 @@
 
 using namespace std;
 
-static inline void drawCell(double x, double y, double sx, double sy)
-{
-	glBegin(GL_POLYGON);  // fill up
-	glVertex2d(x, y);
-	glVertex2d(x, y + sy);
-	glVertex2d(x + sx, y + sy);
-	glVertex2d(x + sx, y);
-	glEnd();
-	glColor3d(0, 0, 0);
-}
-
 void Maze::allocateMaze(int numRows, int numCols)
 {
 	cells.reserve(numRows);

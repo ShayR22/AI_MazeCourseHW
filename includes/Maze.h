@@ -26,6 +26,7 @@ public:
 	inline void setTarget(int r, int c) { target = &cells[r][c]; }
 	inline std::vector<Cell*>& getStarts() { return starts; }
 	inline Cell& getTarget() { return *target; }
+
 	bool addStart(int r, int c);
 	bool removeStart(int r, int c);
 	void drawMaze();

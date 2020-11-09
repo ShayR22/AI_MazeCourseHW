@@ -1,6 +1,6 @@
 #include <iostream>
 #include "glut.h"
-#include <OpenGL.h>
+#include "OpenGL.h"
 #include "Cell.h"
 
 using namespace std;
