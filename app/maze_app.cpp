@@ -3,8 +3,7 @@
 #include "Maze.h"
 #include "BFSSolver.h"
 #include "BFSBiDirectionalSolver.h"
-
-constexpr int MSIZE = 25;
+constexpr int MSIZE = 100;
 
 Maze* maze = nullptr;
 BFSSolver* bfs_solver = nullptr;
@@ -19,38 +18,45 @@ void display()
 	glutSwapBuffers(); // show all
 }
 
-
-
 void idle()
 {
-	if (bfs_is_on) {
-
+	if (bfs_is_on)
 		bfs_solver->solveIteration();
-	}
-
 	else if (bi_bfs_is_on)
-	{
 		bi_bfs_solver->solveIteration();
-	}
 
 	glutPostRedisplay(); // indirect call to display
 }
 
-void restart()
+void initGlobals()
 {
-	delete maze;
-	delete bfs_solver;
-	delete bi_bfs_solver;
-	bfs_is_on = false;
-	bi_bfs_is_on = false;
 	maze = new Maze(MSIZE, MSIZE);
 	bfs_solver = new BFSSolver(*maze);
 	bi_bfs_solver = new BFSBiDirectionalSolver(*maze);
 }
 
+void setSolverFalse()
+{
+	bfs_is_on = false;
+	bi_bfs_is_on = false;
+}
+
+void destroyGlobals()
+{
+	delete maze;
+	delete bfs_solver;
+	delete bi_bfs_solver;
+}
+
+void restart()
+{
+	setSolverFalse();
+	destroyGlobals();
+	initGlobals();
+}
+
 void menu(int choice)
 {
-
 	switch (choice)
 	{
 	case 0: // Restart
@@ -59,9 +65,7 @@ void menu(int choice)
 	case 1: // BFS
 		bfs_is_on = true;
 		break;
-	case 2: // DFS
-		break;
-	case 3: // BFS Bi
+	case 2: // BFS Bi
 		bi_bfs_is_on = true;
 		break;
 	}
@@ -82,7 +86,6 @@ void main(int argc, char* argv[])
 	glutInitWindowSize(600, 600);
 	glutInitWindowPosition(200, 0);
 	glutCreateWindow("First Example");
-	//glEnable(GL_COLOR_MATERIAL);
 
 	glutDisplayFunc(display);
 	glutIdleFunc(idle);
@@ -90,16 +93,10 @@ void main(int argc, char* argv[])
 	glutCreateMenu(menu);
 	glutAddMenuEntry("Restart", 0);
 	glutAddMenuEntry("BFS", 1);
-	glutAddMenuEntry("DFS", 2);
-	glutAddMenuEntry("BFS BI", 3);
+	glutAddMenuEntry("BFS BI", 2);
 	glutAttachMenu(GLUT_RIGHT_BUTTON);
 
 	init();
 	glutMainLoop();
-
-	std::cout << "going to delete" << std::endl;
-
-	delete maze;
-	delete bfs_solver;
-	delete bi_bfs_solver;
+	destroyGlobals();
 }

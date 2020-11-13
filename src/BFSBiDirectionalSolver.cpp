@@ -1,9 +1,6 @@
-#include <BFSBiDirectionalSolver.h>
-
+#include "BFSBiDirectionalSolver.h"
 
 using namespace std;
-
-
 
 BFSBiDirectionalSolver::BFSBiDirectionalSolver(Maze& maze) : maze(maze), solved(false), cells(maze.getCells())
 {
@@ -17,8 +14,6 @@ BFSBiDirectionalSolver::BFSBiDirectionalSolver(Maze& maze) : maze(maze), solved(
 	target->setVisiting(true);
 	vistingTarget.insert(target);
 }
-
-
 
 void BFSBiDirectionalSolver::checkCellNeighbors(Cell& cell, set<Cell*>& visiting, set<Cell*>& targets)
 {
@@ -38,6 +33,8 @@ void BFSBiDirectionalSolver::checkCellNeighbors(Cell& cell, set<Cell*>& visiting
 		neighbors[i]->setVisiting(true);
 
 		if (targets.find(neighbors[i]) != targets.end()) {
+			neighbors[i]->setState(CellState::path);
+			cell.setState(CellState::path);
 			restorePath(*neighbors[i]);
 			restorePath(cell);
 			solved = true;
@@ -45,7 +42,7 @@ void BFSBiDirectionalSolver::checkCellNeighbors(Cell& cell, set<Cell*>& visiting
 		}
 
 		neighbors[i]->setParent(&cell);
-		visiting.insert(&cell);
+		visiting.insert(neighbors[i]);
 	}
 }
 
@@ -72,19 +69,25 @@ void BFSBiDirectionalSolver::solveIterationHelper(set<Cell*>& visiting, set<Cell
 	if (visiting.empty() || solved)
 		return;
 
-	stack <Cell*> temp;
+	vector <Cell*> temp;
 
 	for (auto& e : visiting) {
 		e->setVisited(true);
-		e->setVisiting(false);
-		temp.push(e);
+		temp.push_back(e);
 	}
 	
 	visiting.clear();
 	
-	while (!temp.empty() && !solved) {
-		checkCellNeighbors(*temp.top(), visiting, targets);
-		temp.pop();
+	for (auto& e : temp) {
+		if (solved)
+			break;
+		checkCellNeighbors(*e, visiting, targets);
+	}
+
+	/* if not solved remove last gray (temp) from visiting status */
+	if (!solved) {
+		for (auto& e: temp)
+			e->setVisiting(false);
 	}
 }
 

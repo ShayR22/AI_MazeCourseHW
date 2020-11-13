@@ -1,9 +1,7 @@
-#include <BFSSolver.h>
+#include "BFSSolver.h"
 
 
 using namespace std;
-
-
 
 BFSSolver::BFSSolver(Maze& maze) : maze(maze), solved(false) ,cells(maze.getCells())
 {
@@ -71,7 +69,7 @@ void BFSSolver::solveIteration()
 		visting.pop();
 	}
 	
-	while (!temp.empty()) {
+	while (!temp.empty() && !solved) {
 		checkCellNeighbors(*temp.top());
 		temp.pop();
 	}
