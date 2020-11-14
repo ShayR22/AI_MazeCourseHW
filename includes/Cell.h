@@ -6,12 +6,6 @@
 
 constexpr auto NUM_WALLS = 4;
 
-enum class CellState {
-	wall,
-	space,
-	path
-};
-
 class Cell {
 
 private:
@@ -22,10 +16,10 @@ private:
 	Cell* parent;
 	bool visited;
 	bool visiting;
-	CellState state;
+	bool isPath;
 public:
 	Cell();
-	Cell(int row, int col, const CellState& state);
+	Cell(int row, int col);
 
 	inline bool getWallLeft() { return walls[0]; }
 	inline bool getWallTop() { return walls[1]; }
@@ -52,13 +46,15 @@ public:
 
 	void setLocation(int r, int c);
 	
-	inline void setState(const CellState& s) { state = s; }
-	inline const CellState& getState() const { return state; }
+	inline void setIsPath(bool path) { isPath = path; }
+	inline bool getPath() { return isPath; }
 
 	inline bool operator==(const Cell& other) const { return (row == other.row && col == other.col); }
 	inline bool equal(int r, int c) const { return (row == r && col == c); }
 
 	void draw();
+	/* smart draw for preformance for the maze usage*/
+	void drawTopLeft();
 	void setOpenGLColor();
 	
 	static inline void setOpenGLStartColor() 

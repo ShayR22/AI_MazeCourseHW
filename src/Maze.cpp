@@ -24,7 +24,7 @@ void Maze::allocateMaze(int numRows, int numCols)
 	for (int i = 0; i < numRows; i++) {
 		cur_row.clear();
 		for (int j = 0; j < numCols; j++)
-			cur_row.push_back(Cell(i, j, CellState::space));
+			cur_row.push_back(Cell(i, j));
 
 		cells.push_back(cur_row);
 	}
@@ -92,8 +92,8 @@ void Maze::removeWall(Cell* c, Cell* neighbor, int index)
 
 static bool failChance()
 {
-	auto START_CHANCE = 0.6;
-	constexpr auto MULTIPLIER = 0.85;
+	auto START_CHANCE = 0.6f;
+	constexpr auto MULTIPLIER = 0.85f;
 	static float chance_percent = START_CHANCE;
 
 	if ((rand() % 100) / 100.0 < chance_percent) {
@@ -101,32 +101,12 @@ static bool failChance()
 		return false;
 	}
 
-<<<<<<< HEAD
-	for (int i = 1; i < size - 1; i++)
-		for (int j = 1; j < size - 1; j++)
-		{
-			if (i % 2 == 1)  // this is mostly SPACE
-			{
-				if (rand() % 100 < 10) // 10% WALLs
-					cells[i][j].setState(CellState::wall);
-				else
-					cells[i][j].setState(CellState::space);
-			}
-			else // this is mostly WALL
-			{
-				if (rand() % 100 < 60) // 60% SPACEs
-					cells[i][j].setState(CellState::space);
-				else
-					cells[i][j].setState(CellState::wall);
-			}
-=======
 	chance_percent = START_CHANCE;
 	return true;
 }
 
 Cell* Maze::getPrevNeighborDirection(Cell** neighbors, int prevIndex)
 {
-	constexpr auto CONTINUE_FACTOR = 0.9;
 	if (prevIndex == -1 || neighbors[prevIndex] == nullptr || failChance())
 		return nullptr;
 	return neighbors[prevIndex];
@@ -143,11 +123,25 @@ Cell* Maze::randomizeNeighbor(Cell** neighbors, int numNeighbors, int *neighborI
 		if (randomized == 0) {
 			*neighborIndex = i;
 			return neighbors[i];
->>>>>>> fml check what this shit is (NEED IT)
 		}
 		randomized--;
 	}
 	return nullptr;
+}
+
+
+void Maze::randomRemove()
+{
+	const auto REMOVE_PERCENT = 0.04f;
+	int numRows = (int)cells.size();
+	int numCols = (int)cells[0].size();
+
+	bool noWalls[] = { false, false, false, false };
+
+	for (int i = 1; i < numRows - 1; i++)
+		for (int j = 1; j < numCols - 1; j++)
+			if ((rand() % 100) / 100.f < REMOVE_PERCENT)
+				cells[i][j].setWalls(noWalls);;
 }
 
 void Maze::buildMaze()
@@ -197,6 +191,8 @@ void Maze::buildMaze()
 		for (unsigned int j = 0; j < cells[0].size(); j++)
 			cells[i][j].setVisited(false);
 
+	randomRemove();
+
 	/* uncomment for debug purposes */
 	/*for (int i = 0; i < size; i++)
 		for (int j = 0; j < size; j++)
@@ -209,12 +205,8 @@ Maze::Maze(int numRows, int numCols, bool setStartTarget)
 	allocateMaze(numRows, numCols);	
 	if (setStartTarget) {
 		addStart(numRows / 2, numCols / 2);
-<<<<<<< HEAD
 		setTarget((rand() % (numRows - 2)) + 1, (rand() % (numCols - 2)) + 1);
-=======
-		setTarget(rand() % numRows, rand() % numCols);
 		buildMaze();
->>>>>>> fml check what this shit is (NEED IT)
 	}
 }
 
@@ -241,32 +233,21 @@ bool Maze::removeStart(int r, int c)
 
 void Maze::drawMaze()
 {
-	double x, y;
 	int numRows = (int)cells.size();
 	int numCols = (int)cells[0].size();
-	double sx = 2.0 / numRows;
-	double sy = 2.0 / numCols;
 
 	for (int i = 0; i < numRows; i++) {
 		for (int j = 0; j < numCols; j++) {
 			cells[j][i].setOpenGLColor();
-			// draw sqaure cell
-			x = 2 * (j / (double)numRows) - 1;
-			y = 2 * (i / (double)numCols) - 1;
-			drawCell(x, y, sx, sy);
+			cells[j][i].drawTopLeft();
 		}
 	}
 
 	for (unsigned int i = 0; i < starts.size(); i++) {
-		x = 2 * (starts[i]->getRow() / (double)numRows) - 1;
-		y = 2 * (starts[i]->getCol() / (double)numCols) - 1;
 		Cell::setOpenGLStartColor();
-		drawCell(x, y, sx, sy);
+		starts[i]->draw();
 	}
 
-	x = 2 * (target->getRow() / (double)numRows) - 1;
-	y = 2 * (target->getCol() / (double)numCols) - 1;
 	Cell::setOpenGLTargetColor();
-	drawCell(x, y, sx, sy);
-
+	target->draw();
 }
