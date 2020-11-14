@@ -15,9 +15,15 @@ private:
 	void buildMaze();
 public:
 	Maze(int numRows, int numCols, bool setStartTarget = true);
-	inline cell_mat getCells() { return cells; }
+	inline cell_mat& getCells() { return cells; }
 	inline Cell& getCell(int r, int c) { return cells[r][c]; }
-	inline void setTarget(int r, int c) { target = &cells[r][c]; }
+	inline void setTarget(int r, int c)
+	{
+		target = &cells[r][c];
+		target->setState(CellState::space);
+	}
+	inline std::vector<Cell*>& getStarts() { return starts; }
+	inline Cell& getTarget() { return *target; }
 	bool addStart(int r, int c);
 	bool removeStart(int r, int c);
 	void drawMaze();

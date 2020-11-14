@@ -70,7 +70,7 @@ Maze::Maze(int numRows, int numCols, bool setStartTarget)
 	buildMaze();
 	if (setStartTarget) {
 		addStart(numRows / 2, numCols / 2);
-		setTarget(rand() % numRows, rand() % numCols);
+		setTarget((rand() % (numRows - 2)) + 1, (rand() % (numCols - 2)) + 1);
 	}
 }
 
@@ -105,7 +105,7 @@ void Maze::drawMaze()
 
 	for (int i = 0; i < numRows; i++) {
 		for (int j = 0; j < numCols; j++) {
-			cells[i][j].setOpenGLColor();
+			cells[j][i].setOpenGLColor();
 			// draw sqaure cell
 			x = 2 * (j / (double)numRows) - 1;
 			y = 2 * (i / (double)numCols) - 1;
@@ -124,4 +124,5 @@ void Maze::drawMaze()
 	y = 2 * (target->getCol() / (double)numCols) - 1;
 	Cell::setOpenGLTargetColor();
 	drawCell(x, y, sx, sy);
+
 }
