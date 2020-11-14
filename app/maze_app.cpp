@@ -75,11 +75,12 @@ void init()
 {
 	glClearColor(0.8, 0.7, 0.5, 0);// color of window background
 	glOrtho(-1, 1, -1, 1, 1, -1);
-	srand(time(0));
+	srand((unsigned int)time(0));
+
 	restart();
 }
 
-void main(int argc, char* argv[])
+int main(int argc, char* argv[])
 {
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE);
@@ -99,4 +100,5 @@ void main(int argc, char* argv[])
 	init();
 	glutMainLoop();
 	destroyGlobals();
+	return 0;
 }

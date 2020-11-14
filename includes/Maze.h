@@ -12,6 +12,11 @@ private:
 	Cell* target;
 	cell_mat cells;
 	void allocateMaze(int numRows, int numCols);
+	void removeWall(Cell* c, Cell* neighbor, int index);
+	/* set neighbors [left, top, right , down], neighbors array of poitners*/
+	void getNeighbors(Cell* c, Cell** neighbors, int* numNeighbors);
+	Cell* getPrevNeighborDirection(Cell** neighbors, int prevIndex);
+	Cell* randomizeNeighbor(Cell** neighbors, int numNeighbors, int* neighborIndex);
 	void buildMaze();
 public:
 	Maze(int numRows, int numCols, bool setStartTarget = true);
