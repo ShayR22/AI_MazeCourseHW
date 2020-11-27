@@ -1,6 +1,5 @@
 #include "BFSSolver.h"
 
-
 using namespace std;
 
 BFSSolver::BFSSolver(Maze& maze) : maze(maze), solved(false) ,cells(maze.getCells())
@@ -15,25 +14,34 @@ void BFSSolver::checkCellNeighbors(Cell& cell)
 	int row = cell.getRow();
 	int col = cell.getCol();
 	
-	Cell* neighbors[4];
-	neighbors[0] = &cells[row][col - 1]; // left neighbor
-	neighbors[1] = &cells[row][col + 1]; // right neighbor
-	neighbors[2] = &cells[row - 1][col]; // top neighbor
-	neighbors[3] = &cells[row + 1][col]; // buttom neighbor
+	/* left top right down */
+	int xys[4][2] = {
+		{row, col - 1},
+		{row - 1, col},
+		{row, col + 1},
+		{row + 1, col},
+	};
+	bool* walls = cell.getWalls();
 
 	for(int i = 0; i < 4; i++) {
-		if (neighbors[i]->getVisited() || neighbors[i]->getState() == CellState::wall)
+		if (walls[i])
 			continue;
 
-		neighbors[i]->setVisiting(true);
-		neighbors[i]->setParent(&cell);
-		if (*neighbors[i] == maze.getTarget()) {
-			restorePath(*neighbors[i]);
+		int r = xys[i][0];
+		int c = xys[i][1];
+		Cell* neighbor = &cells[r][c];
+		if (neighbor->getVisited())
+			continue;
+
+		neighbor->setVisiting(true);
+		neighbor->setParent(&cell);
+		if (*neighbor == maze.getTarget()) {
+			restorePath(*neighbor);
 			solved = true;
 			return;
 		}
 
-		visting.push(neighbors[i]);
+		visting.push(neighbor);
 	}	
 }
 
@@ -42,7 +50,7 @@ void BFSSolver::restorePath(Cell& currentCell)
 	Cell* temp = currentCell.getParent();
 	while (temp != nullptr)
 	{
-		temp->setState(CellState::path);
+		temp->setIsPath(true);
 		temp = temp->getParent();
 	}
 }

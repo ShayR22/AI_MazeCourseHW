@@ -1,5 +1,6 @@
 #include <time.h>
 #include "glut.h"
+#include "OpenGL.h"
 #include "Maze.h"
 #include "BFSSolver.h"
 #include "BFSBiDirectionalSolver.h"
@@ -73,13 +74,19 @@ void menu(int choice)
 
 void init()
 {
-	glClearColor(0.8, 0.7, 0.5, 0);// color of window background
+	glClearColor(0.8f, 0.7f, 0.5f, 0.0f);// color of window background
 	glOrtho(-1, 1, -1, 1, 1, -1);
-	srand(time(0));
+	srand((unsigned int)time(0));
+
 	restart();
+	OpenGL::width = MSIZE;
+	OpenGL::height = MSIZE;
+	OpenGL::circleR = 1 / (float)MSIZE;
+	OpenGL::cubeW = 2 / (float)MSIZE;
+	OpenGL::cubeH = 2 / (float)MSIZE;
 }
 
-void main(int argc, char* argv[])
+int main(int argc, char* argv[])
 {
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE);
@@ -99,4 +106,5 @@ void main(int argc, char* argv[])
 	init();
 	glutMainLoop();
 	destroyGlobals();
+	return 0;
 }

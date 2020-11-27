@@ -20,29 +20,39 @@ void BFSBiDirectionalSolver::checkCellNeighbors(Cell& cell, set<Cell*>& visiting
 	int row = cell.getRow();
 	int col = cell.getCol();
 
-	Cell* neighbors[4];
-	neighbors[0] = &cells[row][col - 1]; // left neighbor
-	neighbors[1] = &cells[row][col + 1]; // right neighbor
-	neighbors[2] = &cells[row - 1][col]; // top neighbor
-	neighbors[3] = &cells[row + 1][col]; // buttom neighbor
+	/* left top right down */
+	int xys[4][2] = {
+		{row, col - 1},
+		{row - 1, col},
+		{row, col + 1},
+		{row + 1, col},
+	};
+	bool* walls = cell.getWalls();
 
 	for (int i = 0; i < 4; i++) {
-		if (neighbors[i]->getVisited() || neighbors[i]->getState() == CellState::wall)
+		if (walls[i])
 			continue;
 
-		neighbors[i]->setVisiting(true);
+		int r = xys[i][0];
+		int c = xys[i][1];
+		Cell* neighbor = &cells[r][c];
+		if (neighbor->getVisited())
+			continue;
 
-		if (targets.find(neighbors[i]) != targets.end()) {
-			neighbors[i]->setState(CellState::path);
-			cell.setState(CellState::path);
-			restorePath(*neighbors[i]);
+		neighbor->setVisiting(true);
+
+		if (targets.find(neighbor) != targets.end()) {
+			neighbor->setIsPath(true);
+			cell.setIsPath(true);
+			restorePath(*neighbor);
 			restorePath(cell);
 			solved = true;
+
 			return;
 		}
 
-		neighbors[i]->setParent(&cell);
-		visiting.insert(neighbors[i]);
+		neighbor->setParent(&cell);
+		visiting.insert(neighbor);
 	}
 }
 
@@ -51,7 +61,7 @@ void BFSBiDirectionalSolver::restorePath(Cell& currentCell)
 	Cell* temp = currentCell.getParent();
 	while (temp != nullptr)
 	{
-		temp->setState(CellState::path);
+		temp->setIsPath(true);
 		temp = temp->getParent();
 	}
 }
@@ -98,4 +108,5 @@ void BFSBiDirectionalSolver::solveIteration()
 
 	solveIterationHelper(vistingStart, vistingTarget);
 	solveIterationHelper(vistingTarget, vistingStart);
+	
 }
