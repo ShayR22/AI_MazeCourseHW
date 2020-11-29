@@ -2,11 +2,12 @@
 #define __GRAPH__
 
 #include <vector>
+#include "Drawable.h"
 #include "Maze.h"
 #include "Node.h"
 #include "Edge.h"
 
-class Graph {
+class Graph : public Drawable{
 private:
 	typedef std::vector<std::vector<Node*>> node_mat;
 	std::vector<Node*> nodes;
@@ -26,7 +27,7 @@ private:
 	void removeNoWhereToGo() noexcept(false);
 public:
 	Graph(Maze& maze);
-	void draw();
+	virtual void draw() override;
 	~Graph();
 };
 
