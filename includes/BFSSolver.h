@@ -2,25 +2,22 @@
 #define __BFSSOLVER__
 
 #include <stack>
+#include "Solvable.h"
 #include "Maze.h"
 
 
-class BFSSolver
-{
-
+class BFSSolver : public Solveable {
 private:
 	Maze& maze;
 	cell_mat& cells;
 	std::stack <Cell*> visting;
-	bool solved;
 
 	void checkCellNeighbors(Cell& cell);
 	void restorePath(Cell& currentCell);
 
 public:
 	BFSSolver(Maze& maze);
-
-	void solveIteration();
+	virtual void solveIteration() override;
 };
 
 #endif

@@ -2,11 +2,12 @@
 
 using namespace std;
 
-BFSSolver::BFSSolver(Maze& maze) : maze(maze), solved(false) ,cells(maze.getCells())
+BFSSolver::BFSSolver(Maze& maze) : maze(maze),cells(maze.getCells())
 {
 	Cell* start = maze.getStarts()[0];
 	start->setVisiting(true);
 	visting.push(start);
+	solved = false;
 }
 
 void BFSSolver::checkCellNeighbors(Cell& cell)
