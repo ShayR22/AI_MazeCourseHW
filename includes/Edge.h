@@ -1,10 +1,11 @@
 #ifndef __EDGE__
 #define __EDGE__
 #include <vector>
+#include "Drawable.h"
 
 class Node;
 
-class Edge {
+class Edge : public Drawable {
 private:
 	Node* from;
 	Node* to;
@@ -15,7 +16,7 @@ public:
 	Edge(Node* from, Node* to);
 	inline Node* getFrom() { return from; }
 	inline Node* getTo() { return to; }
-	void draw();
+	virtual void draw() override;
 
 	static void drawEdges(std::vector<Edge>& edges);
 };

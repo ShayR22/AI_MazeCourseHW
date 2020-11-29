@@ -220,7 +220,7 @@ bool Maze::removeStart(int r, int c)
 	return false;
 }
 
-void Maze::drawMaze()
+void Maze::draw()
 {
 	int numRows = (int)cells.size();
 	int numCols = (int)cells[0].size();

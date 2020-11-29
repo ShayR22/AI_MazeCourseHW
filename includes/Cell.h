@@ -3,10 +3,11 @@
 
 #include <iostream>
 #include "glut.h"
+#include "Drawable.h"
 
 constexpr auto NUM_WALLS = 4;
 
-class Cell {
+class Cell : public Drawable {
 
 private:
 	/* left, top, right, down */
@@ -52,7 +53,7 @@ public:
 	inline bool operator==(const Cell& other) const { return (row == other.row && col == other.col); }
 	inline bool equal(int r, int c) const { return (row == r && col == c); }
 
-	void draw();
+	virtual void draw() override;
 	/* smart draw for preformance for the maze usage*/
 	void drawTopLeft();
 	void setOpenGLColor();

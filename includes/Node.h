@@ -1,9 +1,10 @@
 #ifndef __NODE__
 #define __NODE__
 #include <vector>
+#include "Drawable.h"
 #include "Edge.h"
 
-class Node {
+class Node : public Drawable {
 private:
 	int x;
 	int y;
@@ -16,7 +17,7 @@ public:
 	inline int getY() { return y; }
 	void addEdge(Edge& edge);
 	std::vector<Node*> getNieghbors();
-	void draw();
+	virtual void draw() override;
 	
 	static void drawPoints(std::vector<Node*>& nodes);
 };

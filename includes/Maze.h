@@ -2,11 +2,12 @@
 #define __MAZE__
 
 #include <vector>
+#include "Drawable.h"
 #include "Cell.h"
 
 typedef std::vector<std::vector<Cell>> cell_mat;
 
-class Maze {
+class Maze : public Drawable {
 private:
 	std::vector<Cell*> starts;
 	Cell* target;
@@ -29,7 +30,7 @@ public:
 
 	bool addStart(int r, int c);
 	bool removeStart(int r, int c);
-	void drawMaze();
+	virtual void draw() override;
 };
 
 
