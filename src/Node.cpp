@@ -30,7 +30,7 @@ void Node::draw()
     float h = OpenGL::cubeH / 2;
     /* + 0.5 to compensate for matrix to go (0:size-1) not sure why not needed in y */
     /* y might not need cuz we draw in downward direction */
-    float ax = (2 * ((float)x+ 0.5 ) / OpenGL::width) - 1;
+    float ax = (2 * ((float)x+ 0.5f ) / OpenGL::width) - 1;
     float ay = (2 * (float)y / OpenGL::height) - 1;
  
 
@@ -50,7 +50,7 @@ void Node::drawPoints(std::vector<Node*>& nodes)
     for (unsigned int i = 0; i < nodes.size(); i++) {
         /* + 0.5 to compensate for matrix to go (0:size-1) not sure why not needed in y */
         /* y might not need cuz we draw in downward direction */
-        float x = (2 * ((float)nodes[i]->getX() + 0.5) / OpenGL::width) - 1;
+        float x = (2 * ((float)nodes[i]->getX() + 0.5f) / OpenGL::width) - 1;
         float y = (2 * (float)nodes[i]->getY() / OpenGL::height) - 1;
        
 
