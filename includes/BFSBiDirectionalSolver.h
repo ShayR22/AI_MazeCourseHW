@@ -3,11 +3,11 @@
 
 #include <stack>
 #include <set>
+#include "Solvable.h"
 #include "Maze.h"
 
 
-class BFSBiDirectionalSolver
-{
+class BFSBiDirectionalSolver : public Solveable {
 
 private:
 	Maze& maze;
@@ -15,7 +15,6 @@ private:
 	//std::stack <Cell*> visting;
 	std::set <Cell*> vistingStart;
 	std::set <Cell*> vistingTarget;
-	bool solved;
 
 	void solveIterationHelper(std::set<Cell*>& visiting, std::set<Cell*>& targets);
 	void checkCellNeighbors(Cell& cell, std::set<Cell*>& visiting, std::set<Cell*>& targets);
@@ -23,8 +22,7 @@ private:
 
 public:
 	BFSBiDirectionalSolver(Maze& maze);
-
-	void solveIteration();
+	virtual void solveIteration() override;
 };
 
 #endif

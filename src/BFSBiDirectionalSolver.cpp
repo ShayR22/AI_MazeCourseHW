@@ -2,8 +2,10 @@
 
 using namespace std;
 
-BFSBiDirectionalSolver::BFSBiDirectionalSolver(Maze& maze) : maze(maze), solved(false), cells(maze.getCells())
+BFSBiDirectionalSolver::BFSBiDirectionalSolver(Maze& maze) : maze(maze), cells(maze.getCells())
 {
+	solved = false;
+
 	// first stack with start as starting point
 	Cell* start = maze.getStarts()[0];
 	start->setVisiting(true);
