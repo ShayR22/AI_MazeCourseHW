@@ -25,10 +25,16 @@ private:
 	bool toCreateNode(int i, int j, node_mat& nm, cell_mat& cm);
 	void findCreateNode(int i, int j, node_mat& nm, cell_mat& cm);
 	void removeNoWhereToGo() noexcept(false);
+	void setHeuristics();
 public:
 	Graph(Maze& maze);
 	virtual void draw() override;
 	~Graph();
+
+	inline std::vector<Node*>& getNodes() { return nodes; }
+	inline std::vector<Edge>& getEdges() { return edges; }
+	inline std::vector<Node*>& getStarts() { return starts; }
+	inline Node* getTarget() { return target; }
 };
 
 #endif /* __GRAPH__ */

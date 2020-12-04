@@ -5,9 +5,9 @@
 
 using namespace std;
 
-Node::Node(int x, int y) : x(x), y(y) {}
+Node::Node(int x, int y) : x(x), y(y), heuristic(0), visited(false) {}
 
-Node::Node(const Node& node) : x(node.x), y(node.y), edges(node.edges) {}
+Node::Node(const Node& node) : x(node.x), y(node.y), edges(node.edges), heuristic(node.heuristic), visited(node.visited) {}
 
 void Node::addEdge(Edge& edge)
 {
@@ -63,6 +63,11 @@ void Node::drawPoints(std::vector<Node*>& nodes)
     }
     glColor3d(0, 0, 0);
 
+}
+
+void Node::setHeuristic(double h) 
+{
+    heuristic = h;
 }
 
 
