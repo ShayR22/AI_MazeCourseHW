@@ -146,7 +146,7 @@ void Maze::buildMaze()
 	int neighborIndex = -1;
 	int numNeighbors;
 	while (!dfs.empty()) {
-		/* get last Cell in dps branching*/
+		/* get last Cell in dfs branching*/
 		Cell* cur = dfs.top();
 		dfs.pop();
 

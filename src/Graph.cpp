@@ -54,7 +54,7 @@ bool Graph::isAbove(int i, int j, node_mat& nm, cell_mat& cm)
 
 bool Graph::isBelow(int i, int j, cell_mat& mat)
 {
-	return mat[i][j].getWallDown();
+	return !mat[i][j].getWallDown();
 }
 
 bool Graph::isDeadEnd(int i, int j, cell_mat& mat)

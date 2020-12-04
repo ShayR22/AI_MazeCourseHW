@@ -70,7 +70,7 @@ void Manager::setSize(unsigned int newSize)
 void Manager::setDrawableSolvable(DrawableType drawableType, SolveableType solvableType)
 {
 	verifyDrawableSolveable(drawableType, solvableType);
-	drawableType = drawableType;
+	drawType = drawableType;
 	solverType = solvableType;
 	restart();
 }
