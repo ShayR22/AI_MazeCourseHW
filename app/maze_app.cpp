@@ -2,7 +2,7 @@
 #include "glut.h"
 #include "OpenGL.h"
 #include "Manager.h"
-constexpr int MSIZE = 100;
+constexpr int MSIZE = 20;
 
 Manager manager(MSIZE);
 
@@ -39,6 +39,9 @@ void menu(int choice)
 	case 4: // BFS BI
 		manager.setDrawableSolvable(DrawableType::MAZE, SolveableType::MAZE_BFS_BI);
 		break;
+	case 5: // A STAR
+		manager.setDrawableSolvable(DrawableType::GRAPH, SolveableType::GRAPH_A_STAR);
+		break;
 	}
 }
 
@@ -74,6 +77,7 @@ int main(int argc, char* argv[])
 	glutAddMenuEntry("Maze", 2);
 	glutAddMenuEntry("MAZE_BFS", 3);
 	glutAddMenuEntry("MAZE_BFS BI", 4);
+	glutAddMenuEntry("GRAPH_A_STAR", 5);
 	glutAttachMenu(GLUT_RIGHT_BUTTON);
 
 	init();

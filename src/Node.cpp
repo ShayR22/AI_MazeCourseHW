@@ -5,9 +5,10 @@
 
 using namespace std;
 
-Node::Node(int x, int y) : x(x), y(y), heuristic(0), visited(false) {}
+Node::Node(int x, int y) : x(x), y(y), heuristic(0), visited(false), isOpen(false), isClosed(false) {}
 
-Node::Node(const Node& node) : x(node.x), y(node.y), edges(node.edges), heuristic(node.heuristic), visited(node.visited) {}
+Node::Node(const Node& node) : x(node.x), y(node.y), edges(node.edges), heuristic(node.heuristic), visited(node.visited),
+    isOpen(node.isOpen), isClosed(node.isClosed) {}
 
 void Node::addEdge(Edge& edge)
 {
@@ -30,8 +31,8 @@ void Node::draw()
     float h = OpenGL::cubeH / 2;
     /* + 0.5 to compensate for matrix to go (0:size-1) not sure why not needed in y */
     /* y might not need cuz we draw in downward direction */
-    float ax = (2 * ((float)x+ 0.5f ) / OpenGL::width) - 1;
-    float ay = (2 * (float)y / OpenGL::height) - 1;
+    float ay = (2 * ((float)x+ 0.5f ) / OpenGL::width) - 1;
+    float ax = (2 * (float)y / OpenGL::height) - 1;
  
 
     glBegin(GL_POLYGON);  // fill up
@@ -48,10 +49,17 @@ void Node::drawPoints(std::vector<Node*>& nodes)
     float h = OpenGL::cubeH / 2;
     glColor3d(0, 0, 1);
     for (unsigned int i = 0; i < nodes.size(); i++) {
+        if (nodes[i]->isOpen && !nodes[i]->isClosed)
+            glColor3d(0, 0.5, 0.5);
+        else if (!nodes[i]->isOpen && nodes[i]->isClosed)
+            glColor3d(0.5, 0.5, 0);
+        else
+            glColor3d(0, 0, 1);
+
         /* + 0.5 to compensate for matrix to go (0:size-1) not sure why not needed in y */
         /* y might not need cuz we draw in downward direction */
-        float x = (2 * ((float)nodes[i]->getX() + 0.5f) / OpenGL::width) - 1;
-        float y = (2 * (float)nodes[i]->getY() / OpenGL::height) - 1;
+        float y = (2 * ((float)nodes[i]->getX() + 0.5f) / OpenGL::width) - 1;
+        float x = (2 * (float)nodes[i]->getY() / OpenGL::height) - 1;
        
 
         glBegin(GL_POLYGON);  // fill up

@@ -18,7 +18,7 @@ private:
 	};
 
 	std::vector<Node*>& nodes;
-	std::vector<Edge>& edges;
+	std::vector<Edge*>& edges;
 	std::vector<Node*>& starts;
 	Node* target;
 

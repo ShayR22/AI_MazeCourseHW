@@ -48,10 +48,17 @@ void BFSSolver::checkCellNeighbors(Cell& cell)
 
 void BFSSolver::restorePath(Cell& currentCell)
 {
+	cout << "left - top - right - down" << endl;
 	Cell* temp = currentCell.getParent();
 	while (temp != nullptr)
 	{
 		temp->setIsPath(true);
+		bool* walls = temp->getWalls();
+		for (int i = 0; i < 4; i++)
+			cout << walls[i] << " ";
+		cout << endl;
+
+
 		temp = temp->getParent();
 	}
 }
