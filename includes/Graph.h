@@ -11,7 +11,7 @@ class Graph : public Drawable{
 private:
 	typedef std::vector<std::vector<Node*>> node_mat;
 	std::vector<Node*> nodes;
-	std::vector<Edge> edges;
+	std::vector<Edge*> edges;
 	std::vector<Node*> starts;
 	Node* target;
 
@@ -32,7 +32,7 @@ public:
 	~Graph();
 
 	inline std::vector<Node*>& getNodes() { return nodes; }
-	inline std::vector<Edge>& getEdges() { return edges; }
+	inline std::vector<Edge*>& getEdges() { return edges; }
 	inline std::vector<Node*>& getStarts() { return starts; }
 	inline Node* getTarget() { return target; }
 };

@@ -24,9 +24,14 @@ public:
 	void setHeuristic(double h);
 	inline double getHeuristic() { return heuristic; }
 	std::vector<Node*> getNieghbors();
+	inline std::vector<Edge*>& getEdges() { return edges; }
 	virtual void draw() override;
 	
 	static void drawPoints(std::vector<Node*>& nodes);
+
+	bool isOpen;
+	bool isClosed;
+
 };
 
 #endif
