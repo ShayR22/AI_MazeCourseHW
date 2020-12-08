@@ -20,14 +20,45 @@ void GraphSolverBestFirstSearch::solveIteration()
 
 	Node* cur = priorityQueue.top();
 	priorityQueue.pop();
+	cur->setIsVisiting(false);
+	cur->setVisited(true);
 
 	if (cur == target)
 	{
 		solved = true;
+		//restorePath();
 		return;
 	}
 
+	vector<Edge*>& edges = cur->getEdges();
+
+	for (auto& e : edges)
+	{
+		Node* neighbor = e->getTo();
+		
+		if (neighbor->getVisited() || neighbor->getIsVisiting())
+			continue;
+
+		priorityQueue.push(neighbor);
+		neighbor->setIsVisiting(true);
+		neighbor->setParent(cur);
+
+		if (neighbor == target)
+		{
+			solved = true;
+			retorePath();
+			return;
+		}
+	}
+}
 
 
-
+void GraphSolverBestFirstSearch::retorePath()
+{
+	Node* temp = target->getParent();
+	while (temp != nullptr && temp != starts[0])
+	{
+		temp->setIsPath(true);
+		temp = temp->getParent();
+	}
 }

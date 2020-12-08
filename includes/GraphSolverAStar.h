@@ -12,10 +12,6 @@ class GraphSolverAStar : public Solveable {
 	std::vector<Node*>& starts;
 	Node* target;
 
-	// this map will have the path in which each node came from
-	// this map will updates its self with shortest path along the algorithm
-	std::map<Node*, Node*> cameFrom;
-
 	// this map will show for each node its cost from the start
 	std::map<Node*, double> moveCost; // g
 
@@ -29,6 +25,8 @@ class GraphSolverAStar : public Solveable {
 	std::set<Node*> closedSet;
 	Node* findNeighborWithLowestFuncValue();
 	void calculateStepInPathFromCurrentNode(Node* lowestF);
+
+	void restorePath();
 public:
 	GraphSolverAStar(Graph& g);
 	virtual void solveIteration() override;

@@ -24,6 +24,8 @@ private:
 
 	std::priority_queue<Node*, std::vector<Node*>, MinHeuristicComperator > priorityQueue;
 
+	void retorePath();
+
 public:
 	GraphSolverBestFirstSearch(Graph& g);
 

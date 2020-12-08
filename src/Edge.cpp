@@ -24,14 +24,14 @@ Edge::Edge(Node* from, Node* to) : from(from), to(to), weight(calcWeight()) {}
 
 void Edge::draw()
 {
-	float w = OpenGL::cubeW / 4;
-	float h = OpenGL::cubeH / 4;
+	float w = OpenGL::cubeW / 2;
+	float h = -OpenGL::cubeH / 2;
 	/* + 0.5 to compensate for matrix to go (0:size-1) not sure why not needed in y */
 	/* y might not need cuz we draw in downward direction */
-	float x1 = 2 * (((float)from->getX() + 0.5f) / OpenGL::width) - 1 + w;
-	float x2 = 2 * (((float)to->getX() + 0.5f) / OpenGL::width) - 1 + w;
-	float y1 = 2 * ((float)from->getY() / OpenGL::height) - 1 + h;
-	float y2 = 2 * ((float)to->getY() / OpenGL::height) - 1 + h;
+	float x1 = 2 * (((float)from->getX()) / OpenGL::width) - 1 + w;
+	float x2 = 2 * (((float)to->getX()) / OpenGL::width) - 1 + w;
+	float y1 = -(2 * ((float)from->getY() / OpenGL::height) - 1) + h;
+	float y2 = -(2 * ((float)to->getY() / OpenGL::height) - 1) + h;
 
 	glBegin(GL_LINES);
 	glColor3f(0, 0, 0);
@@ -42,8 +42,8 @@ void Edge::draw()
 
 void Edge::drawEdges(std::vector<Edge*>& edges)
 {
-	float w = OpenGL::cubeW / 4;
-	float h = OpenGL::cubeH / 4;
+	float w = OpenGL::cubeW / 2;
+	float h = -OpenGL::cubeH / 2;
 
 	glBegin(GL_LINES);
 	glColor3f(0, 0, 0);
@@ -53,10 +53,10 @@ void Edge::drawEdges(std::vector<Edge*>& edges)
 
 		/* + 0.5 to compensate for matrix to go (0:size-1) not sure why not needed in y */
 		/* y might not need cuz we draw in downward direction */
-		float y1 = 2 * (((float)from->getX() + 0.5f) / OpenGL::width) - 1 + w;
-		float y2 = 2 * (((float)to->getX() + 0.5f) / OpenGL::width) - 1 + w;
-		float x1 = 2 * ((float)from->getY() / OpenGL::height) - 1 + h;
-		float x2 = 2 * ((float)to->getY() / OpenGL::height) - 1 + h;
+		float y1 = -(2 * (((float)from->getX()) / OpenGL::width) - 1) + h;
+		float y2 = -(2 * (((float)to->getX()) / OpenGL::width) - 1) + h;
+		float x1 = 2 * ((float)from->getY() / OpenGL::height) - 1 + w;
+		float x2 = 2 * ((float)to->getY() / OpenGL::height) - 1 + w;
 
 		glVertex2f(x1, y1);
 		glVertex2f(x2, y2);

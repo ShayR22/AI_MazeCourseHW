@@ -8,7 +8,10 @@ class Node : public Drawable {
 private:
 	int x;
 	int y;
+	bool isVisiting;
 	bool visited;
+	bool isPath;
+	Node* parent;
 	std::vector<Edge*> edges;
 
 	double heuristic;
@@ -18,8 +21,14 @@ public:
 	Node(const Node& node);
 	inline int getX() { return x; }
 	inline int getY() { return y; }
+	inline bool getIsVisiting() { return isVisiting; }
+	inline void setIsVisiting(bool v) { isVisiting = v; }
 	inline bool getVisited() { return visited; }
 	inline void setVisited(bool v) { visited = v; }
+	inline bool getIsPath() { return isPath; }
+	inline void setIsPath(bool p) { isPath = p; }
+	inline Node* getParent() { return parent; }
+	inline void setParent(Node* p) { parent = p; }
 	void addEdge(Edge& edge);
 	void setHeuristic(double h);
 	inline double getHeuristic() { return heuristic; }
@@ -28,10 +37,6 @@ public:
 	virtual void draw() override;
 	
 	static void drawPoints(std::vector<Node*>& nodes);
-
-	bool isOpen;
-	bool isClosed;
-
 };
 
 #endif

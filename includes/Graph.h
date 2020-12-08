@@ -23,7 +23,7 @@ private:
 	bool isDeadEnd(int i, int j, cell_mat& mat);
 	bool isSideways(int i, int j, cell_mat& mat);
 	bool toCreateNode(int i, int j, node_mat& nm, cell_mat& cm);
-	void findCreateNode(int i, int j, node_mat& nm, cell_mat& cm);
+	void findCreateEdge(int i, int j, node_mat& nm, cell_mat& cm);
 	void removeNoWhereToGo() noexcept(false);
 	void setHeuristics();
 public:
