@@ -9,6 +9,7 @@ enum class SolveableType {
 	MAZE_BFS,
 	MAZE_BFS_BI,
 	GRAPH_A_STAR,
+	GRAPH_BEST_FIRST_SEARCH,
 	NONE,
 };
 
@@ -28,7 +29,7 @@ private:
 	void initAll();
 	void destroyAll();
 	void verifyDrawableSolveable(DrawableType drawType, SolveableType solverType) noexcept(false);
-	Maze* maze;
+
 public:
 	Manager(unsigned int mazeSize, DrawableType drawType= DrawableType::MAZE,
 					SolveableType solverType = SolveableType::NONE) noexcept(false);

@@ -201,12 +201,6 @@ void Maze::buildMaze()
 			cells[i][j].setVisited(false);
 
 	randomRemove();
-
-	/* uncomment for debug purposes */
-	/*for (int i = 0; i < size; i++)
-		for (int j = 0; j < size; j++)
-			cout << cells[i][j];*/
-
 }
 
 Maze::Maze(int numRows, int numCols, bool setStartTarget)

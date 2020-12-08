@@ -49,9 +49,9 @@ void Cell::setOpenGLColor()
 void Cell::draw()
 {
 	float x = 2 * (float)col / OpenGL::width - 1;
-	float y = 2 *(float)row / OpenGL::height - 1;
+	float y = -(2 *(float)row / OpenGL::height - 1);
 	float w = OpenGL::cubeW;
-	float h = OpenGL::cubeH;
+	float h = -OpenGL::cubeH;
 
 	glBegin(GL_POLYGON);  // fill up
 	glVertex2f(x, y);
@@ -85,9 +85,9 @@ void Cell::draw()
 void Cell::drawTopLeft()
 {
 	float x = 2 * (float)col / OpenGL::width - 1;
-	float y = 2 * (float)row / OpenGL::height - 1;
+	float y = -(2 * (float)row / OpenGL::height - 1);
 	float w = OpenGL::cubeW;
-	float h = OpenGL::cubeH;
+	float h = - OpenGL::cubeH;
 
 	glBegin(GL_POLYGON);  // fill up
 	glVertex2f(x, y);

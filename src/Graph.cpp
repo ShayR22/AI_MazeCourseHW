@@ -84,7 +84,7 @@ bool Graph::toCreateNode(int i, int j, node_mat& nm, cell_mat& cm)
 	return false;
 }
 
-void Graph::findCreateNode(int i, int j, node_mat& nm, cell_mat& cm)
+void Graph::findCreateEdge(int i, int j, node_mat& nm, cell_mat& cm)
 {
 	int row = i;
 	int col = j;
@@ -118,61 +118,33 @@ Graph::Graph(Maze& maze)
 
 	initalizeNodeMat(nm, cm);
 	setStartsAndTarget(nm, maze);
-	cout << "Finished initNode mat and set StartsTargets" << endl;
-
-	for (unsigned int i = 0; i < nm.size(); i++) {
-		for (unsigned int j = 0; j < nm[0].size(); j++) {
-			if (nm[i][j] == nullptr)
-				cout << "-";
-			else
-				cout << "*";
-		}
-		cout << "\n";
-	}
-
-	cout << "*****************==============****************" << endl;
-
 
 	int numRows = cm.size();
 	int numCols = cm[0].size();
-	for (int i = 1; i < numRows - 1; i++) {
-		for (int j = 1; j < numCols - 1; j++) {
+	for (int i = 0; i < numRows; i++) {
+		for (int j = 0; j < numCols; j++) {
 			if (nm[i][j] != nullptr)
 				continue;
 
 			if (toCreateNode(i, j, nm, cm)) {
 				int row = cm[i][j].getRow();
 				int col = cm[i][j].getCol();
-				cout << "x:" << row << ", y:" << col << endl;
 				nodes.push_back(new Node(row, col));
 				nm[i][j] = nodes.back();
 			}
 		}
-	}
-	cout << "Finished creating nodes" << endl;
-
-	for (unsigned int i = 0; i < nm.size(); i++) {
-		for (unsigned int j = 0; j < nm[0].size(); j++) {
-			if (nm[i][j] == nullptr)
-				cout << "-";
-			else
-				cout << "*";
-		}
-		cout << "\n";
 	}
 
 	for (unsigned int i = 0; i < nm.size(); i++) {
 		for (unsigned int j = 0; j < nm[0].size(); j++) {
 			if (nm[i][j] == nullptr)
 				continue;
-			findCreateNode(i, j, nm, cm);
+			findCreateEdge(i, j, nm, cm);
 		}
 	}
-	cout << "Finished creating edges" << endl;
 
 
-
-	/* removeNoWhereToGo(); */
+	removeNoWhereToGo();
 	/* setHeuristics(); */
 }
 
@@ -185,7 +157,6 @@ void Graph::removeNoWhereToGo() noexcept(false)
 	if (target->getNieghbors().size() == 0)
 		throw "target has no nodes connected to it";
 
-	cout << "going to over nodes" << endl;
 	int counter = 0;
 	int nodesSize = (int)nodes.size();
 	auto itr = nodes.begin();

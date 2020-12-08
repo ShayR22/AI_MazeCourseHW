@@ -42,6 +42,9 @@ void menu(int choice)
 	case 5: // A STAR
 		manager.setDrawableSolvable(DrawableType::GRAPH, SolveableType::GRAPH_A_STAR);
 		break;
+	case 6: // Best First Search
+		manager.setDrawableSolvable(DrawableType::GRAPH, SolveableType::GRAPH_BEST_FIRST_SEARCH);
+		break;
 	}
 }
 
@@ -78,6 +81,7 @@ int main(int argc, char* argv[])
 	glutAddMenuEntry("MAZE_BFS", 3);
 	glutAddMenuEntry("MAZE_BFS BI", 4);
 	glutAddMenuEntry("GRAPH_A_STAR", 5);
+	glutAddMenuEntry("GRAPH_BEST_FIRST_SEARCH", 6);
 	glutAttachMenu(GLUT_RIGHT_BUTTON);
 
 	init();

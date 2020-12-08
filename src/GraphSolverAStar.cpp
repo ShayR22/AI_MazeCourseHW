@@ -55,60 +55,51 @@ void GraphSolverAStar::calculateStepInPathFromCurrentNode(Node* lowestF)
 		double currentNeighborCost = moveCost[neighbor];
 		double costFromNodeToNeighbor = moveCost[lowestF] + e->getWeight();
 
-		if (openSet.find(neighbor) == openSet.end())
+		if (openSet.find(neighbor) == openSet.end()) {
 			openSet.insert(neighbor);
-		else if (currentNeighborCost >= costFromNodeToNeighbor)
+			neighbor->setIsVisiting(true);
+		}
+		else if (currentNeighborCost < costFromNodeToNeighbor) {
 			continue;
+		}
 
 		/* if not continued meaning need to update maps costs */
 		moveCost[neighbor] = costFromNodeToNeighbor;
 		funcValues[neighbor] = moveCost[neighbor] + heuristicCost[neighbor];
-		cameFrom[neighbor] = lowestF;
+		neighbor->setParent(lowestF);
 	}
 }
 
-static void printSet(string nodesName, set<Node*> nodes, map<Node*, double> mmap)
+void GraphSolverAStar::restorePath()
 {
-	cout << "=====================================" << endl;
-	cout << nodesName << endl;
-	for (auto& n : nodes)
-		cout << n->getX() << ", " << n->getY() << ": " << mmap[n] << endl;
-	cout << "=====================================" << endl;
+	Node* temp = target->getParent();
+	while (temp != nullptr && temp != starts[0])
+	{
+		temp->setIsPath(true);
+		temp = temp->getParent();
+	}
 }
 
 void GraphSolverAStar::solveIteration()
 {
+
 	if (solved || openSet.empty())
 		return;
-
-	for (auto& n : nodes) {
-		n->isClosed = false;
-		n->isOpen = false;
-	}
-
-	for (auto& n : openSet)
-		n->isOpen = true;
-
-	for (auto& n : closedSet)
-		n->isClosed = true;
-
-	cout << "***************************************" << endl;
-	printSet("moveCost on Open", openSet, moveCost);
-	printSet("moveCost on Close", closedSet, moveCost);
-	cout << "***************************************\n" << endl;
-
-
-
+	
 	Node* lowestF = findNeighborWithLowestFuncValue();
 	openSet.erase(lowestF);
+	lowestF->setIsVisiting(false);
 	closedSet.insert(lowestF);
+	lowestF->setVisited(true);
 
 	if (lowestF == target) {
 		std::cout << "solved" << std::endl;
 		solved = true;
+		restorePath();
 		return;
 	}
 
 	calculateStepInPathFromCurrentNode(lowestF);
 }
+
 
