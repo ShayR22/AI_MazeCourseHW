@@ -125,12 +125,32 @@ void Maze::randomRemove()
 	int numRows = (int)cells.size();
 	int numCols = (int)cells[0].size();
 
-	bool noWalls[] = { false, false, false, false };
+	for (int i = 1; i < numRows - 1; i++) {
+		for (int j = 1; j < numCols - 1; j++) {
+			if ((rand() % 100) / 100.f < REMOVE_PERCENT) {
+				Cell* cur = &cells[i][j];
 
-	for (int i = 1; i < numRows - 1; i++)
-		for (int j = 1; j < numCols - 1; j++)
-			if ((rand() % 100) / 100.f < REMOVE_PERCENT)
-				cells[i][j].setWalls(noWalls);;
+				int row = cur->getRow();
+				int col = cur->getCol();
+
+				/* left top right down */
+				int indecies[4][2] = {
+					{row, col - 1},
+					{row - 1, col},
+					{row, col + 1},
+					{row + 1, col}
+				};
+
+				for (int i = 0; i < 4; i++) {
+					int r = indecies[i][0];
+					int c = indecies[i][1];
+					Cell* neighbor = &cells[r][c];
+					removeWall(cur, neighbor, i);
+				}
+
+			}
+		}
+	}
 }
 
 void Maze::buildMaze()
@@ -181,12 +201,6 @@ void Maze::buildMaze()
 			cells[i][j].setVisited(false);
 
 	randomRemove();
-
-	/* uncomment for debug purposes */
-	/*for (int i = 0; i < size; i++)
-		for (int j = 0; j < size; j++)
-			cout << cells[i][j];*/
-
 }
 
 Maze::Maze(int numRows, int numCols, bool setStartTarget)
@@ -194,7 +208,7 @@ Maze::Maze(int numRows, int numCols, bool setStartTarget)
 	allocateMaze(numRows, numCols);	
 	if (setStartTarget) {
 		addStart(numRows / 2, numCols / 2);
-		setTarget((rand() % (numRows - 2)) + 1, (rand() % (numCols - 2)) + 1);
+		setTarget(rand() % numRows, rand() % numCols);
 		buildMaze();
 	}
 }
@@ -229,9 +243,9 @@ void Maze::draw()
 		for (int j = 0; j < numCols; j++) {
 			cells[j][i].setOpenGLColor();
 			cells[j][i].drawTopLeft();
+
 		}
 	}
-
 	for (unsigned int i = 0; i < starts.size(); i++) {
 		Cell::setOpenGLStartColor();
 		starts[i]->draw();
@@ -239,4 +253,6 @@ void Maze::draw()
 
 	Cell::setOpenGLTargetColor();
 	target->draw();
+
+
 }

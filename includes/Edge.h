@@ -16,9 +16,10 @@ public:
 	Edge(Node* from, Node* to);
 	inline Node* getFrom() { return from; }
 	inline Node* getTo() { return to; }
+	inline double getWeight() { return weight; }
 	virtual void draw() override;
 
-	static void drawEdges(std::vector<Edge>& edges);
+	static void drawEdges(std::vector<Edge*>& edges);
 };
 
 #endif 
