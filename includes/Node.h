@@ -14,8 +14,6 @@ private:
 	Node* parent;
 	std::vector<Edge*> edges;
 
-	double heuristic;
-
 public:
 	Node(int x, int y);
 	Node(const Node& node);
@@ -30,8 +28,7 @@ public:
 	inline Node* getParent() { return parent; }
 	inline void setParent(Node* p) { parent = p; }
 	void addEdge(Edge& edge);
-	void setHeuristic(double h);
-	inline double getHeuristic() { return heuristic; }
+
 	std::vector<Node*> getNieghbors();
 	inline std::vector<Edge*>& getEdges() { return edges; }
 	virtual void draw() override;

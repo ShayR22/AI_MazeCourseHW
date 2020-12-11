@@ -25,7 +25,6 @@ private:
 	bool toCreateNode(int i, int j, node_mat& nm, cell_mat& cm);
 	void findCreateEdge(int i, int j, node_mat& nm, cell_mat& cm);
 	void removeNoWhereToGo() noexcept(false);
-	void setHeuristics();
 public:
 	Graph(Maze& maze);
 	virtual void draw() override;

@@ -6,9 +6,9 @@
 
 using namespace std;
 
-Node::Node(int x, int y) : x(x), y(y), heuristic(0), visited(false), isVisiting(false), isPath(false), parent(nullptr) {}
+Node::Node(int x, int y) : x(x), y(y), visited(false), isVisiting(false), isPath(false), parent(nullptr) {}
 
-Node::Node(const Node& node) : x(node.x), y(node.y), edges(node.edges), heuristic(node.heuristic), visited(node.visited),
+Node::Node(const Node& node) : x(node.x), y(node.y), edges(node.edges), visited(node.visited),
 isVisiting(node.isVisiting), isPath(node.isPath), parent(node.parent) {}
 
 void Node::addEdge(Edge& edge)
@@ -83,10 +83,6 @@ void Node::drawPoints(std::vector<Node*>& nodes)
 
 }
 
-void Node::setHeuristic(double h) 
-{
-    heuristic = h;
-}
 
 
 
