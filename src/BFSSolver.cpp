@@ -12,8 +12,8 @@ BFSSolver::BFSSolver(Maze& maze) : maze(maze),cells(maze.getCells())
 
 void BFSSolver::checkCellNeighbors(Cell& cell)
 {
-	int row = cell.getRow();
-	int col = cell.getCol();
+	int row = cell.getX();
+	int col = cell.getY();
 	
 	/* left top right down */
 	int xys[4][2] = {

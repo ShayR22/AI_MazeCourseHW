@@ -23,8 +23,8 @@ void Graph::setStartsAndTarget(node_mat& nm, Maze& maze)
 {
 	vector<Cell*> cellStarts = maze.getStarts();
 	for (unsigned int i = 0; i < cellStarts.size(); i++) {
-		int row = cellStarts[i]->getRow();
-		int col = cellStarts[i]->getCol();
+		int row = cellStarts[i]->getX();
+		int col = cellStarts[i]->getY();
 
 		nodes.push_back(new Node(row, col));
 		nm[row][col] = nodes.back();
@@ -32,8 +32,8 @@ void Graph::setStartsAndTarget(node_mat& nm, Maze& maze)
 	}
 
 	Cell* cellTarget = &maze.getTarget();
-	nodes.push_back(new Node(cellTarget->getRow(), cellTarget->getCol()));
-	nm[cellTarget->getRow()][cellTarget->getCol()] = nodes.back();
+	nodes.push_back(new Node(cellTarget->getX(), cellTarget->getY()));
+	nm[cellTarget->getX()][cellTarget->getY()] = nodes.back();
 	target = nodes.back();
 }
 
@@ -127,8 +127,8 @@ Graph::Graph(Maze& maze)
 				continue;
 
 			if (toCreateNode(i, j, nm, cm)) {
-				int row = cm[i][j].getRow();
-				int col = cm[i][j].getCol();
+				int row = cm[i][j].getX();
+				int col = cm[i][j].getY();
 				nodes.push_back(new Node(row, col));
 				nm[i][j] = nodes.back();
 			}

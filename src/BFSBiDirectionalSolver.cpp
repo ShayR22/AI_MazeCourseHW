@@ -19,8 +19,8 @@ BFSBiDirectionalSolver::BFSBiDirectionalSolver(Maze& maze) : maze(maze), cells(m
 
 void BFSBiDirectionalSolver::checkCellNeighbors(Cell& cell, set<Cell*>& visiting, set<Cell*>& targets)
 {
-	int row = cell.getRow();
-	int col = cell.getCol();
+	int row = cell.getX();
+	int col = cell.getY();
 
 	/* left top right down */
 	int xys[4][2] = {
