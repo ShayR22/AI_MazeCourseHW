@@ -2,6 +2,7 @@
 #define __CELL__
 
 #include <iostream>
+#include <vector>
 #include "glut.h"
 #include "Drawable.h"
 

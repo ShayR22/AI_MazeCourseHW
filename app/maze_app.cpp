@@ -2,7 +2,7 @@
 #include "glut.h"
 #include "OpenGL.h"
 #include "Manager.h"
-constexpr int MSIZE = 20;
+constexpr int MSIZE = 100;
 
 Manager manager(MSIZE);
 
@@ -33,16 +33,19 @@ void menu(int choice)
 	case 2: // Maze
 		manager.setDrawableSolvable(DrawableType::MAZE, SolveableType::NONE);
 		break;
-	case 3: // BFS
+	case 3: // MAZE BFS
 		manager.setDrawableSolvable(DrawableType::MAZE, SolveableType::MAZE_BFS);
 		break;
-	case 4: // BFS BI
+	case 4: // MAZE BFS BI
 		manager.setDrawableSolvable(DrawableType::MAZE, SolveableType::MAZE_BFS_BI);
 		break;
-	case 5: // A STAR
+	case 5: // MAZE A STAR
+		manager.setDrawableSolvable(DrawableType::MAZE, SolveableType::MAZE_A_STAR);
+		break;
+	case 6: // GRAPH A STAR
 		manager.setDrawableSolvable(DrawableType::GRAPH, SolveableType::GRAPH_A_STAR);
 		break;
-	case 6: // Best First Search
+	case 7: // GRAPH Best First Search
 		manager.setDrawableSolvable(DrawableType::GRAPH, SolveableType::GRAPH_BEST_FIRST_SEARCH);
 		break;
 	}
@@ -80,8 +83,9 @@ int main(int argc, char* argv[])
 	glutAddMenuEntry("Maze", 2);
 	glutAddMenuEntry("MAZE_BFS", 3);
 	glutAddMenuEntry("MAZE_BFS BI", 4);
-	glutAddMenuEntry("GRAPH_A_STAR", 5);
-	glutAddMenuEntry("GRAPH_BEST_FIRST_SEARCH", 6);
+	glutAddMenuEntry("MAZE_A_STAR", 5);
+	glutAddMenuEntry("GRAPH_A_STAR", 6);
+	glutAddMenuEntry("GRAPH_BEST_FIRST_SEARCH", 7);
 	glutAttachMenu(GLUT_RIGHT_BUTTON);
 
 	init();
