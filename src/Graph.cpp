@@ -145,7 +145,6 @@ Graph::Graph(Maze& maze)
 
 
 	removeNoWhereToGo();
-	/* setHeuristics(); */
 }
 
 void Graph::removeNoWhereToGo() noexcept(false)
@@ -170,25 +169,8 @@ void Graph::removeNoWhereToGo() noexcept(false)
 			++itr;
 		}
 	}
-
-	cout << "removed " << ((float)counter)/nodesSize << "% of nodes" << endl;
 }
 
-
-void Graph::setHeuristics()
-{
-	int targetX = target->getX();
-	int targetY = target->getY();
-
-	for (auto& n : nodes)
-	{
-		int nX = n->getX();
-		int nY = n->getY();
-		
-		double distance = sqrt(pow((double)targetX - nX, 2) + pow((double)targetY - nY, 2));
-		n->setHeuristic(distance);
-	}
-}
 
 void Graph::draw()
 {

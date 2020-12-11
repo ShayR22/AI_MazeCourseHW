@@ -1,12 +1,18 @@
 #include "GraphSolverBestFirstSearch.h"
+#include "heruistics.h"
 
 
 using namespace std;
 
 
 GraphSolverBestFirstSearch::GraphSolverBestFirstSearch(Graph& g) : nodes(g.getNodes()), edges(g.getEdges()),
-	starts(g.getStarts()), target(g.getTarget())
+	starts(g.getStarts()), target(g.getTarget()), priorityQueue(MinHeuristicComperator(heuristicCost))
 {
+	for (auto& n : nodes)
+	{
+		heuristicCost[n] = manhattan_distance(n, target);
+	}
+
 	solved = false;
 
 	priorityQueue.push(starts[0]);
@@ -22,13 +28,6 @@ void GraphSolverBestFirstSearch::solveIteration()
 	priorityQueue.pop();
 	cur->setIsVisiting(false);
 	cur->setVisited(true);
-
-	if (cur == target)
-	{
-		solved = true;
-		//restorePath();
-		return;
-	}
 
 	vector<Edge*>& edges = cur->getEdges();
 
