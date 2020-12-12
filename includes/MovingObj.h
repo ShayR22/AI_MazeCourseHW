@@ -1,7 +1,6 @@
 #ifndef __MAZE_MOVING_OBJECT__
 #define __MAZE_MOVING_OBJECT__
 
-#include "Maze.h"
 #include "Drawable.h"
 
 class MovingObj : public Drawable {

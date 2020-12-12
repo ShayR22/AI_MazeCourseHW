@@ -1,4 +1,5 @@
 #include "Manager.h"
+#include "OpenGL.h"
 #include "Maze.h"
 #include "Graph.h"
 #include "MazeSolverAStar.h"
@@ -11,8 +12,14 @@ using namespace std;
 
 void Manager::initAll()
 {
-	solvable = nullptr;
-	drawable = nullptr;
+
+	cout << "entered: "<< __func__ << endl;
+	if (drawType == DrawableType::MAZE_GAME) {
+		mazeGame = new MazeGame(size);
+		drawable = mazeGame;
+		solvable = mazeGame;
+		return;
+	}
 
 	Maze* maze = new Maze(size, size);
 
@@ -48,13 +55,33 @@ void Manager::initAll()
 
 void Manager::destroyAll()
 {
-	delete drawable;
-	delete solvable;
+	if (mazeGame) {
+		delete mazeGame;
+	} else {
+		delete drawable;
+		delete solvable;
+	}
+
+	drawable = nullptr;
+	solvable = nullptr;
+	mazeGame = nullptr;
+}
+
+bool Manager::isNewGame(DrawableType drawType, SolveableType solverType)
+{
+	if ((drawType == DrawableType::MAZE_GAME && solverType != SolveableType::MAZE_GAME) ||
+		(drawType != DrawableType::MAZE_GAME && solverType == SolveableType::MAZE_GAME))
+		throw "when maze game is seleceted user must set both draw and solve type to MAZE_GAME";
+
+	return drawType == DrawableType::MAZE_GAME && solverType == SolveableType::MAZE_GAME;
 }
 
 void Manager::verifyDrawableSolveable(DrawableType drawType, SolveableType solverType)
 {
 	if (solverType == SolveableType::NONE)
+		return;
+
+	if (isNewGame(drawType, solverType))
 		return;
 
 	if (drawType == DrawableType::GRAPH) {
@@ -81,10 +108,23 @@ void Manager::verifyDrawableSolveable(DrawableType drawType, SolveableType solve
 	}
 }
 
+void Manager::draw() 
+{
+	if (drawable)
+		drawable->draw();
+}
+
+void Manager::solveIteration()
+{
+	if (solvable)
+		solvable->solveIteration();
+}
 
 Manager::Manager(unsigned int mazeSize, DrawableType drawType, SolveableType solverType) :
-	drawable(nullptr), solvable(nullptr), size(mazeSize), drawType(drawType), solverType(solverType)
+	drawable(nullptr), solvable(nullptr), size(mazeSize), drawType(drawType), solverType(solverType),
+	mazeGame(nullptr)
 {
+	solved = false;
 	verifyDrawableSolveable(drawType, solverType);
 	restart();
 }

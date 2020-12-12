@@ -1,0 +1,33 @@
+#include "MazeMovingObj.h"
+#include "MovingObj.h"
+#include "OpenGL.h"
+#include <iostream>
+
+MazeMovingObj::MazeMovingObj(cell_mat& cells, float x, float y, float maxDx, float maxDy, float targetX, float targetY)
+	: MovingObj(x, y, maxDx, maxDy, targetX, targetY), cells(cells) {}
+
+
+void MazeMovingObj::getOpenGLCellCenter(Cell& cell, float* xy)
+{
+	float newX = cell.getX() + 0.5f;
+	float newY = cell.getY() + 0.5f;
+
+	xy[0] = newX;
+	xy[1] = newY;
+
+	std::cout << __func__ << ": (x, y) <-> " << "(" << newX << ", " << newY << ")" << std::endl;
+}
+
+void MazeMovingObj::setTarget(Cell& cell)
+{
+	float xy[2];
+	getOpenGLCellCenter(cell, xy);
+	MovingObj::setTarget(xy[0], xy[1]);
+}
+
+void MazeMovingObj::setLocation(Cell& cell)
+{
+	float xy[2];
+	getOpenGLCellCenter(cell, xy);
+	MovingObj::setLocation(xy[0], xy[1]);
+}

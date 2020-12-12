@@ -259,6 +259,4 @@ void Maze::draw()
 
 	Cell::setOpenGLTargetColor();
 	target->draw();
-
-
 }

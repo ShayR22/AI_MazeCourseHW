@@ -7,14 +7,14 @@ using namespace std;
 using namespace std;
 
 Cell::Cell() :
-	row(0), col(0), isPath(false), hasCoin(true),
+	row(0), col(0), isPath(false), hasCoin(false),
 	visiting(false), visited(false), parent(nullptr)
 {
 	memset(walls, true, sizeof(walls));
 }
 
 Cell::Cell(int row, int col) :
-	row(row), col(col), isPath(false), hasCoin(true),
+	row(row), col(col), isPath(false), hasCoin(false),
 	visiting(false), visited(false), parent(nullptr)
 {
 	memset(walls, true, sizeof(walls));
@@ -63,7 +63,7 @@ void Cell::drawCoin(float x, float y, float w, float h)
 	if (!hasCoin)
 		return;
 
-	glPointSize(4.0);
+	glPointSize(1 / OpenGL::circleR / 4.0f);
 	glBegin(GL_POINTS);
 	/* gold color is 255, 215, 0 (255/255, 215/255, 0/255) */
 	glColor3d(1.0, 0.84, 0);
