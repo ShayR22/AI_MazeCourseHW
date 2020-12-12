@@ -20,6 +20,7 @@ private:
 	Cell* randomizeNeighbor(Cell** neighbors, int numNeighbors, int* neighborIndex);
 	void randomRemove();
 	void buildMaze();
+	void drawBackground();
 public:
 	Maze(int numRows, int numCols, bool setStartTarget = true);
 	inline cell_mat& getCells() { return cells; }

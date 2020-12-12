@@ -234,8 +234,15 @@ bool Maze::removeStart(int r, int c)
 	return false;
 }
 
+void Maze::drawBackground()
+{
+	glClearColor(1.0f, 1.0f, 1.0f, 0.0f);// color of window background
+}
+
 void Maze::draw()
 {
+	drawBackground();
+
 	int numRows = (int)cells.size();
 	int numCols = (int)cells[0].size();
 
@@ -243,7 +250,6 @@ void Maze::draw()
 		for (int j = 0; j < numCols; j++) {
 			cells[j][i].setOpenGLColor();
 			cells[j][i].drawTopLeft();
-
 		}
 	}
 	for (unsigned int i = 0; i < starts.size(); i++) {

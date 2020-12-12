@@ -19,6 +19,11 @@ private:
 	bool visited;
 	bool visiting;
 	bool isPath;
+	bool hasCoin;
+
+	void drawPoly(float x, float y, float w, float h);
+	void drawCoin(float x, float y, float w, float h);
+	void drawWalls(int numWalls, float x, float y, float w, float h);
 public:
 	Cell();
 	Cell(int row, int col);
@@ -50,6 +55,9 @@ public:
 	
 	inline void setIsPath(bool path) { isPath = path; }
 	inline bool getPath() { return isPath; }
+
+	inline void setHasCoin(bool c) { hasCoin = c; }
+	inline bool getHasCoin() { return hasCoin; }
 
 	inline bool operator==(const Cell& other) const { return (row == other.row && col == other.col); }
 	inline bool equal(int r, int c) const { return (row == r && col == c); }
