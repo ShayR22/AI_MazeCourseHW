@@ -10,23 +10,7 @@ MazeSolverAStar::MazeSolverAStar(Maze& m) : cells(m.getCells()), starts(m.getSta
 	target(&m.getTarget())
 {
 	solved = false;
-	for (auto& cell_row : cells) {
-		for (auto& cell : cell_row) {
-			double h = manhattan_distance(&cell, target);
-			heuristicCost[&cell] = h;
-
-			moveCost[&cell] = INT_MAX;
-			funcValues[&cell] = INT_MAX;
-		}
-
-	}
-
-	Cell* start = starts[0];
-	// set cost to get to start from start to 0
-	moveCost[start] = 0;
-	funcValues[start] = heuristicCost[start] + moveCost[start];
-
-	openSet.insert(start);
+	setStartTarget(*m.getStarts()[0], m.getTarget());
 }
 
 Cell* MazeSolverAStar::findNeighborWithLowestFuncValue()
@@ -97,6 +81,7 @@ void MazeSolverAStar::calculateStepInPathFromCurrentCell(Cell* lowestF)
 		moveCost[n] = costFromCellToNeighbor;
 		funcValues[n] = moveCost[n] + heuristicCost[n];
 		n->setParent(lowestF);
+		nextInPath[lowestF] = n;
 	}
 }
 
@@ -131,4 +116,37 @@ void MazeSolverAStar::solveIteration()
 	calculateStepInPathFromCurrentCell(lowestF);
 }
 
+void MazeSolverAStar::clear()
+{
 
+	openSet.clear();
+	closedSet.clear();
+
+	for (auto& cellRow : cells) {
+		for (auto& cell : cellRow) {
+			cell.setVisited(false);
+			cell.setVisiting(false);
+			cell.setIsPath(false);
+
+			double h = manhattan_distance(&cell, target);
+			heuristicCost[&cell] = h;
+
+			moveCost[&cell] = INT_MAX;
+			funcValues[&cell] = INT_MAX;
+
+		}
+	}
+}
+
+
+void MazeSolverAStar::setStartTarget(Cell& s, Cell& t)
+{
+	starts[0] = &s;
+	target = &t;
+	clear();
+
+	Cell* start = starts[0];
+	moveCost[start] = 0;
+	funcValues[start] = heuristicCost[start] + moveCost[start];
+	openSet.insert(start);
+}
