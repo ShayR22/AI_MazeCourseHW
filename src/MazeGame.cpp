@@ -29,6 +29,8 @@ MazeGame::MazeGame(int size)
 
 	numCoins = size * size;
 	maze = new Maze(size, size);
+	maze->setColorHidden(true);
+
 	start = maze->getStarts()[0];
 
 	cell_mat& cells = maze->getCells();

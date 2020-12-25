@@ -9,6 +9,7 @@ typedef std::vector<std::vector<Cell>> cell_mat;
 
 class Maze : public Drawable {
 private:
+	bool hideColor;
 	std::vector<Cell*> starts;
 	Cell* target;
 	cell_mat cells;
@@ -28,6 +29,9 @@ public:
 	inline void setTarget(int r, int c) { target = &cells[r][c]; }
 	inline std::vector<Cell*>& getStarts() { return starts; }
 	inline Cell& getTarget() { return *target; }
+
+	inline void setColorHidden(bool ch) { hideColor = ch; }
+	inline bool getColorHidden() { return hideColor; }
 
 	bool addStart(int r, int c);
 	bool removeStart(int r, int c);

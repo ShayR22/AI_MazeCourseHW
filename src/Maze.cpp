@@ -203,7 +203,7 @@ void Maze::buildMaze()
 	randomRemove();
 }
 
-Maze::Maze(int numRows, int numCols, bool setStartTarget)
+Maze::Maze(int numRows, int numCols, bool setStartTarget) : hideColor(false)
 {
 	allocateMaze(numRows, numCols);	
 	if (setStartTarget) {
@@ -246,9 +246,14 @@ void Maze::draw()
 	int numRows = (int)cells.size();
 	int numCols = (int)cells[0].size();
 
+
 	for (int i = 0; i < numRows; i++) {
 		for (int j = 0; j < numCols; j++) {
-			cells[j][i].setOpenGLColor();
+			if (!hideColor)
+				cells[j][i].setOpenGLColor();
+			else
+				glColor3d(1, 1, 1);   // white
+
 			cells[j][i].drawTopLeft();
 		}
 	}
