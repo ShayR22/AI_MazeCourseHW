@@ -1,24 +1,22 @@
-#include "Player.h"
+#include "Enemy.h"
 #include "OpenGL.h"
 #include <iostream>
 
 
-Player::Player(cell_mat& cells, float x, float y, float maxDx, float maxDy, float targetX, float targetY, int *numCoins)
+Enemy::Enemy(cell_mat& cells, float x, float y, float maxDx, float maxDy, float targetX, float targetY)
     : MazeMovingObj(cells, x, y, maxDx, maxDy, targetX, targetY)
 {
     lastCellX = (int)x;
     lastCellY = (int)y;
-    cells[lastCellX][lastCellY].setHasCoin(false);
-    *numCoins--;
 }
 
-void Player::draw()
+void Enemy::draw()
 {
     float y = -(2 * (float)this->x / OpenGL::width - 1);
-    float x = (2 *(float)this->y / OpenGL::height - 1);
+    float x = (2 * (float)this->y / OpenGL::height - 1);
 
-    /* draw black body and draw body yellow a bit smaller, in order to create a black 
-     * layer creating clear definition for packman   
+    /* draw black body and draw body yellow a bit smaller, in order to create a black
+     * layer creating clear definition for packman
      */
     glPointSize(1 / OpenGL::circleR / 1.2f);
     glBegin(GL_POINTS);
@@ -28,7 +26,7 @@ void Player::draw()
 
     glPointSize(1 / OpenGL::circleR / 1.5f);
     glBegin(GL_POINTS);
-    glColor3d(1, 1, 0);
+    glColor3d(1, 0, 0);
     glVertex2f(x, y);
     glEnd();
 
@@ -44,7 +42,7 @@ void Player::draw()
     glEnd();
 }
 
-void Player::move()
+void Enemy::move()
 {
     MovingObj::move();
     if ((int)x == lastCellX && (int)y == lastCellY)
@@ -52,9 +50,4 @@ void Player::move()
 
     lastCellX = (int)x;
     lastCellY = (int)y;
-
-    if (cells[lastCellX][lastCellY].getHasCoin()) {
-        cells[lastCellX][lastCellY].setHasCoin(false);
-        *numCoins--;
-    }
 }

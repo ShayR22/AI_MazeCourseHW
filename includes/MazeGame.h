@@ -9,6 +9,7 @@
 
 class MazeGame : public Drawable, public Solveable {
 private:
+	int numCoins;
 	Maze *maze;
 	Cell* start;
 	Player *player;

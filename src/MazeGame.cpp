@@ -27,6 +27,7 @@ MazeGame::MazeGame(int size)
 {
 	solved = false;
 
+	numCoins = size * size;
 	maze = new Maze(size, size);
 	start = maze->getStarts()[0];
 
@@ -41,7 +42,7 @@ MazeGame::MazeGame(int size)
 	float dy = playerDy();
 	float tx = maze->getTarget().getX() + 0.5f;
 	float ty = maze->getTarget().getY() + 0.5f;
-	player = new Player(cells, sx, sy, dx, dy, tx, ty);
+	player = new Player(cells, sx, sy, dx, dy, tx, ty, &numCoins);
 }
 
 MazeGame::~MazeGame()
@@ -49,7 +50,6 @@ MazeGame::~MazeGame()
 	delete maze;
 	delete player;
 }
-
 
 void MazeGame::draw()
 {
@@ -59,5 +59,11 @@ void MazeGame::draw()
 
 void MazeGame::solveIteration()
 {
+	if (solved)
+		return;
+
 	player->move();
+	if (numCoins == 0)
+		solved = true;
+
 }
