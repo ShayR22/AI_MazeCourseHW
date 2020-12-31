@@ -28,6 +28,7 @@ class MazeSolverAStar : public Solveable {
 	void calculateStepInPathFromCurrentCell(Cell* lowestF);
 	std::vector<Cell*> getCellNeighbors(Cell* cell);
 
+	void setNextInPath();
 	void restorePath();
 	void clear();
 public:

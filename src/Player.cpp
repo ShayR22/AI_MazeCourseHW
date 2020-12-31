@@ -3,13 +3,14 @@
 #include <iostream>
 
 
-Player::Player(cell_mat& cells, float x, float y, float maxDx, float maxDy, float targetX, float targetY, int *numCoins)
-    : MazeMovingObj(cells, x, y, maxDx, maxDy, targetX, targetY)
+Player::Player(cell_mat& cells, float x, float y, float maxDx, float maxDy, float targetX, float targetY, int &numCoins)
+    : MazeMovingObj(cells, x, y, maxDx, maxDy, targetX, targetY), numCoins(numCoins)
 {
     lastCellX = (int)x;
     lastCellY = (int)y;
     cells[lastCellX][lastCellY].setHasCoin(false);
-    *numCoins--;
+
+    this->numCoins--;
 }
 
 void Player::draw()
@@ -55,6 +56,6 @@ void Player::move()
 
     if (cells[lastCellX][lastCellY].getHasCoin()) {
         cells[lastCellX][lastCellY].setHasCoin(false);
-        *numCoins--;
+        numCoins--;
     }
 }

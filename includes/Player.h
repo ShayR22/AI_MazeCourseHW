@@ -6,11 +6,11 @@
 
 class Player : public MazeMovingObj {
 private:
-	int* numCoins;
+	int& numCoins;
 	int lastCellX;
 	int lastCellY;
 public:
-	Player(cell_mat& cells, float x, float y, float maxDx, float maxDy, float targetX, float targetY, int* numCoins);
+	Player(cell_mat& cells, float x, float y, float maxDx, float maxDy, float targetX, float targetY, int& numCoins);
 	virtual void draw() override;
 	virtual void move();
 };

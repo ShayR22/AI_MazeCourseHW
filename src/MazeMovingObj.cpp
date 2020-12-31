@@ -15,7 +15,7 @@ void MazeMovingObj::getOpenGLCellCenter(Cell& cell, float* xy)
 	xy[0] = newX;
 	xy[1] = newY;
 
-	std::cout << __func__ << ": (x, y) <-> " << "(" << newX << ", " << newY << ")" << std::endl;
+	//std::cout << __func__ << ": (x, y) <-> " << "(" << newX << ", " << newY << ")" << std::endl;
 }
 
 void MazeMovingObj::setTarget(Cell& cell)

@@ -13,6 +13,7 @@ public:
 			solveIteration();
 	}
 	inline bool getSolved() { return solved; }
+	inline void setSolved(bool s) { solved = s; }
 };
 
 #endif

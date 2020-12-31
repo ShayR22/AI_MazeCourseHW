@@ -81,7 +81,18 @@ void MazeSolverAStar::calculateStepInPathFromCurrentCell(Cell* lowestF)
 		moveCost[n] = costFromCellToNeighbor;
 		funcValues[n] = moveCost[n] + heuristicCost[n];
 		n->setParent(lowestF);
-		nextInPath[lowestF] = n;
+	}
+}
+
+void MazeSolverAStar::setNextInPath()
+{
+	Cell* curTarget = target;
+	Cell* curParent = curTarget->getParent();
+
+	while (curParent != nullptr) {
+		nextInPath[curParent] = curTarget;
+		curTarget = curParent;
+		curParent = curParent->getParent();
 	}
 }
 
@@ -110,6 +121,7 @@ void MazeSolverAStar::solveIteration()
 		std::cout << "solved" << std::endl;
 		solved = true;
 		restorePath();
+		setNextInPath();
 		return;
 	}
 
@@ -118,7 +130,7 @@ void MazeSolverAStar::solveIteration()
 
 void MazeSolverAStar::clear()
 {
-
+	solved = false;
 	openSet.clear();
 	closedSet.clear();
 
@@ -134,10 +146,10 @@ void MazeSolverAStar::clear()
 			moveCost[&cell] = INT_MAX;
 			funcValues[&cell] = INT_MAX;
 
+			nextInPath[&cell] = nullptr;
 		}
 	}
 }
-
 
 void MazeSolverAStar::setStartTarget(Cell& s, Cell& t)
 {

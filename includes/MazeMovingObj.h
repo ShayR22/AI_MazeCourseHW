@@ -14,6 +14,7 @@ public:
 	virtual void setTarget(Cell& cell);
 	virtual void setLocation(Cell& cell);
 	virtual void draw() = 0;
+	inline Cell& getCellLocation() { return cells[(int)x][(int)y]; }
 
 };
 

@@ -5,7 +5,7 @@
 using namespace std;
 
 MovingObj::MovingObj(float x, float y, float maxDx, float maxDy, float targetX, float targetY) :
-	maxDx(maxDx), maxDy(maxDy)
+	maxDx(maxDx), maxDy(maxDy), atTarget(false)
 {
 	setLocation(x, y);
 	setTarget(targetX, targetY);
@@ -29,9 +29,9 @@ void MovingObj::calculateDxDy()
 	dx = xDir * maxDx;
 	dy = yDir * maxDy;
 
-	cout << "x: " << x << ", y: " << y << endl;
-	cout << "tx: " << targetX << ", ty: " << targetY << endl;
-	cout << "dx: " << dx << ", dy: " << dy << endl << endl;
+	//cout << "x: " << x << ", y: " << y << endl;
+	//cout << "tx: " << targetX << ", ty: " << targetY << endl;
+	//cout << "dx: " << dx << ", dy: " << dy << endl << endl;
 
 }
 
@@ -54,13 +54,15 @@ void MovingObj::setLocation(float x, float y)
 
 void MovingObj::move()
 {
-
-	//cout << "dx " << dx << ", x " << x << ", targetX " << targetX << ", diff :" << fabs(x - targetX) << endl;
-	//cout << "dy " << dy << ", y " << y << ", targetY " << targetY << ", diff :" << fabs(y - targetY) << endl << endl;
+	float lastX = x, lastY = y;
 
 	/* TODO look if this if need rework for floating-point arithmetic */
 	if (fabs(y - targetY) > fabs(1.5 * dy))
 		y += dy;
 	if (fabs(x - targetX) > fabs(1.5 * dx))
 		x += dx;
+
+	atTarget = (x == lastX) && (y == lastY);
+	//if (atTarget)
+	//	cout << "Got to target" << endl;
 }
