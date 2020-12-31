@@ -129,7 +129,7 @@ void MazeGame::updateEnemies()
 bool MazeGame::isEnemyGotPlayer()
 {
 	/* TODO add smart solution for dynamic radius size */
-	float radiusesSize = 2.0f * OpenGL::circleR / 1.2f;
+	float radiusesSize = 2.0f * OpenGL::circleR * 1.2f;
 
 	float px = player->getX();
 	float py = player->getY();
