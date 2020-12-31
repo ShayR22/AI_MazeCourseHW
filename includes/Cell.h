@@ -2,6 +2,7 @@
 #define __CELL__
 
 #include <iostream>
+#include <vector>
 #include "glut.h"
 #include "Drawable.h"
 
@@ -33,8 +34,8 @@ public:
 	inline void setWallDown(bool w) { walls[3] = w; }
 	inline void setWalls(bool* otherWalls) { memcpy(walls, otherWalls, sizeof(walls)); }
 
-	inline int getRow() const { return row; }
-	inline int getCol() const { return col; }
+	inline int getX() const { return row; }
+	inline int getY() const { return col; }
 
 	inline void setVisiting(bool v) { visiting = v; }
 	inline bool getVisiting() const { return visiting; }

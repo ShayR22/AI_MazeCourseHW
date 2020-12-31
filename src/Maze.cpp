@@ -23,8 +23,8 @@ void Maze::getNeighbors(Cell* c, Cell** neighbors, int *numNeighbors)
 {
 	/* set all to null*/
 
-	int row = c->getRow();
-	int col = c->getCol();
+	int row = c->getX();
+	int col = c->getY();
 
 	/* left top right down */
 	int indecies[4][2] = {
@@ -130,8 +130,8 @@ void Maze::randomRemove()
 			if ((rand() % 100) / 100.f < REMOVE_PERCENT) {
 				Cell* cur = &cells[i][j];
 
-				int row = cur->getRow();
-				int col = cur->getCol();
+				int row = cur->getX();
+				int col = cur->getY();
 
 				/* left top right down */
 				int indecies[4][2] = {

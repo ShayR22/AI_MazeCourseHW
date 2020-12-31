@@ -8,6 +8,7 @@
 enum class SolveableType {
 	MAZE_BFS,
 	MAZE_BFS_BI,
+	MAZE_A_STAR,
 	GRAPH_A_STAR,
 	GRAPH_BEST_FIRST_SEARCH,
 	NONE,

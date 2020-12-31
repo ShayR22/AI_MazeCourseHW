@@ -1,6 +1,7 @@
 #include "Manager.h"
 #include "Maze.h"
 #include "Graph.h"
+#include "MazeSolverAStar.h"
 #include "BFSSolver.h"
 #include "BFSBiDirectionalSolver.h"
 #include "GraphSolverAStar.h"
@@ -39,6 +40,9 @@ void Manager::initAll()
 	case SolveableType::MAZE_BFS_BI:
 		solvable = new BFSBiDirectionalSolver(*maze);
 		break;
+	case SolveableType::MAZE_A_STAR:
+		solvable = new MazeSolverAStar(*maze);
+		break;
 	}
 }
 
@@ -69,6 +73,8 @@ void Manager::verifyDrawableSolveable(DrawableType drawType, SolveableType solve
 	case SolveableType::MAZE_BFS:
 		break;
 	case SolveableType::MAZE_BFS_BI:
+		break;
+	case SolveableType::MAZE_A_STAR:
 		break;
 	default:
 		throw runtime_error("Invalid usage, Mazes cant use solverType given");
