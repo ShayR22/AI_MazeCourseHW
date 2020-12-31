@@ -118,7 +118,6 @@ void MazeSolverAStar::solveIteration()
 	lowestF->setVisited(true);
 
 	if (lowestF == target) {
-		std::cout << "solved" << std::endl;
 		solved = true;
 		restorePath();
 		setNextInPath();
@@ -139,6 +138,7 @@ void MazeSolverAStar::clear()
 			cell.setVisited(false);
 			cell.setVisiting(false);
 			cell.setIsPath(false);
+			cell.setParent(nullptr);
 
 			double h = manhattan_distance(&cell, target);
 			heuristicCost[&cell] = h;

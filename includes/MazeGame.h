@@ -3,6 +3,7 @@
 
 #include <map>
 #include <vector>
+#include <chrono>
 #include "Drawable.h"
 #include "Solvable.h"
 #include "Maze.h"
@@ -23,6 +24,8 @@ private:
 	std::vector<std::map<Cell*, Cell*>> enemiesPaths;
 	MazeSolverAStar* enemyBrain;
 
+	std::chrono::high_resolution_clock::time_point last_tick;
+
 	void updateTargetLocation(MazeMovingObj& o, std::map<Cell*, Cell*> nextInPath);
 	void updateEnemies();
 
@@ -31,7 +34,9 @@ private:
 	void initalizeEnemies();
 	void initalizeEnemiesBrain();
 	void reCalculatePaths();
+	void enemyBrainTick();
 	bool isEnemyGotPlayer();
+
 public:
 	MazeGame(int size);
 	~MazeGame();

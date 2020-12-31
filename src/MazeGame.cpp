@@ -2,6 +2,7 @@
 #include "OpenGL.h"
 
 using namespace std;
+using namespace std::chrono;
 
 void MazeGame::initalizeMaze(int size)
 {
@@ -63,7 +64,6 @@ void MazeGame::reCalculatePaths()
 		enemyBrain->solve();
 		enemiesPaths.push_back(enemyBrain->getNextInPath());
 	}
-
 }
 
 void MazeGame::initalizeEnemiesBrain()
@@ -81,7 +81,7 @@ void MazeGame::initalizeEnemiesBrain()
 	}
 }
 
-MazeGame::MazeGame(int size)
+MazeGame::MazeGame(int size) : last_tick(high_resolution_clock::now())
 {
 	solved = false;
 	initalizeMaze(size);
@@ -123,13 +123,13 @@ void MazeGame::updateEnemies()
 		enemies[i].move();
 		updateTargetLocation(enemies[i], enemiesPaths[i]);
 	}
+	enemyBrainTick();
 }
 
 bool MazeGame::isEnemyGotPlayer()
 {
 	/* TODO add smart solution for dynamic radius size */
 	float radiusesSize = 2.0f * OpenGL::circleR / 1.2f;
-
 
 	float px = player->getX();
 	float py = player->getY();
@@ -141,11 +141,39 @@ bool MazeGame::isEnemyGotPlayer()
 		float xDiff = px - ex;
 		float yDiff = py - ey;
 		float dist = sqrt(pow(xDiff, 2) + pow(yDiff, 2));
-		if (dist < radiusesSize)
+		if (dist < radiusesSize) {
+			cout << "got hit" << endl;
 			return true;
+		}
 	}
 
 	return false;
+}
+
+void MazeGame::enemyBrainTick()
+{
+	constexpr auto TICK_TIMEOUT_MS = 5000;
+
+	high_resolution_clock::time_point now = high_resolution_clock::now();
+	duration<double, std::milli> time_span = now - last_tick;
+
+	/* check if TICK_TIMEOUT_MS have not yet passed */
+	if (time_span.count() < TICK_TIMEOUT_MS)
+		return;
+
+	cout << "brain tick" << endl;
+	last_tick = now;
+
+	reCalculatePaths();
+
+	/* 
+	 * update target to return to the center of the current cell before continuing in their new path 
+	 * this should prevent some buggy movement from the edge of the cell to the new cell	
+	 */
+	for (int i = 0; i < (int)enemies.size(); i++) {
+		Cell* eLocation = &enemies[i].getCellLocation();
+		enemies[i].setTarget(*eLocation);
+	}
 }
 
 
