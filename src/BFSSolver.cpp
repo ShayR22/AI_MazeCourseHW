@@ -4,11 +4,37 @@ using namespace std;
 
 BFSSolver::BFSSolver(Maze& maze) : maze(maze),cells(maze.getCells())
 {
-	Cell* start = maze.getStarts()[0];
+	start = maze.getStarts()[0];
 	start->setVisiting(true);
-	visting.push(start);
+	visiting.push_back(start);
+	targets.push_back(&maze.getTarget());
 	solved = false;
 }
+
+void BFSSolver::clear()
+{
+	solved = false;
+	visiting.clear();
+
+	for (auto& cellRow : cells) {
+		for (auto& cell : cellRow) {
+			cell.setVisited(false);
+			cell.setVisiting(false);
+			cell.setIsPath(false);
+			cell.setParent(nullptr);
+		}
+	}
+}
+
+void BFSSolver::setStartTarget(Cell& s, vector<Cell*> targets)
+{
+	start = &s;
+	this->targets = targets;
+	clear();
+	start->setVisiting(true);
+	visiting.push_back(start);
+}
+
 
 void BFSSolver::checkCellNeighbors(Cell& cell)
 {
@@ -36,13 +62,16 @@ void BFSSolver::checkCellNeighbors(Cell& cell)
 
 		neighbor->setVisiting(true);
 		neighbor->setParent(&cell);
-		if (*neighbor == maze.getTarget()) {
+		if (find(targets.begin(), targets.end(), neighbor) != targets.end()) {
 			restorePath(*neighbor);
-			solved = true;
-			return;
+			targets.erase(remove(targets.begin(), targets.end(), neighbor), targets.end());
+			if (targets.empty()) {
+				solved = true;
+				return;
+			}
 		}
 
-		visting.push(neighbor);
+		visiting.push_back(neighbor);
 	}	
 }
 
@@ -66,22 +95,24 @@ void BFSSolver::solveIteration()
 	5. if we found target - > solved = true.
 	*/
 
-	if (visting.empty() || solved)
+	if (solved) {
 		return;
-
-	stack <Cell*> temp(visting);
-
-	while (!visting.empty()) {
-		Cell* cell = visting.top();
-		cell->setVisited(true);
-		cell->setVisiting(false);
-		visting.pop();
 	}
 	
-	while (!temp.empty() && !solved) {
-		checkCellNeighbors(*temp.top());
-		temp.pop();
-	}
-	
+	if (visiting.empty()) {
+		targets.erase(remove(targets.begin(), targets.end(), start), targets.end());
 
+		if (targets.empty()) {
+			solved = true;
+			return;
+		}
+	}
+
+	Cell* first = visiting.front();
+
+	first->setVisited(true);
+	first->setVisiting(false);
+	checkCellNeighbors(*first);
+
+	visiting.erase(visiting.begin());
 }

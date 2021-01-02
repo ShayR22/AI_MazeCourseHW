@@ -121,7 +121,7 @@ Cell* Maze::randomizeNeighbor(Cell** neighbors, int numNeighbors, int *neighborI
 
 void Maze::randomRemove()
 {
-	const auto REMOVE_PERCENT = 0.04f;
+	const auto REMOVE_PERCENT = 0.12f;
 	int numRows = (int)cells.size();
 	int numCols = (int)cells[0].size();
 
@@ -232,6 +232,65 @@ bool Maze::removeStart(int r, int c)
 		}
 	}		
 	return false;
+}
+
+vector<Cell*> Maze::getNeighbors(Cell& c) {
+
+	vector<Cell*> possibolePaths;
+	int row = c.getX();
+	int col = c.getY();
+
+	/* left top right down */
+	int xys[4][2] = {
+		{row, col - 1},
+		{row - 1, col},
+		{row, col + 1},
+		{row + 1, col},
+	};
+
+	bool* walls = c.getWalls();
+
+	for (int i = 0; i < 4; i++) {
+		if (walls[i])
+			continue;
+
+		int r = xys[i][0];
+		int c = xys[i][1];
+		Cell* neighbor = &cells[r][c];
+		possibolePaths.push_back(neighbor);
+	}
+
+	return possibolePaths;
+}
+
+bool Maze::isLeadingToDeadEnd(Cell& src, Cell& explore, int depth) {
+
+	Cell* srcTemp = &src;
+	Cell* exploreTemp = &explore;
+	
+	while (true) {
+		vector<Cell*> exploreNeighbors = getNeighbors(*exploreTemp);
+
+		exploreNeighbors.erase(remove(exploreNeighbors.begin(), exploreNeighbors.end(), srcTemp), exploreNeighbors.end());
+
+		if (exploreNeighbors.empty()) {
+			return true;
+		}
+
+		if (exploreNeighbors.size() > 1) {
+			if (depth == 0) {
+				return false;
+			}
+			for (auto& e : exploreNeighbors) {
+				if (!isLeadingToDeadEnd(*srcTemp, *e, depth - 1))
+					return false;
+			}
+			return true;
+		}
+
+		srcTemp = exploreTemp;
+		exploreTemp = exploreNeighbors[0];
+	}
 }
 
 void Maze::drawBackground()

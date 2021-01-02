@@ -3,11 +3,17 @@
 #include <iostream>
 
 
-Enemy::Enemy(cell_mat& cells, float x, float y, float maxDx, float maxDy, float targetX, float targetY)
-    : MazeMovingObj(cells, x, y, maxDx, maxDy, targetX, targetY)
+Enemy::Enemy(cell_mat& cells, float x, float y, float maxDx, float maxDy, float targetX, float targetY, int brainCalculationEachMs)
+    : MazeMovingObj(cells, x, y, maxDx, maxDy, targetX, targetY), brainCalculationEachMs(brainCalculationEachMs), lastTick(std::chrono::high_resolution_clock::now())
 {
     lastCellX = (int)x;
     lastCellY = (int)y;
+
+    if (brainCalculationEachMs <= 0) {
+        std::cout << "warning: negative value given for brainCalculationEachMs" << std::endl;
+        std::cout << "setting to " << MIN_BRAIN_CALC_TIMEOUT_MS << std::endl;
+        this->brainCalculationEachMs = MIN_BRAIN_CALC_TIMEOUT_MS;
+    }
 }
 
 void Enemy::draw()

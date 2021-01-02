@@ -3,8 +3,8 @@
 #include <iostream>
 
 
-Player::Player(cell_mat& cells, float x, float y, float maxDx, float maxDy, float targetX, float targetY, int &numCoins)
-    : MazeMovingObj(cells, x, y, maxDx, maxDy, targetX, targetY), numCoins(numCoins)
+Player::Player(cell_mat& cells, float x, float y, float maxDx, float maxDy, float targetX, float targetY, int& numCoins)
+    : MazeMovingObj(cells, x, y, maxDx, maxDy, targetX, targetY), numCoins(numCoins), enemySearchRadius((float)sqrt(numCoins)/3.50f)
 {
     lastCellX = (int)x;
     lastCellY = (int)y;

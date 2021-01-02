@@ -35,6 +35,8 @@ public:
 
 	bool addStart(int r, int c);
 	bool removeStart(int r, int c);
+	std::vector<Cell*> getNeighbors(Cell& c);
+	bool isLeadingToDeadEnd(Cell& src, Cell& explore, int depth);
 	virtual void draw() override;
 };
 
