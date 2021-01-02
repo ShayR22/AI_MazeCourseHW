@@ -43,6 +43,17 @@ void Player::draw()
     glColor3d(0, 0, 0);
     glVertex2f(x, y);
     glEnd();
+
+
+    /* draw player's enemies radius detaction*/
+    double openglW = enemySearchRadius / OpenGL::width;
+    glColor3d(1, 0, 0);
+    glBegin(GL_LINE_LOOP);
+    glVertex2d(x - openglW, y - openglW);
+    glVertex2d(x + openglW, y - openglW);
+    glVertex2d(x + openglW, y + openglW);
+    glVertex2d(x - openglW, y + openglW);
+    glEnd();
 }
 
 void Player::move()
