@@ -65,11 +65,13 @@ void MazeGame::initalizeEnemies()
 
 void MazeGame::reCalculatePaths(vector<Enemy*> requireBrainUpdate)
 {
+
 	Cell& pLocation = player->getCellLocation();
 
 	// vector enemies
 	// map<Enemy*, value> paths
 	for (auto& e : requireBrainUpdate) {
+		
 		Cell& eLocation = e->getCellLocation();
 		enemyBrain->setStartTarget(eLocation, pLocation);
 		enemyBrain->solve();
@@ -143,7 +145,7 @@ void MazeGame::updateTargetLocation(MazeMovingObj &o, map<Cell*, Cell*> nextInPa
 void MazeGame::updateEnemies()
 {
 	for (auto& e : enemies) {
-		e.move();
+		e.move(); 
 		updateTargetLocation(e, enemiesPaths[&e]);
 	}
 	enemyBrainTick();
@@ -168,6 +170,7 @@ map<Cell*, Cell*> MazeGame::findCoinPath()
 			Cell* pLocation = &player->getLastPlayerLoctaion();
 			neighbors.erase(remove(neighbors.begin(), neighbors.end(), pLocation), neighbors.end());
 		}
+		
 		nextInPath[&pLocation] = neighbors[rand() % neighbors.size()];
 	}
 	else {
@@ -179,16 +182,32 @@ map<Cell*, Cell*> MazeGame::findCoinPath()
 
 vector<Cell*> MazeGame::calculatePossibleEscapePaths(Cell* c)
 {
+
+	/*
+	 1. if u got more than 1 enemy in the radius
+	  - check if there is a free path
+	   - yes -> pick that path
+	   - no -> take the long enemy path
+	*/
+
+	/*
+		check if spesific neigbor is found in more than 1 diffreet path
+		if it does check which path is longer
+		and choose that path
+	
+	*/
 	vector<Cell*> escapePaths;
 	vector<Cell*> notDeadEnd;
 	vector<Cell*> neighbors = maze->getNeighbors(*c);
 
+	/* check if the neighbors of the cell is leading to dead end*/
 	for (auto& n : neighbors) {
 		if (!maze->isLeadingToDeadEnd(*c,*n,1)) {
 			notDeadEnd.push_back(n);
 		}
 	}
-
+	
+	/* map of cell's neighbors that not leading to a dead end*/
 	for (auto& n : notDeadEnd) {
 		if (!n->getPath()) {
 			escapePaths.push_back(n);
@@ -217,8 +236,17 @@ map<Cell*, Cell*> MazeGame::findEscapePath(vector<MazeMovingObj*> enemies)
 	Cell& start = player->getCellLocation();
 	playerEscapeBrain->setStartTarget(start, targets);
 	playerEscapeBrain->solve();
+
+	enemiesPathToPlayer[&start] = (playerEscapeBrain->getPathToTargets()); /*yoni*/
+
 	vector<Cell*> paths = calculatePossibleEscapePaths(&start);
 	map<Cell*, Cell*> nextInPath;
+
+	/* paths = possibole escape paths
+		check in paths if more than 1 neighbors is found in enemy path to player
+		if more than one is found: choose the neighbors that found in the longest path to the player.
+	*/
+
 
 	nextInPath[&start] = paths[rand() % paths.size()];
 	playerEscapeBrain->clear();

@@ -31,11 +31,12 @@ class MazeSolverAStar : public Solveable {
 	void setNextInPath();
 	void restorePath();
 	void clear();
+
 public:
 	MazeSolverAStar(Maze& m);
 	void setStartTarget(Cell& start, Cell& target);
 	virtual void solveIteration() override;
-	std::map<Cell*, Cell*>& getNextInPath() { return nextInPath; }
+	inline std::map<Cell*, Cell*>& getNextInPath() { return nextInPath; }
 
 };
 

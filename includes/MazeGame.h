@@ -23,6 +23,7 @@ private:
 
 	std::vector<Enemy> enemies;
 	std::map<Enemy*, std::map<Cell*, Cell*>> enemiesPaths;
+	std::map<Cell*, std::vector<std::vector<Cell*>>> enemiesPathToPlayer; //yoni
 	MazeSolverAStar* enemyBrain;
 	BFSSolver* playerEscapeBrain;
 

@@ -28,6 +28,7 @@ void BFSSolver::clear()
 
 void BFSSolver::setStartTarget(Cell& s, vector<Cell*> targets)
 {
+	pathToTargets.clear(); //yoni
 	start = &s;
 	this->targets = targets;
 	clear();
@@ -74,15 +75,21 @@ void BFSSolver::checkCellNeighbors(Cell& cell)
 		visiting.push_back(neighbor);
 	}	
 }
-
+/*
+	//README
+*/
 void BFSSolver::restorePath(Cell& currentCell)
-{
+{	
+	vector<Cell*> pathToTarget;
 	Cell* temp = currentCell.getParent();
 	while (temp != nullptr)
 	{
+		pathToTarget.push_back(temp); /*yoni*/
 		temp->setIsPath(true);
 		temp = temp->getParent();
+
 	}
+	pathToTargets.push_back(pathToTarget); /*yoni*/
 }
 
 void BFSSolver::solveIteration()
