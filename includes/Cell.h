@@ -12,6 +12,7 @@ class Cell : public Drawable {
 
 private:
 	/* left, top, right, down */
+	bool restoreWalls[NUM_WALLS];
 	bool walls[NUM_WALLS];
 	int row;
 	int col;
@@ -38,6 +39,9 @@ public:
 	inline void setWallRight(bool w) { walls[2] = w; }
 	inline void setWallDown(bool w) { walls[3] = w; }
 	inline void setWalls(bool* otherWalls) { memcpy(walls, otherWalls, sizeof(walls)); }
+	inline void setRestoreWalls(bool *otherWalls) { memcpy(restoreWalls, otherWalls, sizeof(restoreWalls)); }
+	inline void wallRestoration() { memcpy(walls, restoreWalls, sizeof(walls)); }
+
 
 	inline int getX() const { return row; }
 	inline int getY() const { return col; }

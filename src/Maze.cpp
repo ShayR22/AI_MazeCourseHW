@@ -121,7 +121,7 @@ Cell* Maze::randomizeNeighbor(Cell** neighbors, int numNeighbors, int *neighborI
 
 void Maze::randomRemove()
 {
-	const auto REMOVE_PERCENT = 0.12f;
+	const auto REMOVE_PERCENT = 0.175f;
 	int numRows = (int)cells.size();
 	int numCols = (int)cells[0].size();
 
@@ -201,6 +201,11 @@ void Maze::buildMaze()
 			cells[i][j].setVisited(false);
 
 	randomRemove();
+
+	for (unsigned int i = 0; i < cells.size(); i++)
+		for (unsigned int j = 0; j < cells[0].size(); j++)
+			cells[i][j].setRestoreWalls(cells[i][j].getWalls());
+
 }
 
 Maze::Maze(int numRows, int numCols, bool setStartTarget) : hideColor(false)
@@ -263,8 +268,8 @@ vector<Cell*> Maze::getNeighbors(Cell& c) {
 	return possibolePaths;
 }
 
-bool Maze::isLeadingToDeadEnd(Cell& src, Cell& explore, int depth) {
-
+bool Maze::isLeadingToDeadEnd(Cell& src, Cell& explore, int depth)
+{
 	Cell* srcTemp = &src;
 	Cell* exploreTemp = &explore;
 	
@@ -316,11 +321,15 @@ void Maze::draw()
 			cells[j][i].drawTopLeft();
 		}
 	}
-	for (unsigned int i = 0; i < starts.size(); i++) {
-		Cell::setOpenGLStartColor();
-		starts[i]->draw();
+
+	if (!hideColor) {
+		for (unsigned int i = 0; i < starts.size(); i++) {
+			Cell::setOpenGLStartColor();
+			starts[i]->draw();
+		}
+
+		Cell::setOpenGLTargetColor();
+		target->draw();
 	}
 
-	Cell::setOpenGLTargetColor();
-	target->draw();
 }

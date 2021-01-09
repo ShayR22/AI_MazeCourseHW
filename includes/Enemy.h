@@ -7,8 +7,8 @@
 
 class Enemy : public MazeMovingObj {
 private:
-	static const int MIN_BRAIN_CALC_TIMEOUT_MS = 1000;
-	static const int MAX_BRAIN_CALC_TIMEOUT_MS = 9000;
+	static const int MIN_BRAIN_CALC_TIMEOUT_MS = 4000;
+	static const int MAX_BRAIN_CALC_TIMEOUT_MS = 10000;
 
 	std::chrono::high_resolution_clock::time_point lastTick;
 	int	brainCalculationEachMs;
