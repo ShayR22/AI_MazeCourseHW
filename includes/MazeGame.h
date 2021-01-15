@@ -12,6 +12,7 @@
 #include "Enemy.h"
 #include "MazeSolverAStar.h"
 #include "BFSSolver.h"
+#include "BFSSolverCoin.h"
 
 class MazeGame : public Drawable, public Solveable {
 private:
@@ -26,6 +27,7 @@ private:
 	std::map<Cell*, std::vector<std::vector<Cell*>>> enemiesPathToPlayer; //yoni
 	MazeSolverAStar* enemyBrain;
 	BFSSolver* playerEscapeBrain;
+	BFSSolverCoin* playerCoinBrain;
 
 	void updateTargetLocation(MazeMovingObj& o, std::map<Cell*, Cell*> nextInPath);
 	void updateEnemies();
@@ -38,7 +40,7 @@ private:
 
 	void initalizeMaze(int size);
 	void initalizePlayer();
-	void initalizePlayerEscapeBrain();
+	void initalizePlayerBrains();
 	void initalizeEnemies();
 	void initalizeEnemiesBrain();
 	void reCalculatePaths(std::vector<Enemy*> requireBrainUpdate);

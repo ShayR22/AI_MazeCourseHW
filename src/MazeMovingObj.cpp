@@ -31,3 +31,13 @@ void MazeMovingObj::setLocation(Cell& cell)
 	getOpenGLCellCenter(cell, xy);
 	MovingObj::setLocation(xy[0], xy[1]);
 }
+
+
+void MazeMovingObj::updateLastLocation()
+{
+	if ((int)x == lastCellX && (int)y == lastCellY)
+		return;
+
+	lastCellX = (int)x;
+	lastCellY = (int)y;
+}

@@ -116,8 +116,12 @@ void Manager::draw()
 
 void Manager::solveIteration()
 {
-	if (solvable)
+	if (solvable) {
 		solvable->solveIteration();
+		solvable->solveIteration();
+		solvable->solveIteration();
+		solvable->solveIteration();
+	}
 }
 
 Manager::Manager(unsigned int mazeSize, DrawableType drawType, SolveableType solverType) :

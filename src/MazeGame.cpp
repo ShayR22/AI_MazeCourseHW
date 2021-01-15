@@ -35,10 +35,11 @@ void MazeGame::initalizePlayer()
 
 }
 
-void MazeGame::initalizePlayerEscapeBrain()
+void MazeGame::initalizePlayerBrains()
 {
 
 	playerEscapeBrain = new BFSSolver(*maze);
+	playerCoinBrain = new BFSSolverCoin(*maze);
 
 }
 
@@ -106,7 +107,7 @@ MazeGame::MazeGame(int size)
 	solved = false;
 	initalizeMaze(size);
 	initalizePlayer();
-	initalizePlayerEscapeBrain();
+	initalizePlayerBrains();
 	initalizeEnemies();
 	initalizeEnemiesBrain();
 }
@@ -117,6 +118,7 @@ MazeGame::~MazeGame()
 	delete player;
 	delete enemyBrain;
 	delete playerEscapeBrain;
+	delete playerCoinBrain;
 }
 
 void MazeGame::draw()
@@ -129,6 +131,7 @@ void MazeGame::draw()
 
 void MazeGame::updateTargetLocation(MazeMovingObj &o, map<Cell*, Cell*> nextInPath)
 {
+	o.updateLastLocation();
 	if (!o.isAtTarget())
 		return;
 
@@ -137,7 +140,14 @@ void MazeGame::updateTargetLocation(MazeMovingObj &o, map<Cell*, Cell*> nextInPa
 
 	if (!target) {
 		vector<Cell*> neighbors = maze->getNeighbors(*current);
+
+		if (neighbors.size() > 1) {
+			Cell* oLocation = &o.getLastCellLoctaion();
+			neighbors.erase(remove(neighbors.begin(), neighbors.end(), oLocation), neighbors.end());
+		}
 		target = neighbors[rand() % neighbors.size()];
+
+
 	}
 
 	o.setTarget(*target);
@@ -167,11 +177,20 @@ map<Cell*, Cell*> MazeGame::findCoinPath()
 	map<Cell*, Cell*> nextInPath;
 
 	if (neighborsWithCoin.empty()) {
+
+		playerCoinBrain->setStart(pLocation);
+		playerCoinBrain->solve();
+		
+		for (auto& n : neighbors) {
+			if (n->getPath()) {
+				nextInPath[&pLocation] = n;
+				return nextInPath;
+			}
+		}
+
 		if (neighbors.size() > 1) {
-			cout << "Coins: before remove: size = " << neighbors.size() << endl;
-			Cell* pLocation = &player->getLastPlayerLoctaion();
+			Cell* pLocation = &player->getLastCellLoctaion();
 			neighbors.erase(remove(neighbors.begin(), neighbors.end(), pLocation), neighbors.end());
-			cout << "Coins: after remove: size = " << neighbors.size() << endl;
 		}
 		
 		nextInPath[&pLocation] = neighbors[rand() % neighbors.size()];
@@ -185,23 +204,16 @@ map<Cell*, Cell*> MazeGame::findCoinPath()
 
 vector<Cell*> MazeGame::calculatePossibleEscapePaths(Cell* c)
 {
-
-	/*
-	 1. if u got more than 1 enemy in the radius
-	  - check if there is a free path
-	   - yes -> pick that path
-	   - no -> take the long enemy path
-	*/
-
-	/*
-		check if spesific neigbor is found in more than 1 diffreet path
-		if it does check which path is longer
-		and choose that path
-	
-	*/
 	vector<Cell*> escapePaths;
+	vector<Cell*> bestEscapePaths;
 	vector<Cell*> notDeadEnd;
 	vector<Cell*> neighbors = maze->getNeighbors(*c);
+	vector <vector< Cell* >> pathsToEnemies = enemiesPathToPlayer[&player->getCellLocation()];
+	vector <Cell*> enemiesCellLocation;
+
+	for (auto& e : pathsToEnemies) {
+		enemiesCellLocation.push_back(e[0]);
+	}
 
 	/* save walls of enemies aside and set all their walls to true,
 	   this would make the algorithm remove a path direct to them, as
@@ -230,24 +242,45 @@ vector<Cell*> MazeGame::calculatePossibleEscapePaths(Cell* c)
 		}
 	}
 
+	/* check if the neighbors's neighbors of the cell is equal to target cell location*/
+	for (auto& n : escapePaths) {
+		bool isFound = false;
+		for (auto& nn : maze->getNeighbors(*n)) {
+			if (find(enemiesCellLocation.begin(), enemiesCellLocation.end(), nn) == enemiesCellLocation.end()) {
+				isFound = true;
+				break;
+			}
+		}
+		if (!isFound) {
+			bestEscapePaths.push_back(n);
+		}
+	}
+
+	if (!bestEscapePaths.empty()) {
+		cout << "returning bestEscapePaths size: " << bestEscapePaths.size() << endl;
+		return bestEscapePaths;
+	}
+	
+
 	if (!escapePaths.empty()) {
 		cout << "returning escapPaths size: " << escapePaths.size() << endl;
 		return escapePaths;
 	}
 
-	vector <vector< Cell* >> pathsToEnemies = enemiesPathToPlayer[&player->getCellLocation()];
 	cout << "no escape paths" << endl;
 	if (pathsToEnemies.empty()) {
 		cout << "paths to enemies is empty" << endl;
 		return neighbors;
 	}
 
-	unsigned int maxSize = 0;
+	int maxSize = -1;
 	vector<Cell*> *longestPath = nullptr;
 	for (auto& p : pathsToEnemies) {
-		if (p.size() > maxSize) {
+		if ((int)p.size() > maxSize) {
+			cout << "p.size :" << p.size() << endl;
 			longestPath = &p;
-			maxSize = p.size();
+			maxSize = (int)p.size();
+			cout << "maxSize :" << maxSize << endl;
 		}
 	}
 
@@ -260,7 +293,7 @@ vector<Cell*> MazeGame::calculatePossibleEscapePaths(Cell* c)
 	vector<Cell*> cellWithLongestEnemyPath;
 	Cell* nextTarget = (*longestPath)[longestPath->size() - 2];
 
-	if (nextTarget == &player->getLastPlayerLoctaion()) {
+	if (nextTarget == &player->getLastCellLoctaion()) {
 		vector<Cell*>& randomPath = pathsToEnemies[rand() % pathsToEnemies.size()];
 		Cell* randomPick = randomPath[randomPath.size() - 2];
 		cellWithLongestEnemyPath.push_back(randomPick);
@@ -330,7 +363,7 @@ void MazeGame::updatePlayer()
 	if (!player->isAtTarget())
 		return;
 
-	constexpr auto PLAYER_BRAIN_CALC_MS = 1;
+	constexpr auto PLAYER_BRAIN_CALC_MS = 0;
 	chrono::high_resolution_clock::time_point now = chrono::high_resolution_clock::now();
 	duration<double, std::milli> time_span = now - player->getLastTick();
 
@@ -338,7 +371,7 @@ void MazeGame::updatePlayer()
 	if (time_span.count() < PLAYER_BRAIN_CALC_MS) {
 		nextInPath = findCoinPath();
 		updateTargetLocation(*player, nextInPath);
-		player->updateLastLocation();
+		//player->updateLastLocation();
 		return;
 
 	}
