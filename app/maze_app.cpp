@@ -65,8 +65,6 @@ void init()
 	OpenGL::circleR = 1 / (float)MSIZE;
 	OpenGL::cubeW = 2 / (float)MSIZE;
 	OpenGL::cubeH = 2 / (float)MSIZE;
-
-	//manager.restart();
 }
 
 int main(int argc, char* argv[])

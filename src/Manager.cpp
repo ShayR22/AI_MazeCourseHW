@@ -10,10 +10,10 @@
 
 using namespace std;
 
+constexpr int GAME_SPEED_FRAMES = 1;
+
 void Manager::initAll()
 {
-
-	cout << "entered: "<< __func__ << endl;
 	if (drawType == DrawableType::MAZE_GAME) {
 		mazeGame = new MazeGame(size);
 		drawable = mazeGame;
@@ -117,10 +117,9 @@ void Manager::draw()
 void Manager::solveIteration()
 {
 	if (solvable) {
-		solvable->solveIteration();
-		solvable->solveIteration();
-		solvable->solveIteration();
-		solvable->solveIteration();
+		for (int i = 0; i < GAME_SPEED_FRAMES; i++) {
+			solvable->solveIteration();
+		}
 	}
 }
 

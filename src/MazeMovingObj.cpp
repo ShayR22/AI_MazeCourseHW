@@ -4,7 +4,7 @@
 #include <iostream>
 
 MazeMovingObj::MazeMovingObj(cell_mat& cells, float x, float y, float maxDx, float maxDy, float targetX, float targetY)
-	: MovingObj(x, y, maxDx, maxDy, targetX, targetY), cells(cells) {}
+	: MovingObj(x, y, maxDx, maxDy, targetX, targetY), cells(cells), lastCellX((int)x), lastCellY((int)y) {}
 
 
 void MazeMovingObj::getOpenGLCellCenter(Cell& cell, float* xy)
@@ -14,8 +14,6 @@ void MazeMovingObj::getOpenGLCellCenter(Cell& cell, float* xy)
 
 	xy[0] = newX;
 	xy[1] = newY;
-
-	//std::cout << __func__ << ": (x, y) <-> " << "(" << newX << ", " << newY << ")" << std::endl;
 }
 
 void MazeMovingObj::setTarget(Cell& cell)

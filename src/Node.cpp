@@ -35,18 +35,12 @@ void Node::draw()
     float ay = -((2 * ((float)x) / OpenGL::width) - 1) + h/2.0f;
     float ax = (2 * (float)y / OpenGL::height) - 1 + w/2.0f;
  
-
     glBegin(GL_POLYGON);  // fill up
     glVertex2f(ax, ay);
     glVertex2f(ax, ay + h);
     glVertex2f(ax + w, ay + h);
     glVertex2f(ax + w, ay);
     glEnd();
-
-    
-    //cout << "ax: " << ax << " ay: " << ay << endl;
-    //cout << "w: " << w << " h: " << h << endl;
-    //cout << "x: " << x << " y: " << y << endl << endl;
 }
 
 void Node::drawPoints(std::vector<Node*>& nodes)

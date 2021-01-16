@@ -2,6 +2,7 @@
 #include "OpenGL.h"
 #include <iostream>
 
+constexpr bool PLAYER_DEBUG = false;
 
 Player::Player(cell_mat& cells, float x, float y, float maxDx, float maxDy, float targetX, float targetY, int& numCoins)
     : MazeMovingObj(cells, x, y, maxDx, maxDy, targetX, targetY), numCoins(numCoins),
@@ -67,18 +68,17 @@ void Player::draw()
     glVertex2f(x, y);
     glEnd();
 
-
-    /* draw player's enemies radius detaction*/
-    double openglW = 2 * enemySearchRadius / OpenGL::width;
-    glColor3d(1, 0, 0);
-    glBegin(GL_LINE_LOOP);
-    glVertex2d(x, y - openglW);
-    glVertex2d(x + openglW, y);
-    glVertex2d(x, y + openglW);
-    glVertex2d(x - openglW, y);
-    glEnd();
-
-    //drawLastLocation(lastCellX + 0.5 , lastCellY + 0.5);
+    if (PLAYER_DEBUG) {
+        /* draw player's enemies radius detaction*/
+        double openglW = 2 * enemySearchRadius / OpenGL::width;
+        glColor3d(1, 0, 0);
+        glBegin(GL_LINE_LOOP);
+        glVertex2d(x, y - openglW);
+        glVertex2d(x + openglW, y);
+        glVertex2d(x, y + openglW);
+        glVertex2d(x - openglW, y);
+        glEnd();
+    }
 }
 
 void Player::updateLastLocation()

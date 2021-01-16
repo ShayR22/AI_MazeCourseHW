@@ -12,7 +12,6 @@ class BFSBiDirectionalSolver : public Solveable {
 private:
 	Maze& maze;
 	cell_mat& cells;
-	//std::stack <Cell*> visting;
 	std::set <Cell*> vistingStart;
 	std::set <Cell*> vistingTarget;
 
