@@ -2,14 +2,18 @@
 #define __SOLVABLE__
 
 class Solveable {
-public:
-	virtual void solveIteration() = 0;
-	/* FIXME - add in the future single solve */
-	// void solve() = 0;
-	inline bool getSolved() { return solved; }
 protected:
 	bool solved;
-
+public:
+	Solveable() { solved = false; }
+	virtual void solveIteration() = 0;
+	void solve()
+	{
+		while (!solved)
+			solveIteration();
+	}
+	inline bool getSolved() { return solved; }
+	inline void setSolved(bool s) { solved = s; }
 };
 
 #endif

@@ -2,7 +2,7 @@
 #include "glut.h"
 #include "OpenGL.h"
 #include "Manager.h"
-constexpr int MSIZE = 100;
+constexpr int MSIZE = 25;
 
 Manager manager(MSIZE);
 
@@ -48,6 +48,9 @@ void menu(int choice)
 	case 7: // GRAPH Best First Search
 		manager.setDrawableSolvable(DrawableType::GRAPH, SolveableType::GRAPH_BEST_FIRST_SEARCH);
 		break;
+	case 8: // MAZE GAME
+		manager.setDrawableSolvable(DrawableType::MAZE_GAME, SolveableType::MAZE_GAME);
+		break;
 	}
 }
 
@@ -56,8 +59,6 @@ void init()
 	glClearColor(0.8f, 0.7f, 0.5f, 0.0f);// color of window background
 	glOrtho(-1, 1, -1, 1, 1, -1);
 	srand((unsigned int)time(0));
-
-	manager.restart();
 
 	OpenGL::width = MSIZE;
 	OpenGL::height = MSIZE;
@@ -74,6 +75,10 @@ int main(int argc, char* argv[])
 	glutInitWindowPosition(400, 0);
 	glutCreateWindow("First Example");
 
+	/* make drawing points to draw circle instead of pixel */
+	glEnable(GL_POINT_SMOOTH);
+	glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
+
 	glutDisplayFunc(display);
 	glutIdleFunc(idle);
 	// menu
@@ -86,6 +91,7 @@ int main(int argc, char* argv[])
 	glutAddMenuEntry("MAZE_A_STAR", 5);
 	glutAddMenuEntry("GRAPH_A_STAR", 6);
 	glutAddMenuEntry("GRAPH_BEST_FIRST_SEARCH", 7);
+	glutAddMenuEntry("MAZE_GAME", 8);
 	glutAttachMenu(GLUT_RIGHT_BUTTON);
 
 	init();

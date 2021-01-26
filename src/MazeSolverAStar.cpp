@@ -10,23 +10,7 @@ MazeSolverAStar::MazeSolverAStar(Maze& m) : cells(m.getCells()), starts(m.getSta
 	target(&m.getTarget())
 {
 	solved = false;
-	for (auto& cell_row : cells) {
-		for (auto& cell : cell_row) {
-			double h = manhattan_distance(&cell, target);
-			heuristicCost[&cell] = h;
-
-			moveCost[&cell] = INT_MAX;
-			funcValues[&cell] = INT_MAX;
-		}
-
-	}
-
-	Cell* start = starts[0];
-	// set cost to get to start from start to 0
-	moveCost[start] = 0;
-	funcValues[start] = heuristicCost[start] + moveCost[start];
-
-	openSet.insert(start);
+	setStartTarget(*m.getStarts()[0], m.getTarget());
 }
 
 Cell* MazeSolverAStar::findNeighborWithLowestFuncValue()
@@ -100,6 +84,18 @@ void MazeSolverAStar::calculateStepInPathFromCurrentCell(Cell* lowestF)
 	}
 }
 
+void MazeSolverAStar::setNextInPath()
+{
+	Cell* curTarget = target;
+	Cell* curParent = curTarget->getParent();
+
+	while (curParent != nullptr) {
+		nextInPath[curParent] = curTarget;
+		curTarget = curParent;
+		curParent = curParent->getParent();
+	}
+}
+
 void MazeSolverAStar::restorePath()
 {
 	Cell* temp = target->getParent();
@@ -122,13 +118,47 @@ void MazeSolverAStar::solveIteration()
 	lowestF->setVisited(true);
 
 	if (lowestF == target) {
-		std::cout << "solved" << std::endl;
 		solved = true;
 		restorePath();
+		setNextInPath();
 		return;
 	}
 
 	calculateStepInPathFromCurrentCell(lowestF);
 }
 
+void MazeSolverAStar::clear()
+{
+	solved = false;
+	openSet.clear();
+	closedSet.clear();
 
+	for (auto& cellRow : cells) {
+		for (auto& cell : cellRow) {
+			cell.setVisited(false);
+			cell.setVisiting(false);
+			cell.setIsPath(false);
+			cell.setParent(nullptr);
+
+			double h = manhattan_distance(&cell, target);
+			heuristicCost[&cell] = h;
+
+			moveCost[&cell] = INT_MAX;
+			funcValues[&cell] = INT_MAX;
+
+			nextInPath[&cell] = nullptr;
+		}
+	}
+}
+
+void MazeSolverAStar::setStartTarget(Cell& s, Cell& t)
+{
+	starts[0] = &s;
+	target = &t;
+	clear();
+
+	Cell* start = starts[0];
+	moveCost[start] = 0;
+	funcValues[start] = heuristicCost[start] + moveCost[start];
+	openSet.insert(start);
+}

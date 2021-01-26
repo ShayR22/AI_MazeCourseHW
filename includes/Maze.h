@@ -9,6 +9,7 @@ typedef std::vector<std::vector<Cell>> cell_mat;
 
 class Maze : public Drawable {
 private:
+	bool hideColor;
 	std::vector<Cell*> starts;
 	Cell* target;
 	cell_mat cells;
@@ -20,6 +21,7 @@ private:
 	Cell* randomizeNeighbor(Cell** neighbors, int numNeighbors, int* neighborIndex);
 	void randomRemove();
 	void buildMaze();
+	void drawBackground();
 public:
 	Maze(int numRows, int numCols, bool setStartTarget = true);
 	inline cell_mat& getCells() { return cells; }
@@ -28,8 +30,13 @@ public:
 	inline std::vector<Cell*>& getStarts() { return starts; }
 	inline Cell& getTarget() { return *target; }
 
+	inline void setColorHidden(bool ch) { hideColor = ch; }
+	inline bool getColorHidden() { return hideColor; }
+
 	bool addStart(int r, int c);
 	bool removeStart(int r, int c);
+	std::vector<Cell*> getNeighbors(Cell& c);
+	bool isLeadingToDeadEnd(Cell& src, Cell& explore, int depth);
 	virtual void draw() override;
 };
 

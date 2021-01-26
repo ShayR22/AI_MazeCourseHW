@@ -1,17 +1,16 @@
-#include "BFSSolver.h"
+#include "BFSSolverCoin.h"
 
 using namespace std;
 
-BFSSolver::BFSSolver(Maze& maze) : maze(maze),cells(maze.getCells())
+BFSSolverCoin::BFSSolverCoin(Maze& maze) : maze(maze), cells(maze.getCells())
 {
 	start = maze.getStarts()[0];
 	start->setVisiting(true);
 	visiting.push_back(start);
-	targets.push_back(&maze.getTarget());
 	solved = false;
 }
 
-void BFSSolver::clear()
+void BFSSolverCoin::clear()
 {
 	solved = false;
 	visiting.clear();
@@ -26,22 +25,20 @@ void BFSSolver::clear()
 	}
 }
 
-void BFSSolver::setStartTarget(Cell& s, vector<Cell*> targets)
+void BFSSolverCoin::setStart(Cell& s)
 {
-	pathToTargets.clear(); //yoni
 	start = &s;
-	this->targets = targets;
 	clear();
 	start->setVisiting(true);
 	visiting.push_back(start);
 }
 
 
-void BFSSolver::checkCellNeighbors(Cell& cell)
+void BFSSolverCoin::checkCellNeighbors(Cell& cell)
 {
 	int row = cell.getX();
 	int col = cell.getY();
-	
+
 	/* left top right down */
 	int xys[4][2] = {
 		{row, col - 1},
@@ -51,7 +48,7 @@ void BFSSolver::checkCellNeighbors(Cell& cell)
 	};
 	bool* walls = cell.getWalls();
 
-	for(int i = 0; i < 4; i++) {
+	for (int i = 0; i < 4; i++) {
 		if (walls[i])
 			continue;
 
@@ -63,56 +60,36 @@ void BFSSolver::checkCellNeighbors(Cell& cell)
 
 		neighbor->setVisiting(true);
 		neighbor->setParent(&cell);
-		if (find(targets.begin(), targets.end(), neighbor) != targets.end()) {
+
+		if (neighbor->getHasCoin()) {
 			restorePath(*neighbor);
-			targets.erase(remove(targets.begin(), targets.end(), neighbor), targets.end());
-			if (targets.empty()) {
-				solved = true;
-				return;
-			}
+			solved = true;
+			return;
 		}
 
 		visiting.push_back(neighbor);
-	}	
+	}
 }
-/*
-	//README
-*/
-void BFSSolver::restorePath(Cell& currentCell)
-{	
-	vector<Cell*> pathToTarget;
+
+void BFSSolverCoin::restorePath(Cell& currentCell)
+{
 	Cell* temp = &currentCell;
 	while (temp != nullptr)
 	{
-		pathToTarget.push_back(temp);
 		temp->setIsPath(true);
 		temp = temp->getParent();
 
 	}
-	pathToTargets.push_back(pathToTarget);
 }
 
-void BFSSolver::solveIteration()
+void BFSSolverCoin::solveIteration()
 {
-	/*
-	1. check if stack is empty || solved
-	2. empty the visting stack to a temp stack && mark them as visted.
-	3. push to visting temp's neighbors cells.
-	4. check if one of temp's neighbors cells is the target.
-	5. if we found target - > solved = true.
-	*/
-
 	if (solved) {
 		return;
 	}
-	
-	if (visiting.empty()) {
-		targets.erase(remove(targets.begin(), targets.end(), start), targets.end());
 
-		if (targets.empty()) {
-			solved = true;
-			return;
-		}
+	if (visiting.empty()) {
+		return;
 	}
 
 	Cell* first = visiting.front();

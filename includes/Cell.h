@@ -12,6 +12,7 @@ class Cell : public Drawable {
 
 private:
 	/* left, top, right, down */
+	bool restoreWalls[NUM_WALLS];
 	bool walls[NUM_WALLS];
 	int row;
 	int col;
@@ -19,6 +20,11 @@ private:
 	bool visited;
 	bool visiting;
 	bool isPath;
+	bool hasCoin;
+
+	void drawPoly(float x, float y, float w, float h);
+	void drawCoin(float x, float y, float w, float h);
+	void drawWalls(int numWalls, float x, float y, float w, float h);
 public:
 	Cell();
 	Cell(int row, int col);
@@ -33,6 +39,9 @@ public:
 	inline void setWallRight(bool w) { walls[2] = w; }
 	inline void setWallDown(bool w) { walls[3] = w; }
 	inline void setWalls(bool* otherWalls) { memcpy(walls, otherWalls, sizeof(walls)); }
+	inline void setRestoreWalls(bool *otherWalls) { memcpy(restoreWalls, otherWalls, sizeof(restoreWalls)); }
+	inline void wallRestoration() { memcpy(walls, restoreWalls, sizeof(walls)); }
+
 
 	inline int getX() const { return row; }
 	inline int getY() const { return col; }
@@ -50,6 +59,9 @@ public:
 	
 	inline void setIsPath(bool path) { isPath = path; }
 	inline bool getPath() { return isPath; }
+
+	inline void setHasCoin(bool c) { hasCoin = c; }
+	inline bool getHasCoin() { return hasCoin; }
 
 	inline bool operator==(const Cell& other) const { return (row == other.row && col == other.col); }
 	inline bool equal(int r, int c) const { return (row == r && col == c); }

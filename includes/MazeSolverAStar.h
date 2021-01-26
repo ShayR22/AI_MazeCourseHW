@@ -11,6 +11,8 @@ class MazeSolverAStar : public Solveable {
 	std::vector<Cell*>& starts;
 	Cell* target;
 
+	std::map<Cell*, Cell*> nextInPath;
+
 	// this map will show for each node its cost from the start
 	std::map<Cell*, double> moveCost; // g
 
@@ -26,11 +28,15 @@ class MazeSolverAStar : public Solveable {
 	void calculateStepInPathFromCurrentCell(Cell* lowestF);
 	std::vector<Cell*> getCellNeighbors(Cell* cell);
 
+	void setNextInPath();
 	void restorePath();
+	void clear();
+
 public:
 	MazeSolverAStar(Maze& m);
+	void setStartTarget(Cell& start, Cell& target);
 	virtual void solveIteration() override;
-
+	inline std::map<Cell*, Cell*>& getNextInPath() { return nextInPath; }
 
 };
 
