@@ -1,46 +1,41 @@
 #ifndef __MOVING_OBJECT__
 #define __MOVING_OBJECT__
 
+#include "vec2.h"
+
 class MovingObject {
+private:
+	void calculateDxDy();
 protected:
-	float x;
-	float y;
-	float dx;
-	float dy;
-	float maxDx;
-	float maxDy;
-	float targetX;
-	float targetY;
+	bool atTarget;
+	vec2f location;
+	vec2f speed;
+	vec2f maxSpeed;
+	vec2f target;
 	float boundingRadius;
 public:
-	MovingObject(float x, float y, float dx, float fy, float maxDx, float maxDy,
-				 float targetX, float targetY, float boundingRadius);
-	
-	inline void setX(float x) { this->x = x; }
-	inline float getX() { return x; }
-	inline void setY(float y) { this->y = y; }
-	inline float getY() { return y; }
-	inline void setDx(float dx) { this->dx = dx; }
-	inline float getDx() { return dx; }
-	inline void setDy(float dy) { this->dy = dy; }
-	inline float getDy() { return dy; }
-	inline void setMaxDx(float maxDx) { this->maxDx = maxDx; }
-	inline float getMaxDx() { return maxDx; }
-	inline void setMaxDy(float maxDy) { this->maxDy = maxDy; }
-	inline float getMaxDy() { return maxDy; }
-	inline void setTargetX(float targetX) {this->targetX = targetX; }
-	inline float getTargetX() { return targetX; }
-	inline void setTargetY(float targetY) { this->targetY = targetY; }
-	inline float getTargetY() { return targetY; }
+	MovingObject(vec2f location, vec2f maxSpeed, vec2f target, float boundingRadius);
+
+	void setTarget(vec2f target);
+	void setLocation(vec2f location);
+
+	inline vec2f getLocation() { return this->location; }
+
+	inline void setSpeed(vec2f speed) { this->speed = speed; }
+	inline vec2f getSpeed() { return this->speed; }
+
+	inline void setMaxSpeed(vec2f maxSpeed) { this->maxSpeed = maxSpeed; }
+	inline vec2f getMaxSpeed() { return this->maxSpeed; }
+
+	inline vec2f getTarget() { return this->target; }
+
 	inline void setBoundingRadius(float boundingRadius) { this->boundingRadius = boundingRadius; }
 	inline float getBoundingRadius() { return boundingRadius; }
-	
-	void setTarget(float targetX, float targetY);
-	void setLocation(float x, float y);
-	bool isAtTarget();
 
+	inline bool isAtTarget() { return this->atTarget; }
+
+	virtual void move();
 	virtual void draw() = 0;
-	virtual void move() = 0;
 };
 
 #endif
