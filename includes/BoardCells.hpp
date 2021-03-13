@@ -1,16 +1,17 @@
 #ifndef __BOARDCELLS__
 #define __BOARDCELLS__
 
+#include <vector>
 #include "Cell.hpp"
 #include "Consumable.hpp"
-#include <vector>
+#include "vec2.h"
 
 class BoardCells {
 protected:
 	bool shootable;
-	std::vector<float> xyOffset; // where corridor is in reference in the game, for drawing
+	vec2f xyOffset; // where BoardCells is in reference in the game, for drawing
 public:
-	BoardCells(bool shootable, std::vector<float> xyOffset);
+	BoardCells(bool shootable, vec2f& xyOffset);
 
 	virtual std::vector<std::vector<Cell>>& getCells() = 0;
 	virtual Cell* getConnectingCell(BoardCells& board) = 0;
@@ -20,8 +21,8 @@ public:
 	inline void setShootable() { this->shootable = shootable; }
 	inline bool getShootable() { return shootable; }
 
-	inline void setXYOffset() { this->xyOffset = xyOffset; }
-	inline std::vector<float>& getXYOffset() { return xyOffset; }
+	inline void setXYOffset(vec2f& xyOffset) { this->xyOffset = xyOffset; }
+	inline vec2f& getXYOffset() { return xyOffset; }
 };
 
 #endif
