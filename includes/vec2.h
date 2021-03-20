@@ -28,6 +28,10 @@ SOFTWARE.
 #define M_PI 3.14159265358979323846
 #endif
 
+#ifndef M_EPSILON
+#define EPSILON 1e-6
+#endif
+
 template <class T>
 class vec2 {
 public:
@@ -134,7 +138,7 @@ public:
 		return *this;
 	}
 	
-	float dist(vec2 v) const {
+	float dist(vec2& v) const {
 		vec2 d(v.x - x, v.y - y);
 		return d.length();
 	}
@@ -149,6 +153,13 @@ public:
 	
 	vec2 ortho() const {
 		return vec2(y, -x);
+	}
+
+	bool hasSameDirection(vec2& v) {
+		vec2 v1(*this);
+		vec2 v2(v);
+		vec2 result = v1.normalize() - v2.normalize();
+		return result.length() < EPSILON;
 	}
 	
 	static float dot(vec2 v1, vec2 v2) {
