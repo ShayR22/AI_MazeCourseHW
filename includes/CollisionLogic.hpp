@@ -8,6 +8,7 @@ class CollisionLogic {
 private:
 	std::vector<Team> teams;
 public:
+	CollisionLogic() {};
 	CollisionLogic(std::vector<Team> teams);
 	void handleCollisions();
 
