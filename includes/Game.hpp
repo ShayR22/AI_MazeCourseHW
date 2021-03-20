@@ -13,7 +13,17 @@ private:
 	std::vector<Team> teams;
 	std::vector<Room> rooms;
 	std::vector<Corridor> corridors;
+
+	CellMat generateCellMat(int numRows, int numCols);
+	std::vector<std::vector<vec2i>> generateRoomsOn2DGrid(vec2i& gridOffset, vec2i& maxWH);
+	std::vector<std::vector<vec2i>> generateCorridorsOn2DGrid(std::vector<std::vector<vec2i>>& roomsWH, vec2i& gridOffset);
+	void connectRoomCorridorLeftToRight(int i, int j, std::vector<vec2i>& corridorsLeftToRight, vec2i& gridOffset);
+	void connectRoomCorridorTopToBottom(int i, int j, std::vector<vec2i>& corridorsLeftToRight, vec2i& gridOffset);
+	void connectRoomsCorridors(std::vector<std::vector<vec2i>>& corrdirosOffsets, vec2i& gridOffset);
+	void randomizeMap();
+
 public:
+	Game();
 	void draw();
 	void start();
 	
