@@ -7,17 +7,16 @@
 
 class CellMovingObject : public MovingObject {
 protected:
-	int lastX;
-	int lastY;
+	vec2i lastPos;
 	BoardCells& board;
+private:
+	vec2f getCellCenter(Cell& cell) { return vec2f(cell.getX() + 0.5f, cell.getY() + 0.5f); }
 public:
-	CellMovingObject(float x, float y, float dx, float fy, float maxDx, float maxDy,
-		float targetX, float targetY, float boundingRadius, BoardCells& board);
+	CellMovingObject(vec2f& location, vec2f& maxSpeed, vec2f& target, float boundingRadius, BoardCells& board);
 
-	inline void setLastX(int lastX) { this->lastX = lastX; }
-	inline int getLastX() { return lastX; }
-	inline void setLastY(int lastY) { this->lastY = lastY; }
-	inline int getLastY() { return lastY; }
+	inline void setLastPos(vec2i& lastPos) { this->lastPos = lastPos; }
+	inline vec2i& getLastPos() { return this->lastPos; }
+
 	inline void setBoardCells(BoardCells& board) { this->board = board; }
 	inline BoardCells& getBoardCells() { return board; }
 
