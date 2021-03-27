@@ -32,7 +32,7 @@ void init()
 	glOrtho(-1, 1, -1, 1, 1, -1);
 	srand((unsigned int)time(0));
 
-	game = new Game();
+	game = Game::getInstance();
 
 	int a = 2;
 }

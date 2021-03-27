@@ -24,6 +24,16 @@ private:
 
 public:
 	Game();
+	static Game* game;
+public:
+	Game(const Game& other) = delete;
+	void operator=(const Game& other) = delete;
+	static Game* getInstance();
+	static std::vector<Team>& getGameTeams() { return game->getTeams(); }
+	static std::vector<Room>& getGameRooms() { return game->getRooms(); }
+	static std::vector<Corridor>& getGameCorridors() { return game->getCorridors(); }
+
+
 	void draw();
 	void start();
 	

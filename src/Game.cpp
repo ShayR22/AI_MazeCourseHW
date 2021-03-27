@@ -223,6 +223,16 @@ Game::Game()
 	randomizeMap();
 }
 
+Game* Game::getInstance()
+{
+	if (game)
+		return game;
+	game = new Game();
+
+
+	return game;
+}
+
 void Game::draw()
 {
 	for (auto& c : corridors)
@@ -237,3 +247,5 @@ void Game::start()
 {
 
 }
+
+Game* Game::game = nullptr;
