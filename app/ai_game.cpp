@@ -7,59 +7,19 @@ using namespace std;
 
 Game *game = nullptr;
 
-CellMat cells = {
-	{Cell(0,0), Cell(0,0), Cell(0,0)},
-	{Cell(0,0), Cell(0,0), Cell(0,0)},
-	{Cell(0,0), Cell(0,0), Cell(0,0)},
-	{Cell(0,0), Cell(0,0), Cell(0,0)},
-	{Cell(0,0), Cell(0,0), Cell(0,0)},
-	{Cell(0,0), Cell(0,0), Cell(0,0)}
-};
-
-vec2f xyOffset(0, 0);
-Room r(cells, xyOffset);
-
-CellMat cellsC = {
-	{Cell(0,0), Cell(0,0), Cell(0,0)},
-	{Cell(0,0), Cell(0,0), Cell(0,0)},
-	{Cell(0,0), Cell(0,0), Cell(0,0)},
-	{Cell(0,0), Cell(0,0), Cell(0,0)},
-	{Cell(0,0), Cell(0,0), Cell(0,0)},
-	{Cell(0,0), Cell(0,0), Cell(0,0)}
-};
-
-vec2f xyOffsetC(4, 3);
-Corridor c(cellsC, xyOffsetC);
-
-
 void display()
 {
 	glClear(GL_COLOR_BUFFER_BIT); // clean frame buffer
 	if (game)
 		game->draw();
-	//r.draw();
-	//c.draw();
+
 	glutSwapBuffers(); // show all
 }
 
-
-int i = 0;
 void idle()
 {
-	//manager.solveIteration();
-	if(++i % 250 == 0) {
-		//vec2f xyOffset = r.getXYOffset();
-		//xyOffset.x += 1;
-
-		//r.setXYOffset(xyOffset);
-		//cout << "x = " << xyOffset.x << " y = " << xyOffset.y << endl;
-
-	}
-
-	//Sleep(10);
 	glutPostRedisplay(); // indirect call to display
 }
-
 
 void menu(int choice)
 {
