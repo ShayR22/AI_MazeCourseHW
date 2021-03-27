@@ -1,6 +1,5 @@
 #include "Drawer.hpp"
 #include "vec2.h"
-#include "glut.h"
 
 #include <iostream>
 
@@ -83,13 +82,9 @@ void Drawer::rectWithGrid(float x, float y, float w, float h, DrawerColor color)
 	glEnd();
 }
 
+void Drawer::drawCircle(GLenum glMode, float cxGL, float cyGL, float rGL) {
 
-void Drawer::circle(float cx, float cy, float diameter, DrawerColor color) {
-	float cxGL = 2 * (cx / width) - 1;
-	float cyGL = -(2 * ((cy / height)) - 1);
-	float rGL = diameter / width / 2;
-
-	glBegin(GL_LINE_LOOP);
+	glBegin(glMode);
 	for (int ii = 0; ii < CIRCLE_NUM_SEGMENTS; ii++) {
 		float theta = 2.0f * (float)M_PI * ii / float(CIRCLE_NUM_SEGMENTS);
 		float x = rGL * cosf(theta);
@@ -97,6 +92,27 @@ void Drawer::circle(float cx, float cy, float diameter, DrawerColor color) {
 		glVertex2f(x + cxGL, y + cyGL);
 	}
 	glEnd();
+}
+
+void Drawer::circle(float cx, float cy, float diameter, DrawerColor color) {
+	float cxGL = 2 * (cx / width) - 1;
+	float cyGL = -(2 * ((cy / height)) - 1);
+	/* drawer stretch image to 2x2 thus, everything is *2.
+	 * this is negated with /2 to convert diameter into radius
+	 */
+	float rGL = diameter / width;
+
+	setColor(color);
+	drawCircle(GL_LINE_LOOP, cxGL, cyGL, rGL);
+}
+
+void Drawer::filledCircle(float cx, float cy, float diameter, DrawerColor color) {
+	float cxGL = 2 * (cx / width) - 1;
+	float cyGL = -(2 * ((cy / height)) - 1);
+	float rGL = diameter / width;
+
+	setColor(color);
+	drawCircle(GL_POLYGON, cxGL, cyGL, rGL);
 }
 
 /* default values to be initalize too. */
