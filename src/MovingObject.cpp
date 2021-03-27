@@ -2,7 +2,7 @@
 
 void MovingObject::calculateDxDy()
 {
-    vec2f relativePath = location - target;
+    vec2f relativePath = target - location;
 
     if (relativePath.x == 0 && relativePath.y == 0) {
         speed.set(0, 0);
@@ -10,7 +10,7 @@ void MovingObject::calculateDxDy()
     }
 
     relativePath.normalize();
-    speed *= relativePath;
+    speed = maxSpeed * relativePath;
 }
 
 MovingObject::MovingObject(vec2f location,vec2f maxSpeed, vec2f target, float boundingRadius) :
