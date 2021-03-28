@@ -1,12 +1,15 @@
 #include "Room.hpp"
 #include "Corridor.hpp"
+#include "AmmoBox.hpp"
+#include "HealthBox.hpp"
+#include "Wall.hpp"
 #include "Drawer.hpp"
 
 using namespace std;
 
 Room::Room(CellMat& cells, vec2f& xyOffset) : BoardCells(cells, true, xyOffset)
 {
-	/* DO NOTHING */
+
 }
 
 Room::Room(map<Cell*, Corridor*> corridorConnections, CellMat& cells,
@@ -46,6 +49,35 @@ vector<Consumable*> Room::getConsumables(ConsumableType type)
 		return healthBoxes;
 }
 
+void Room::addAmmoBox(int cellX, int cellY, int ammoAmount, bool isHidden)
+{
+	Cell* location = &(cells[cellY][cellX]);
+	location->setIsOccupy(true);
+	Consumable* ammoBox = new AmmoBox(location, ammoAmount, isHidden);
+	ammoBoxes.push_back(ammoBox);
+}
+
+
+void Room::addHealthBox(int cellX, int cellY, int healthAmount, bool isHidden)
+{
+
+	Cell* location = &(cells[cellY][cellX]);
+	location->setIsOccupy(true);
+	Consumable* healthBox = new HealthBox(location, healthAmount, isHidden);
+	healthBoxes.push_back(healthBox);
+}
+
+void Room::addWall(int healthPoints, int destroyFrame, vector<Cell*>& cover)
+{
+	Wall* wall = new Wall(healthPoints, destroyFrame, cover);
+
+	for (auto& c : cover) {
+		c->setIsOccupy(true);
+	}
+	obstacles.push_back(wall);
+}
+
+
 void Room::draw()
 {
 	/* Assume cells aren't empty */
@@ -53,4 +85,17 @@ void Room::draw()
 	float h = static_cast<float>(cells.size());
 
 	Drawer::rectWithGrid(xyOffset.x, xyOffset.y, w, h, DrawerColor::WHITE);
+	
+	for (auto& ammoBox : ammoBoxes) {
+		ammoBox->draw(xyOffset.x, xyOffset.y);
+	}
+
+	for (auto& healthBox : healthBoxes) {
+		healthBox->draw(xyOffset.x, xyOffset.y);
+	}
+
+
+	for (auto& obstacle : obstacles) {
+		obstacle->draw(xyOffset.x, xyOffset.y);
+	}
 }

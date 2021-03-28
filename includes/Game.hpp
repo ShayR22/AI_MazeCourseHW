@@ -21,6 +21,8 @@ private:
 	void connectRoomCorridorTopToBottom(int i, int j, std::vector<vec2i>& corridorsLeftToRight, vec2i& gridOffset);
 	void connectRoomsCorridors(std::vector<std::vector<vec2i>>& corrdirosOffsets, vec2i& gridOffset);
 	void randomizeMap();
+	void addConsumbles();
+	void addObstacles();
 
 public:
 	Game();

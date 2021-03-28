@@ -2,6 +2,7 @@
 #define __OBSTACLE__
 
 #include "MovingObject.hpp"
+#include "Cell.hpp"
 #include <vector>
 
 class Obstacle {

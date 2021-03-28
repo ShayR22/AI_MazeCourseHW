@@ -8,7 +8,7 @@ class AmmoBox : public Consumable {
 private:
 	int ammoAmount;
 public:
-	AmmoBox(int ammoAmount);
+	AmmoBox(Cell* loctaion,int ammoAmount, bool isHidden);
 
 	virtual bool canConsume(Bot& p);
 	virtual void consume(Bot& p);

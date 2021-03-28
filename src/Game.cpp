@@ -34,9 +34,8 @@ CellMat Game::generateCellMat(int numCols, int numRows)
 		cells[i].reserve(numCols);
 
 		for (int j = 0; j < numCols; j++)
-			cells[i].push_back(Cell(i, j));
+			cells[i].push_back(Cell(j, i));
 	}
-
 	return cells;
 }
 
@@ -56,8 +55,13 @@ vector<vector<vec2i>> Game::generateRoomsOn2DGrid(vec2i& gridOffset, vec2i& maxW
 
 			vec2f xyOffsets(static_cast<float>(xOffset), static_cast<float>(yOffset));
 			CellMat cells = generateCellMat(width, height);
-			rooms.push_back(Room(cells, xyOffsets));
 
+			Room r = Room(cells, xyOffsets);
+			rooms.push_back(r);
+
+			//rooms.push_back(Room(cells, xyOffsets));
+
+			CellMat& cellss = rooms.back().getCells();
 			vec2i roomWH(width, height);
 			roomsWH[i].push_back(roomWH);
 		}
@@ -207,6 +211,7 @@ void Game::connectRoomsCorridors(vector<vector<vec2i>>& corrdirosOffsets, vec2i&
 }
 
 
+
 void Game::randomizeMap()
 {
 	vec2i gridOffset(Drawer::width / MAX_ROOM_COLS, Drawer::height / MAX_ROOM_ROWS);
@@ -221,6 +226,90 @@ void Game::randomizeMap()
 Game::Game()
 {
 	randomizeMap();
+	addConsumbles();
+	addObstacles();
+
+}
+
+
+void Game::addConsumbles()
+{
+	int cellX;
+	int cellY;
+	constexpr bool isHidden = false;
+	constexpr int ammoAmount = 10;
+	constexpr int healthAmmount = 100;
+
+	for (auto& r : rooms) {
+		do {
+			cellX = rand() % (r.getCells()[0].size() - 3) + 1;
+			cellY = rand() % (r.getCells().size() - 3) + 1;
+		} while (r.getCells()[cellY][cellX].getIsOccupy());
+		printf("CellX : %d , CellY : %d\n", cellX, cellY);
+		r.addAmmoBox(cellX, cellY, ammoAmount, isHidden);
+	}
+
+	for (auto& r : rooms) {
+		do {
+			cellX = rand() % (r.getCells()[0].size() - 3) + 1;
+			cellY = rand() % (r.getCells().size() - 3) + 1;
+		} while (r.getCells()[cellY][cellX].getIsOccupy());
+		r.addHealthBox(cellX, cellY, healthAmmount, isHidden);
+	}
+
+	for (auto& r : rooms) {
+		vector<Consumable*>& ammoBoxes = r.getAmmoBoxes();
+		vector<Consumable*>& healthBoxes = r.getHealthBoxes();
+		for (auto& ab : ammoBoxes) {
+			ab->getLocation()->setIsOccupy(false);
+		}
+
+		for (auto& hb : healthBoxes) {
+			hb->getLocation()->setIsOccupy(false);
+		}
+	}
+}
+
+void Game::addObstacles()
+{
+	int cellX;
+	int cellY;
+	bool isHorizontal = false;
+	constexpr int healthPoints = 10;
+	constexpr int destroyFrame = 100;
+
+	for (auto& r : rooms) {
+		vector<Cell*> cover;
+		int maxWidth = (r.getCells()[0].size() - 1);
+		int maxHeight = (r.getCells().size() - 1);
+		do {
+			cellX = rand() % (maxWidth - 2) + 1;
+			cellY = rand() % (maxHeight - 2) + 1;
+		} while (r.getCells()[cellY][cellX].getIsOccupy());
+
+		if (isHorizontal) {
+			for (int i = cellX; i < maxWidth; i++) {
+				Cell* c = &r.getCells()[cellY][i];
+				if (c->getIsOccupy())
+					break;
+				cover.push_back(c);
+			}
+		}
+		else {
+			for (int j = cellY; j < maxHeight; j++) {
+				Cell* c = &r.getCells()[j][cellX];
+				if (c->getIsOccupy())
+					break;
+				cover.push_back(c);
+			}
+		}
+		
+		r.addWall(healthPoints, destroyFrame,cover);
+
+		isHorizontal = !isHorizontal;
+	}
+
+
 }
 
 Game* Game::getInstance()
@@ -235,12 +324,16 @@ Game* Game::getInstance()
 
 void Game::draw()
 {
+
 	for (auto& c : corridors)
 		c.draw();
 
 	for (auto& r : rooms)
+	{
 		r.draw();
+	}
 
+		
 }
 
 void Game::start()

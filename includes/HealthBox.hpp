@@ -8,7 +8,7 @@ class HealthBox : public Consumable {
 private:
 	int healthAmount;
 public:
-	HealthBox(int healthAmount);
+	HealthBox(Cell* loctaion,int healthAmount, bool isHidden);
 
 	virtual bool canConsume(Bot& p);
 	virtual void consume(Bot& p);
