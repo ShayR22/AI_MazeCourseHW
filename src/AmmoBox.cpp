@@ -3,12 +3,18 @@
 #include "Drawer.hpp"
 
 
-AmmoBox::AmmoBox(Cell* loctaion, int ammoAmount, bool isHidden): Consumable(loctaion, ConsumableType::AMMO, isHidden)
+AmmoBox::AmmoBox(Cell* loctaion, int numBullets, int numGrenades, bool isHidden) : numBullets(numBullets), numGrenades(numGrenades),
+Consumable(loctaion, ConsumableType::AMMO, isHidden)
 {
-	if (ammoAmount > MAX_AMMO || ammoAmount < 0)
-		this->ammoAmount = MAX_AMMO;
+	if (numBullets > MAX_BULLETS || numBullets < 0)
+		this->numBullets = MAX_BULLETS;
 	else
-		this->ammoAmount = ammoAmount;
+		this->numBullets = numBullets;
+
+	if (numGrenades > MAX_GRENADES || numGrenades < 0)
+		this->numGrenades = MAX_GRENADES;
+	else
+		this->numGrenades = numGrenades;
 }
 
 bool AmmoBox::canConsume(Bot& p)
@@ -22,8 +28,11 @@ bool AmmoBox::canConsume(Bot& p)
 void AmmoBox::consume(Bot& p)
 {
 	if (canConsume(p)) {
+		p.setNumBullets(MAX_BULLETS);
+		p.setNumGrenades(MAX_GRENADES);
 		this->setHidden(true);
-		this->setammoAmount(0);
+		this->setNumBullets(0);
+		this->setNumGrenades(0);
 	}
 }
 

@@ -6,16 +6,20 @@
 
 class AmmoBox : public Consumable {
 private:
-	int ammoAmount;
+	int numBullets;
+	int numGrenades;
 public:
-	AmmoBox(Cell* loctaion,int ammoAmount, bool isHidden);
+	AmmoBox(Cell* loctaion,int numBullets, int numGrenades, bool isHidden);
 
 	virtual bool canConsume(Bot& p);
 	virtual void consume(Bot& p);
 	virtual void draw(float offsetX, float offsetY);
 
-	inline void setammoAmount(int ammoAmount) { this->ammoAmount = ammoAmount;}
-	inline int getammoAmount() { return ammoAmount;}
+	inline void setNumBullets(int numBullets) { this->numBullets = numBullets;}
+	inline int getNumBullets() { return numBullets;}
+
+	inline void setNumGrenades(int numGrenades) { this->numGrenades = numGrenades; }
+	inline int getNumGrenades() { return numGrenades; }
 };
 
 #endif

@@ -26,7 +26,7 @@ public:
 	virtual std::vector<BoardCells*> getConnectors();
 	virtual std::vector<Consumable*> getConsumables(ConsumableType type);
 
-	void addAmmoBox(int cellX, int cellY, int ammoAmount, bool isHidden);
+	void addAmmoBox(int cellX, int cellY, int numBullets, int numGrenades, bool isHidden);
 	void addHealthBox(int cellX, int cellY, int healthAmount, bool isHidden);
 	void addWall(int healthPoints, int destroyFrame, std::vector<Cell*>& cover);
 

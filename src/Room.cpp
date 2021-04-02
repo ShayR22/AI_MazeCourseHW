@@ -49,11 +49,11 @@ vector<Consumable*> Room::getConsumables(ConsumableType type)
 		return healthBoxes;
 }
 
-void Room::addAmmoBox(int cellX, int cellY, int ammoAmount, bool isHidden)
+void Room::addAmmoBox(int cellX, int cellY, int numBullets, int numGrenades, bool isHidden)
 {
 	Cell* location = &(cells[cellY][cellX]);
 	location->setIsOccupy(true);
-	Consumable* ammoBox = new AmmoBox(location, ammoAmount, isHidden);
+	Consumable* ammoBox = new AmmoBox(location, numBullets, numGrenades, isHidden);
 	ammoBoxes.push_back(ammoBox);
 }
 

@@ -237,7 +237,8 @@ void Game::addConsumbles()
 	int cellX;
 	int cellY;
 	constexpr bool isHidden = false;
-	constexpr int ammoAmount = 10;
+	constexpr int numBullets = 20;
+	constexpr int numGrenades = 20;
 	constexpr int healthAmmount = 100;
 
 	for (auto& r : rooms) {
@@ -246,7 +247,7 @@ void Game::addConsumbles()
 			cellY = rand() % (r.getCells().size() - 3) + 1;
 		} while (r.getCells()[cellY][cellX].getIsOccupy());
 		printf("CellX : %d , CellY : %d\n", cellX, cellY);
-		r.addAmmoBox(cellX, cellY, ammoAmount, isHidden);
+		r.addAmmoBox(cellX, cellY, numBullets, numGrenades, isHidden);
 	}
 
 	for (auto& r : rooms) {

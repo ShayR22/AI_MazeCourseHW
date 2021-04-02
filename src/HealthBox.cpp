@@ -3,7 +3,8 @@
 #include "Drawer.hpp"
 
 
-HealthBox::HealthBox(Cell* location,int healthAmount, bool isHidden): Consumable(location, ConsumableType::HEALTH, isHidden)
+HealthBox::HealthBox(Cell* location,int healthAmount, bool isHidden): healthAmount(healthAmount),
+Consumable(location, ConsumableType::HEALTH, isHidden)
 {
 	if (healthAmount > MAX_HEALTH || healthAmount < 0)
 		this->healthAmount = MAX_HEALTH;
@@ -22,6 +23,11 @@ bool HealthBox::canConsume(Bot& p)
 void HealthBox::consume(Bot& p)
 {
 	if (canConsume(p)) {
+		int healing = p.getHealth() + healthAmount;
+		if (healing > MAX_HEALTH) {
+			healing = MAX_HEALTH;
+		}
+		p.setHealth(healing);
 		this->setHidden(true);
 		this->sethealthAmount(0);
 	}
