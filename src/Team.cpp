@@ -1,7 +1,7 @@
 #include "Team.hpp"
 #include "SupportBot.hpp"
 
-Team::Team()
+Team::Team() : teamColor(DrawerColor::WHITE)
 {
 
 }
@@ -27,6 +27,14 @@ void Team::update()
 {
 	for (auto p : projectiles) {
 		p->update();
+	}
+}
+
+void Team::setTeamColor(DrawerColor teamColor)
+{
+	this->teamColor = teamColor;
+	for (auto& bot : bots) {
+		bot->setTeamColor(teamColor);
 	}
 }
 
