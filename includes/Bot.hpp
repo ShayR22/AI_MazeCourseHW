@@ -4,6 +4,7 @@
 #include "CellMovingObject.hpp"
 #include "Team.hpp"
 #include "PathFinder.hpp"
+#include "Drawer.hpp"
 
 #define MAX_BULLETS 20
 #define MAX_GRENADES 20
@@ -18,6 +19,7 @@ private:
 	int numGrenades;
 	Team& team;
 	PathFinder pathFinder;
+	DrawerColor teamColor;
 
 	/*pathfinder returns nullptr board if the target is at the same boardcell with the player*/
 	inline bool isTargetAtTheSameRoom(BoardCells* targetBoard) { return !targetBoard || (board.getShootable() && targetBoard->getShootable());}
@@ -40,11 +42,14 @@ public:
 	inline int getNumBullets() { return numBullets; }
 	inline int getNumGrenades() { return numGrenades; }
 	inline Team& getTeam() { return team; }
+	inline DrawerColor getTeamColor() { return teamColor; }
 
 	inline void setHealth(int health) { this->health = health; };
 	inline void setNumBullets(int numBullets) { this->numBullets = numBullets; }
 	inline void setNumGrenades(int numGrenades) { this->numGrenades = numGrenades; }
 	inline void setTeam(Team& team) { this->team = team; }
+	inline void setTeamColor(DrawerColor teamColor) { this->teamColor = teamColor; }
+
 
 	inline bool isAmmoFull() { return (numBullets < MAX_BULLETS &&  + numGrenades < MAX_GRENADES); }
 	inline bool isFullHealth() { return health < MAX_HEALTH; }

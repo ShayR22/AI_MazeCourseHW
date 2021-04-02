@@ -11,7 +11,7 @@ using namespace std;
 Bot::Bot(int health, int numBullets, int numGrenades, Team& team, vec2f& location,
 	vec2f& maxSpeed, vec2f& target, float boundingRadius, BoardCells& board)
 	: health(health), numBullets(numBullets), numGrenades(numGrenades), team(team), pathFinder(*this),
-	CellMovingObject(location, maxSpeed,target,boundingRadius,board)
+	CellMovingObject(location, maxSpeed, target, boundingRadius, board), teamColor(DrawerColor::WHITE)
 {
 
 }
@@ -153,7 +153,6 @@ void Bot::draw()
 	float x = xy.x;
 	float y = xy.y;
 
-	Drawer::filledCircle(x, y, 0.95, DrawerColor::BLACK);
-	Drawer::filledCircle(x, y, 0.75, DrawerColor::BLUE);
-
+	Drawer::filledCircle(x, y, boundingRadius, DrawerColor::BLACK);
+	Drawer::filledCircle(x, y, boundingRadius / 1.5f, teamColor);
 }
