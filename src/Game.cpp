@@ -387,12 +387,15 @@ Room* Game::getRoom(vec2f& cellLocation)
 
 void Game::draw()
 {
-
 	for (auto& c : corridors)
 		c.draw();
 
 	for (auto& r : rooms)
-		r.draw();		
+		r.draw();
+
+	for (auto& t : teams)
+		t.draw();
+
 }
 
 void Game::start()
