@@ -8,7 +8,8 @@ enum class DrawerColor{
 	BLACK,
 	RED,
 	BLUE,
-	GREEN
+	GREEN,
+	PURPULE
 };
 
 class Drawer {
@@ -28,6 +29,8 @@ public:
 	static void rectWithGrid(float x, float y, float w, float h, DrawerColor color);
 	static void circle(float cx, float cy, float diamater, DrawerColor color);
 	static void filledCircle(float cx, float cy, float diamater, DrawerColor color);
+	static void line(float sx, float sy, float tx, float ty, DrawerColor color);
+
 };
 
 #endif

@@ -26,6 +26,9 @@ void Drawer::setColor(DrawerColor color)
 	case DrawerColor::GREEN:
 		glColor3d(0, 1, 0);
 		break;
+	case DrawerColor::PURPULE:
+		glColor3d(1, 0, 1);
+		break;
 	}
 }
 
@@ -113,6 +116,22 @@ void Drawer::filledCircle(float cx, float cy, float diameter, DrawerColor color)
 
 	setColor(color);
 	drawCircle(GL_POLYGON, cxGL, cyGL, rGL);
+}
+
+void Drawer::line(float sx, float sy, float tx, float ty, DrawerColor color)
+{
+	float sxGL = 2 * (sx / width) - 1;
+	float syGL = -(2 * ((sy / height)) - 1);
+	float txGL = 2 * (tx / width) - 1;
+	float tyGL = -(2 * ((ty / height)) - 1);
+
+	glLineWidth((GLfloat)3);
+	setColor(color);
+
+	glBegin(GL_LINES);
+	glVertex2f(sxGL, syGL);
+	glVertex2f(txGL, tyGL);
+	glEnd();
 }
 
 /* default values to be initalize too. */
