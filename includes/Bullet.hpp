@@ -5,8 +5,8 @@
 
 class Bullet : public Projectile {
 public:
-	Bullet(int damage);
-	virtual void draw();
+	Bullet(vec2f location, vec2f startSpeed, vec2f target, float boundingRadius, int damage, Team* teamPtr);
+	virtual void draw() override;
 };
 
 #endif
