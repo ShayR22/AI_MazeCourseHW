@@ -34,8 +34,7 @@ void MovingObject::setLocation(vec2f location)
 void MovingObject::move()
 {
     vec2f lastLocation(location.x, location.y);
-    vec2f diff(location);
-    diff -= target;
+    vec2f diff = target - location;
 
     if (fabs(diff.x) > fabs(1.5 * speed.x))
         location.x += speed.x;
