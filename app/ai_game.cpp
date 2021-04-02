@@ -1,7 +1,12 @@
 #include <time.h>
 #include "glut.h"
 #include "Game.hpp"
+#include "Drawer.hpp"
 #include <iostream>
+#include "PathFinder.hpp"
+#include "GamePoint.hpp"
+#include "GamePointEdge.hpp"
+#include "Bot.hpp"
 
 using namespace std;
 
@@ -33,8 +38,7 @@ void init()
 	srand((unsigned int)time(0));
 
 	game = Game::getInstance();
-
-	int a = 2;
+	game->createTeams();
 }
 
 int main(int argc, char* argv[])
