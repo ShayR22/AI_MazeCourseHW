@@ -287,6 +287,10 @@ stack<GamePoint> ConnectorPathFinder::getPath(GamePoint &gamePointTarget)
 #define CONNECTOR_PATH_DEUBG 0
 void ConnectorPathFinder::draw()
 {
+	if (!CONNECTOR_PATH_DEUBG) {
+		return;
+	}
+
 	/* draw nodes */
 	for (auto& n : nodes) {
 		BoardCells* b = n->getGameLocation().board;
@@ -314,10 +318,6 @@ void ConnectorPathFinder::draw()
 		else {
 			Drawer::line(sx, sy, tx, ty, DrawerColor::BLUE);
 		}
-	}
-
-	if (!CONNECTOR_PATH_DEUBG) {
-		return;
 	}
 
 	stack<GamePoint> path = generatePath();
