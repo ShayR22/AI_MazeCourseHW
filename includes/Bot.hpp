@@ -46,9 +46,10 @@ public:
 	inline void setNumGrenades(int numGrenades) { this->numGrenades = numGrenades; }
 	inline void setTeam(Team& team) { this->team = team; }
 
-
 	inline bool isAmmoFull() { return (numBullets < MAX_BULLETS &&  + numGrenades < MAX_GRENADES); }
 	inline bool isFullHealth() { return health < MAX_HEALTH; }
+
+	virtual void draw();
 };
 
 #endif

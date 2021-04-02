@@ -146,3 +146,14 @@ void Bot::updateBot()
 		findEnemy();
 	}
 }
+
+void Bot::draw()
+{
+	vec2f xy = getCellCenter(board, getCellLocation());
+	float x = xy.x;
+	float y = xy.y;
+
+	Drawer::filledCircle(x, y, 0.95, DrawerColor::BLACK);
+	Drawer::filledCircle(x, y, 0.75, DrawerColor::BLUE);
+
+}
