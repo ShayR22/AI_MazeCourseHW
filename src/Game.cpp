@@ -50,16 +50,15 @@ vector<vector<vec2i>> Game::generateRoomsOn2DGrid(vec2i& gridOffset, vec2i& maxW
 		int yOffset = i * gridOffset.y + ROOM_START_OFFSET_Y;
 		for (int j = 0; j < MAX_ROOM_COLS; j++) {
 			int xOffset = j * gridOffset.x + ROOM_START_OFFSET_X;
-			int width = randomizeNumber(ROOM_WIDTH_MIN, maxWH.x);
-			int height = randomizeNumber(ROOM_HEIGHT_MIN, maxWH.y);
+			/* add -1 to force corridors to have at least 2 cells*/
+			int width = randomizeNumber(ROOM_WIDTH_MIN, maxWH.x - 1);
+			int height = randomizeNumber(ROOM_HEIGHT_MIN, maxWH.y - 1);
 
 			vec2f xyOffsets(static_cast<float>(xOffset), static_cast<float>(yOffset));
 			CellMat cells = generateCellMat(width, height);
 
 			Room r = Room(cells, xyOffsets);
 			rooms.push_back(r);
-
-			//rooms.push_back(Room(cells, xyOffsets));
 
 			CellMat& cellss = rooms.back().getCells();
 			vec2i roomWH(width, height);
@@ -77,8 +76,8 @@ vector<vector<vec2i>> Game::generateCorridorsOn2DGrid(vector<vector<vec2i>>& roo
 	/* corridor generation left to right */
 	for (int i = 0; i < MAX_ROOM_ROWS; i++) {
 		for (int j = 0; j < MAX_ROOM_COLS - 1; j++) {
-			int yOffset = i * gridOffset.y + randomizeNumber(0, ROOM_HEIGHT_MIN);
-			int xOffset = j * gridOffset.x + roomsWH[i][j].x;
+			int yOffset = i * gridOffset.y + randomizeNumber(1, ROOM_HEIGHT_MIN);
+			int xOffset = j * gridOffset.x + roomsWH[i][j].x + ROOM_START_OFFSET_X;
 
 			int width = ((j + 1) * gridOffset.x) - xOffset + ROOM_START_OFFSET_X;
 
@@ -93,8 +92,9 @@ vector<vector<vec2i>> Game::generateCorridorsOn2DGrid(vector<vector<vec2i>>& roo
 	/* corridor generation top to bottom */
 	for (int i = 0; i < MAX_ROOM_COLS; i++) {
 		for (int j = 0; j < MAX_ROOM_ROWS - 1; j++) {
-			int xOffset = i * gridOffset.x + randomizeNumber(0, ROOM_WIDTH_MIN);
-			int yOffset = j * gridOffset.y + roomsWH[j][i].y;
+			int xOffset = i * gridOffset.x + randomizeNumber(1, ROOM_WIDTH_MIN);
+			int yOffset = j * gridOffset.y + roomsWH[j][i].y + ROOM_START_OFFSET_Y;
+
 
 			int height = ((j + 1) * gridOffset.y) - yOffset + ROOM_START_OFFSET_Y;
 
@@ -184,10 +184,10 @@ void Game::connectRoomCorridorTopToBottom(int i, int j, vector<vec2i>& corridors
 	Cell* topRoomConnector = &corridorCells[0][0];
 	roomConnections[topRoomConnector] = &topRoom;
 	/* connect bottom room */
-	Cell* bottomRoomConnector = &corridorCells[corridorCells[0].size() - 1][0];
+	Cell* bottomRoomConnector = &corridorCells[corridorCells.size() - 1][0];
 	roomConnections[bottomRoomConnector] = &bottomRoom;
+	corridor.setRoomConnections(roomConnections);
 }
-
 
 void Game::connectRoomsCorridors(vector<vector<vec2i>>& corrdirosOffsets, vec2i& gridOffset)
 {
@@ -210,8 +210,6 @@ void Game::connectRoomsCorridors(vector<vector<vec2i>>& corrdirosOffsets, vec2i&
 	}
 }
 
-
-
 void Game::randomizeMap()
 {
 	vec2i gridOffset(Drawer::width / MAX_ROOM_COLS, Drawer::height / MAX_ROOM_ROWS);
@@ -231,7 +229,6 @@ Game::Game()
 	removeConsumablesOccupation();
 }
 
-
 void Game::removeConsumablesOccupation()
 {
 	for (auto& r : rooms) {
@@ -247,7 +244,6 @@ void Game::removeConsumablesOccupation()
 	}
 }
 
-
 void Game::addConsumbles()
 {
 	int cellX;
@@ -262,7 +258,6 @@ void Game::addConsumbles()
 			cellX = rand() % (r.getCells()[0].size() - 3) + 1;
 			cellY = rand() % (r.getCells().size() - 3) + 1;
 		} while (r.getCells()[cellY][cellX].getIsOccupy());
-		printf("CellX : %d , CellY : %d\n", cellX, cellY);
 		r.addAmmoBox(cellX, cellY, numBullets, numGrenades, isHidden);
 	}
 
@@ -341,11 +336,7 @@ void Game::draw()
 		c.draw();
 
 	for (auto& r : rooms)
-	{
-		r.draw();
-	}
-
-		
+		r.draw();		
 }
 
 void Game::start()
