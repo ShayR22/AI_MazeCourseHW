@@ -31,6 +31,10 @@ public:
 	void addWall(int healthPoints, int destroyFrame, std::vector<Cell*>& cover);
 
 	void draw();
+	bool isRelated2CellLocation(vec2f& cellLocation);
+	float getWidth() { return static_cast<float>(cells[0].size()); }
+	float getHeight() { return static_cast<float>(cells.size()); }
+	void getShape(std::vector<vec2f>& points);
 
 	inline void setCorridorConnections(std::map<Cell*, Corridor*> corridorConnections) { this->corridorConnections = corridorConnections; }
 	inline std::map<Cell*, Corridor*>& getCorridorConnections() { return corridorConnections; }

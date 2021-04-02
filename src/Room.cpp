@@ -81,8 +81,8 @@ void Room::addWall(int healthPoints, int destroyFrame, vector<Cell*>& cover)
 void Room::draw()
 {
 	/* Assume cells aren't empty */
-	float w = static_cast<float>(cells[0].size());
-	float h = static_cast<float>(cells.size());
+	float w = getWidth();
+	float h = getHeight();
 
 	Drawer::rectWithGrid(xyOffset.x, xyOffset.y, w, h, DrawerColor::WHITE);
 	
@@ -98,4 +98,28 @@ void Room::draw()
 	for (auto& obstacle : obstacles) {
 		obstacle->draw(xyOffset.x, xyOffset.y);
 	}
+}
+
+bool Room::isRelated2CellLocation(vec2f& cellLocation)
+{
+	float xmin = xyOffset.x;
+	float xmax = xmin + getWidth();
+	float ymin = xyOffset.y;
+	float ymax = ymin + getHeight();
+
+	return (cellLocation.x >= xmin && cellLocation.x <= xmax)
+		&& (cellLocation.y >= ymin && cellLocation.y <= ymax);
+}
+
+void Room::getShape(std::vector<vec2f>& points)
+{
+	float xmin = xyOffset.x;
+	float xmax = xmin + getWidth();
+	float ymin = xyOffset.y;
+	float ymax = ymin + getHeight();
+
+	points.push_back(vec2f(xmin, ymin));
+	points.push_back(vec2f(xmax, ymin));
+	points.push_back(vec2f(xmax, ymax));
+	points.push_back(vec2f(xmin, ymax));
 }
