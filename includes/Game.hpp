@@ -21,6 +21,8 @@ private:
 	void connectRoomCorridorTopToBottom(int i, int j, std::vector<vec2i>& corridorsLeftToRight, vec2i& gridOffset);
 	void connectRoomsCorridors(std::vector<std::vector<vec2i>>& corrdirosOffsets, vec2i& gridOffset);
 	void randomizeMap();
+
+	void createTeam(Team& t, int roomRow);
 	void addConsumbles();
 	void addObstacles();
 	void removeConsumablesOccupation();
@@ -34,6 +36,7 @@ public:
 	static std::vector<Team>& getGameTeams() { return game->getTeams(); }
 	static std::vector<Room>& getGameRooms() { return game->getRooms(); }
 	static std::vector<Corridor>& getGameCorridors() { return game->getCorridors(); }
+	void createTeams();
 	Room* getRoom(vec2f& cellLocation);
 
 	void draw();

@@ -1,4 +1,7 @@
 #include "Game.hpp"
+#include "Bot.hpp"
+#include "SupportBot.hpp"
+#include "Team.hpp"
 #include "Drawer.hpp"
 #include "vec2.h"
 
@@ -219,6 +222,59 @@ void Game::randomizeMap()
 	vector<vector<vec2i>> corrdiorOffsets = generateCorridorsOn2DGrid(roomsWH, gridOffset);
 
 	connectRoomsCorridors(corrdiorOffsets, gridOffset);
+}
+
+
+void Game::createTeam(Team& t, int roomRow)
+{
+	constexpr auto NUM_ASSAULT_BOT = 2;
+	constexpr auto NUM_SUPPORT_BOT = 1;
+
+	for (auto i = 0; i < NUM_ASSAULT_BOT; i++) {
+		int roomIndex = roomRow * MAX_ROOM_COLS + i;
+		Room& r = rooms[roomIndex];
+		vec2f& rXY = r.getXYOffset();
+		/* start location is cell 0, 0 of the cell */
+		vec2f location(rXY.x, rXY.y);
+		vec2f maxSpeed = vec2f(1, 1);
+
+		Bot* bot = new Bot(MAX_HEALTH, MAX_BULLETS, MAX_GRENADES, t, location, maxSpeed, location, 0.9f, r);
+		vector<Bot*> bots = t.getBots();
+		bots.push_back(bot);
+		/* probably not required */
+		t.setBots(bots);
+	}
+
+	for (auto i = 0; i < NUM_SUPPORT_BOT; i++) {
+		int roomIndex = roomRow * MAX_ROOM_COLS + i + NUM_ASSAULT_BOT;
+		Room& r = rooms[roomIndex];
+		vec2f& rXY = r.getXYOffset();
+		/* start location is cell 0, 0 of the cell */
+		vec2f location(rXY.x, rXY.y);
+		vec2f maxSpeed = vec2f(1, 1);
+
+		Bot* bot = new SupportBot(MAX_HEALTH, MAX_BULLETS, MAX_GRENADES, t, location, maxSpeed, location, 0.9f, r);
+		vector<Bot*> bots = t.getBots();
+		bots.push_back(bot);
+		/* probably not required */
+		t.setBots(bots);
+	}
+
+}
+
+void Game::createTeams()
+{
+	/* start bots on rows 0 and 2 */
+	int roomRowIndecies[2] = { 0, 2 };
+
+	for (auto& roomRow : roomRowIndecies) {
+		teams.push_back(Team());
+		Team& t = teams.back();
+		createTeam(t, roomRow);
+	}
+
+	teams[0].setTeamColor(DrawerColor::GREEN);
+	teams[1].setTeamColor(DrawerColor::YELLOW);
 }
 
 Game::Game()
