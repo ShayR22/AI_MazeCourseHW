@@ -1,9 +1,147 @@
 #include "CollisionLogic.hpp"
-#include "Room.hpp"
+#include "Game.hpp"
+
 #include "Cell.hpp"
+#include "Bot.hpp"
 #include <iostream>
 
 using namespace std;
+
+CollisionLogic::CollisionLogic() : teams(Game::getGameTeams()), rooms(Game::getGameRooms()), corridors(Game::getGameCorridors())
+{
+
+}
+
+void CollisionLogic::handleCollisions()
+{
+	/*
+	* handle collision between:
+	* - bot vs consumables
+	* - bot vs projectiles
+	* - projectile vs obstacle
+	*/
+
+	handleCollisionBetweenBots2Consumables();
+	handleCollisionBetweenBots2Projectiles();
+}
+
+void CollisionLogic::handleCollisionBetweenBots2Consumables()
+{
+	for (auto& team : teams) {
+		for (auto& bot : team.getBots()) {
+			handleCollisionBetweensingleBot2Consumables(bot);
+		}
+	}
+	
+}
+
+void CollisionLogic::handleCollisionBetweensingleBot2Consumables(Bot* bot)
+{
+	BoardCells* board = &bot->getBoardCells();
+	if (!board->getShootable())
+		return;
+
+	Room* room = static_cast<Room*>(board);
+
+	Cell* src = &bot->getCellLocation();
+
+	for (auto& consumable : room->getConsumables(ConsumableType::AMMO)) {
+		Cell* dst = consumable->getLocation();
+		if (dst == src) {
+			consumable->consume(*bot);
+			return;
+		}
+	}
+	
+	for (auto& consumable : room->getConsumables(ConsumableType::HEALTH)) {
+		Cell* dst = consumable->getLocation();
+		if (dst == src) {
+			consumable->consume(*bot);
+			return;
+		}
+	}
+}
+
+void CollisionLogic::handleCollisionBetweenBots2Projectiles()
+{
+	vector<Bot*> bots;
+	for (auto& room : rooms) {
+		for (auto& enemyTeam : teams) {
+
+			for (auto& team : teams) {
+				// check only in teams which are NOT the same team of enemy projectiles
+				if (&team == &enemyTeam) {
+					continue;
+				}	
+				// TODO:
+
+				bots = getBotsInsideRoom(room, team);
+				handleCollisionBetweenTeam2EnemyProjectilesInRoom(room, bots, enemyTeam);
+			}
+		}
+	}
+}
+
+std::vector<Bot*> CollisionLogic::getBotsInsideRoom(Room& room, Team& team)
+{
+	vector<Bot*> bots;
+	for (auto& bot : team.getBots()) {
+		if (&bot->getBoardCells() == &room)
+			bots.push_back(bot);
+	}
+	return bots;
+}
+
+vector<Projectile*> CollisionLogic::extractProjectileInRoom(Room &room, Team &team)
+{
+	vec2f projectileLocation;
+	vector<vec2f> points;
+	vector<Projectile*> projectilesResult;
+
+	room.getShape(points);
+	float xmin = points[0].x, xmax = points[2].x, ymin = points[0].y, ymax = points[2].y;
+	for (auto& projectile : team.getProjectiles()) {
+		projectileLocation = projectile->getLocation();
+		if (projectileLocation.x >= xmin && projectileLocation.x <= xmax
+			&& projectileLocation.y >= ymin && projectileLocation.y <= ymax)
+			projectilesResult.push_back(projectile);
+	}
+
+	return projectilesResult;
+}
+
+
+// ASSUNPTION: Enemy projectiles ate NOT relate to the team!
+void CollisionLogic::handleCollisionBetweenTeam2EnemyProjectilesInRoom(Room& room, vector<Bot*> bots, Team& enemyTeam)
+{
+	vector<Projectile*> enemyProjectiles;
+
+	Projectile* projectile;
+
+	for (auto& bot : bots) {
+		// each iteration we want to get the updated enemy projectiles
+		enemyProjectiles = extractProjectileInRoom(room, enemyTeam);
+		for (unsigned int pos = 0; pos < enemyProjectiles.size(); pos++) {
+			projectile = enemyProjectiles[pos];
+			if (isBotClose2Projectile(bot, projectile)) {
+				bot->decreaseHealth(static_cast<int>(projectile->calculatePower()));
+				enemyTeam.unregisterProjectile(pos);
+
+
+			}
+		}
+
+
+		// to be sure it was cleaned
+		enemyProjectiles.clear();
+	}
+}
+
+bool CollisionLogic::isBotClose2Projectile(Bot* bot, Projectile* projectile)
+{
+	vec2f v = projectile->getLocation();
+	return bot->getLocation().dist(v) <= BOT_RADIUS + projectile->getBoundingRadius();
+}
 
 vec2f CollisionLogic::getCollision(vec2f& p, vec2f& dir, std::vector<vec2f>& points) {
 	Line2D line;

@@ -15,6 +15,7 @@ private:
 public:
 	Team();
 	void registerProjectile(Projectile& projectile);
+	void unregisterProjectile(int position);
 	Bot* isSupportBotAlive();
 
 	void update();

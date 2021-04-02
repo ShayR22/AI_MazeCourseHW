@@ -2,6 +2,7 @@
 #include "Drawer.hpp"
 #include "Cell.hpp"
 #include "GamePoint.hpp"
+#include "CollisionLogic.hpp"
 #include <iostream>
 #include <stack>
 #include <map>
@@ -27,10 +28,14 @@ void Bot::roadToTargetAtTheSameRoom(Cell* target)
 
 void Bot::fight(Cell* target)
 {
-	BoardCells& room = this->board;
+	BoardCells& boardCells = this->board;
 	Cell& mylocation = getCellLocation();
-	if (/*isInSight(BoardCells & room, mylocation,*target)*/1) {
-		/*CODE*/
+
+	Room* room = dynamic_cast<Room*>(&boardCells);
+
+	if (!room) {
+		// if the fight was activated in 
+		return;
 	}
 	roadToTargetAtTheSameRoom(target);
 }

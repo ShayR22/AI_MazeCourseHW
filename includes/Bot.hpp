@@ -11,6 +11,7 @@
 #define MAX_HEALTH 100
 #define HEALTH_THRESHOLD 50
 #define AMMO_THRESHOLD 10
+#define BOT_RADIUS 0.5f
 
 class Bot : public CellMovingObject {
 private:
@@ -50,6 +51,9 @@ public:
 	inline void setTeam(Team& team) { this->team = team; }
 	inline void setTeamColor(DrawerColor teamColor) { this->teamColor = teamColor; }
 
+
+	inline void increaseHealth(int incHealth) { setHealth(std::min(health + incHealth, MAX_HEALTH)); }
+	inline void decreaseHealth(int decHealth) { setHealth(std::max(health - decHealth, 0)); }
 
 	inline bool isAmmoFull() { return (numBullets < MAX_BULLETS &&  + numGrenades < MAX_GRENADES); }
 	inline bool isFullHealth() { return health < MAX_HEALTH; }

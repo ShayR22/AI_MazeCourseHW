@@ -11,6 +11,14 @@ void Team::registerProjectile(Projectile& projectile)
 	projectiles.push_back(&projectile);
 }
 
+void Team::unregisterProjectile(int position)
+{
+	Projectile* p = projectiles[position];
+	projectiles.erase(projectiles.begin() + position);
+	if (p)
+		delete p;
+}
+
 Bot* Team::isSupportBotAlive()
 {
 	for (auto& bot : bots) {

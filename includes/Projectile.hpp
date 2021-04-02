@@ -7,6 +7,7 @@ class Team;
 
 class Projectile : public MovingObject{
 protected:
+	vec2f initalLocation;
 	int damage;
 	Team* teamPtr;
 	unsigned int id;
@@ -17,8 +18,13 @@ public:
 	virtual void update();
 	virtual void draw() = 0;
 
+	float calculatePower();
+
 	inline int getDamage() { return damage; }
 	inline void setDamage(int damage) { this->damage = damage; };
+
+	inline vec2f& getInitalLocation() { return initalLocation; }
+	inline void setInitalLocation(vec2f& initalLocation) { this->initalLocation = initalLocation; }
 };
 
 #endif

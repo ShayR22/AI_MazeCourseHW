@@ -22,6 +22,9 @@ bool Consumable::canConsume(Bot& p)
 		else
 			return true;
 	}
+	else {
+		return false;
+	}
 }
 
 void Consumable::consume(Bot& p)
