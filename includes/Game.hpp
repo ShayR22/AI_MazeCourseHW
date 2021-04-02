@@ -23,6 +23,7 @@ private:
 	void randomizeMap();
 	void addConsumbles();
 	void addObstacles();
+	void removeConsumablesOccupation();
 
 public:
 	Game();

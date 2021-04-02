@@ -228,7 +228,23 @@ Game::Game()
 	randomizeMap();
 	addConsumbles();
 	addObstacles();
+	removeConsumablesOccupation();
+}
 
+
+void Game::removeConsumablesOccupation()
+{
+	for (auto& r : rooms) {
+		vector<Consumable*>& ammoBoxes = r.getAmmoBoxes();
+		vector<Consumable*>& healthBoxes = r.getHealthBoxes();
+		for (auto& ab : ammoBoxes) {
+			ab->getLocation()->setIsOccupy(false);
+		}
+
+		for (auto& hb : healthBoxes) {
+			hb->getLocation()->setIsOccupy(false);
+		}
+	}
 }
 
 
@@ -256,18 +272,6 @@ void Game::addConsumbles()
 			cellY = rand() % (r.getCells().size() - 3) + 1;
 		} while (r.getCells()[cellY][cellX].getIsOccupy());
 		r.addHealthBox(cellX, cellY, healthAmmount, isHidden);
-	}
-
-	for (auto& r : rooms) {
-		vector<Consumable*>& ammoBoxes = r.getAmmoBoxes();
-		vector<Consumable*>& healthBoxes = r.getHealthBoxes();
-		for (auto& ab : ammoBoxes) {
-			ab->getLocation()->setIsOccupy(false);
-		}
-
-		for (auto& hb : healthBoxes) {
-			hb->getLocation()->setIsOccupy(false);
-		}
 	}
 }
 
@@ -309,8 +313,6 @@ void Game::addObstacles()
 
 		isHorizontal = !isHorizontal;
 	}
-
-
 }
 
 Game* Game::getInstance()
