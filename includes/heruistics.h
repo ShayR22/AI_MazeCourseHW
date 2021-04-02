@@ -6,7 +6,7 @@
 template <class T>
 float manhattan_distance(T* src, T* tgt)
 {
-	return fabs(src->getX() - tgt->getX()) + fabs(src->getY() - tgt->getY());
+	return static_cast<float>(fabs(src->getX() - tgt->getX()) + fabs(src->getY() - tgt->getY()));
 }
 
 template <class T>
