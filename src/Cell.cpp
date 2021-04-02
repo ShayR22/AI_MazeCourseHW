@@ -13,5 +13,8 @@ Cell::Cell(const Cell& other) : x(other.x), y(other.y), isOccupy(other.isOccupy)
 
 void Cell::draw(float offsetX, float offsetY)
 {
-	Drawer::rect(offsetX, offsetY, 1, 1, DrawerColor::WHITE);
+	float x = offsetX + this->x;
+	float y = offsetY + this->y;
+
+	Drawer::rect(x, y, 1.0f, 1.0f, DrawerColor::WHITE);
 }
