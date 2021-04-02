@@ -29,6 +29,9 @@ void Drawer::setColor(DrawerColor color)
 	case DrawerColor::PURPULE:
 		glColor3d(1, 0, 1);
 		break;
+	case DrawerColor::YELLOW:
+		glColor3d(1, 1, 0);
+		break;
 	}
 }
 

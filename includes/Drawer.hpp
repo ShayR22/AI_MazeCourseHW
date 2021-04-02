@@ -9,7 +9,8 @@ enum class DrawerColor{
 	RED,
 	BLUE,
 	GREEN,
-	PURPULE
+	PURPULE,
+	YELLOW
 };
 
 class Drawer {
