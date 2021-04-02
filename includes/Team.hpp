@@ -11,8 +11,10 @@ private:
 	std::vector<Projectile*> projectiles;
 	std::vector<Bot*> bots;
 public:
+	Team();
 	void registerProjectile(Projectile& projectile);
-	Bot* isSupportBotAlive() { return nullptr; }
+	Bot* isSupportBotAlive();
+
 	void update();
 
 	inline std::vector<Projectile*> getProjectiles() { return projectiles; }
@@ -20,6 +22,8 @@ public:
 
 	inline void setProjectiles(std::vector<Projectile*> projectiles) { this->projectiles = projectiles; }
 	inline void setBots(std::vector<Bot*> bots) { this->bots = bots; }
+
+	void draw();
 };
 
 #endif
