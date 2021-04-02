@@ -35,7 +35,7 @@ public:
 	static std::vector<Team>& getGameTeams() { return game->getTeams(); }
 	static std::vector<Room>& getGameRooms() { return game->getRooms(); }
 	static std::vector<Corridor>& getGameCorridors() { return game->getCorridors(); }
-
+	Room* getRoom(vec2f& cellLocation);
 
 	void draw();
 	void start();

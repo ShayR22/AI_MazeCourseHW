@@ -325,6 +325,15 @@ Game* Game::getInstance()
 	return game;
 }
 
+Room* Game::getRoom(vec2f& cellLocation)
+{
+	for (auto& room : rooms) {
+		if (room.isRelated2CellLocation(cellLocation))
+			return &room;
+	}
+	return nullptr;
+}
+
 void Game::draw()
 {
 
