@@ -284,6 +284,7 @@ stack<GamePoint> ConnectorPathFinder::getPath(GamePoint &gamePointTarget)
 	return path;
 }
 
+#define CONNECTOR_PATH_DEUBG 0
 void ConnectorPathFinder::draw()
 {
 	/* draw nodes */
@@ -313,6 +314,24 @@ void ConnectorPathFinder::draw()
 		else {
 			Drawer::line(sx, sy, tx, ty, DrawerColor::BLUE);
 		}
+	}
+
+	if (!CONNECTOR_PATH_DEUBG) {
+		return;
+	}
+
+	stack<GamePoint> path = generatePath();
+	while (!path.empty()) {
+		GamePoint p = path.top();
+		path.pop();
+
+		vec2f& bXY = p.board->getXYOffset();
+		Cell* c = p.cell;
+
+		float x = bXY.x + c->getX();
+		float y = bXY.y + c->getY();
+
+		Drawer::rect(x + 0.1f, y + 0.1f, 0.8f, 0.8f, DrawerColor::PURPULE);
 	}
 }
 
