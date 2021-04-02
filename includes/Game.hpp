@@ -25,7 +25,6 @@ private:
 	void addObstacles();
 	void removeConsumablesOccupation();
 
-public:
 	Game();
 	static Game* game;
 public:
