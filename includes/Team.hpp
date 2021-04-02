@@ -12,6 +12,7 @@ private:
 	std::vector<Bot*> bots;
 public:
 	void registerProjectile(Projectile& projectile);
+	Bot* isSupportBotAlive() { return nullptr; }
 	void update();
 
 	inline std::vector<Projectile*> getProjectiles() { return projectiles; }
