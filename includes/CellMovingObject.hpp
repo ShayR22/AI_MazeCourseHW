@@ -8,7 +8,7 @@
 class CellMovingObject : public MovingObject {
 protected:
 	vec2i lastPos;
-	BoardCells& board;
+	BoardCells* board;
 	BoardCells* nextBoard;
 
 	vec2f getCellCenter(BoardCells& board, Cell& cell);
@@ -18,8 +18,8 @@ public:
 	inline void setLastPos(vec2i& lastPos) { this->lastPos = lastPos; }
 	inline vec2i& getLastPos() { return this->lastPos; }
 
-	inline void setBoardCells(BoardCells& board) { this->board = board; }
-	inline BoardCells& getBoardCells() { return board; }
+	inline void setBoardCells(BoardCells& board) { this->board = &board; }
+	inline BoardCells& getBoardCells() { return *board; }
 
 	virtual void setTarget(BoardCells& board, Cell &cell);
 	virtual void setLocation(BoardCells& board,Cell &cell);

@@ -6,13 +6,18 @@
 #include "Room.hpp"
 #include "Corridor.hpp"
 #include <vector>
+#include <mutex>
 
 class Game {
 private:
-	CollisionLogic collisionLogic;
-	std::vector<Team> teams;
-	std::vector<Room> rooms;
-	std::vector<Corridor> corridors;
+	bool gameOver;
+	CollisionLogic* collisionLogic;
+	std::vector<Team*> teams;
+	std::vector<Room*> rooms;
+	std::vector<Corridor*> corridors;
+	std::mutex lock;
+
+	void updateGameOver();
 
 	CellMat generateCellMat(int numRows, int numCols);
 	std::vector<std::vector<vec2i>> generateRoomsOn2DGrid(vec2i& gridOffset, vec2i& maxWH);
@@ -31,28 +36,30 @@ private:
 	static Game* game;
 public:
 	Game(const Game& other) = delete;
+	~Game();
 	void operator=(const Game& other) = delete;
 	static Game* getInstance();
-	static std::vector<Team>& getGameTeams() { return game->getTeams(); }
-	static std::vector<Room>& getGameRooms() { return game->getRooms(); }
-	static std::vector<Corridor>& getGameCorridors() { return game->getCorridors(); }
+	static std::vector<Team*>& getGameTeams() { return game->getTeams(); }
+	static std::vector<Room*>& getGameRooms() { return game->getRooms(); }
+	static std::vector<Corridor*>& getGameCorridors() { return game->getCorridors(); }
+	static void killGameBot(Bot* bot);
 	void createTeams();
 	Room* getRoom(vec2f& cellLocation);
 
 	void draw();
-	void start();
+	void update();
 	
-	inline void setCollisionLogic(CollisionLogic& collisionLogic) { this->collisionLogic = collisionLogic;}
-	inline CollisionLogic& getCollisionLogic() { return collisionLogic; }
+	inline void setCollisionLogic(CollisionLogic& collisionLogic) { this->collisionLogic = &collisionLogic;}
+	inline CollisionLogic& getCollisionLogic() { return *collisionLogic; }
 
 	inline void setTeams() { this->teams = teams; }
-	inline std::vector<Team>& getTeams() { return teams; }
+	inline std::vector<Team*>& getTeams() { return teams; }
 
 	inline void setRooms() { this->rooms = rooms; }
-	inline std::vector<Room>& getRooms() { return rooms; }
+	inline std::vector<Room*>& getRooms() { return rooms; }
 
 	inline void setCorridors() { this->corridors = corridors; }
-	inline std::vector<Corridor>& getCorridors() { return corridors; }
+	inline std::vector<Corridor*>& getCorridors() { return corridors; }
 };
 
 #endif

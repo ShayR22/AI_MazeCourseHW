@@ -5,9 +5,11 @@
 #include "Team.hpp"
 #include "PathFinder.hpp"
 #include "Drawer.hpp"
+#include <iostream>
+#include <chrono>
 
-#define MAX_BULLET_SPEED 0.1f
-#define MAX_GRENADE_SPEED 0.1f
+#define MAX_BULLET_SPEED 0.025f
+#define MAX_GRENADE_SPEED 0.01f
 #define MAX_BULLETS 20
 #define MAX_GRENADES 20
 #define MAX_HEALTH 100
@@ -24,8 +26,15 @@ private:
 	PathFinder pathFinder;
 	DrawerColor teamColor;
 
+	std::chrono::high_resolution_clock::time_point lastBulletShot;
+	std::chrono::high_resolution_clock::time_point lastGrenadeShot;
+	std::chrono::high_resolution_clock::time_point lastFire;
+
+
+	bool canFire(std::chrono::high_resolution_clock::time_point& fire, double shotTimeoutMS);
+
 	/*pathfinder returns nullptr board if the target is at the same boardcell with the player*/
-	inline bool isTargetAtTheSameRoom(BoardCells* targetBoard) { return !targetBoard || (board.getShootable() && targetBoard->getShootable());}
+	inline bool isTargetAtTheSameRoom(BoardCells* targetBoard) { return !targetBoard || (board->getShootable() && targetBoard->getShootable());}
 	void roadToTargetAtTheSameRoom(Cell* target);
 	void roadToTeammate(GamePoint& destLocation);
 	void roadToConsumable(std::stack<GamePoint>& pathToConsumable);
@@ -39,7 +48,7 @@ private:
 public:
 	Bot(int health, int numBullets, int numGrenades, Team& team, vec2f& location, vec2f& maxSpeed, vec2f& target, float boundingRadius, BoardCells& board);
 
-	void updateBot();
+	void update();
 	void shootBullet(Cell& target);
 	void throwGrenade(Cell& target);
 	//void createProjectile(Cell& target);

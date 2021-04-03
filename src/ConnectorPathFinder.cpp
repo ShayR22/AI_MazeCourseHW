@@ -50,20 +50,20 @@ void ConnectorPathFinder::generateNodesAndEdges()
 
 	/* iterate on corridros */
 	for (auto& corridor : corridors) {
-		vec2f& cXY = corridor.getXYOffset();
+		vec2f& cXY = corridor->getXYOffset();
 		/* iterate on corrdiror rooms */
-		for (auto& cr : corridor.getRoomConnections()) {
+		for (auto& cr : corridor->getRoomConnections()) {
 
 			/* create first node from the corridor*/
 			Cell& c = *cr.first;
 
-			GamePoint tempGamePoint1(&corridor, &c);
+			GamePoint tempGamePoint1(corridor, &c);
 			nodes.push_back(new GamePointNode(tempGamePoint1));
 			GamePointNode* gpn1 = nodes.back();
 			Room* r = cr.second;
 
 			/* find in room the cell that is connected to the corridor's cell */
-			Cell* rCell = r->getConnectingCell(corridor);
+			Cell* rCell = r->getConnectingCell(*corridor);
 			if (rCell == nullptr) {
 				cout << "something went wrong couldn't find connecting cell of room" << endl;
 				return;
@@ -105,13 +105,15 @@ void ConnectorPathFinder::generateNodesAndEdges()
 }
 
 ConnectorPathFinder::ConnectorPathFinder() : cellMovingObject(nullptr), teams(Game::getGameTeams()),
-rooms(Game::getGameRooms()), corridors(Game::getGameCorridors()), start(nullptr), target(nullptr)
+rooms(Game::getGameRooms()), corridors(Game::getGameCorridors()), start(nullptr), target(nullptr), isStartNodeExistingNode(false),
+	isTargetNodeExistingNode(false)
 {
 	generateNodesAndEdges();
 }
 
 ConnectorPathFinder::ConnectorPathFinder(CellMovingObject& cellMovingObject) : cellMovingObject(&cellMovingObject), teams(Game::getGameTeams()),
-rooms(Game::getGameRooms()), corridors(Game::getGameCorridors()), start(nullptr), target(nullptr)
+rooms(Game::getGameRooms()), corridors(Game::getGameCorridors()), start(nullptr), target(nullptr), isStartNodeExistingNode(false),
+	isTargetNodeExistingNode(false)
 {
 	generateNodesAndEdges();
 }
@@ -119,32 +121,45 @@ rooms(Game::getGameRooms()), corridors(Game::getGameCorridors()), start(nullptr)
 
 void ConnectorPathFinder::removeStartTarget()
 {
-	nodes.erase(std::remove(nodes.begin(), nodes.end(), start), nodes.end());
-	nodes.erase(std::remove(nodes.begin(), nodes.end(), target), nodes.end());
 
-	delete start;
-	delete target;
 
-	for (auto& edge : startEdges) {
-		edges.erase(std::remove(edges.begin(), edges.end(), edge), edges.end());
+	if (!isStartNodeExistingNode) {
+		for (auto& edge : startEdges) {
+			edges.erase(std::remove(edges.begin(), edges.end(), edge), edges.end());
+		}
+		startEdges.clear();
+		nodes.erase(std::remove(nodes.begin(), nodes.end(), start), nodes.end());
+
+		delete start;
+		start = nullptr;
 	}
-	startEdges.clear();
 
-	for (auto& edge : targetEdges) {
-		edges.erase(std::remove(edges.begin(), edges.end(), edge), edges.end());
+	if (!isTargetNodeExistingNode) {
+		for (auto& e : targetEdges) {
+			GamePointNode* n = e->getFrom();
+			n->removeEdge(*e);
+		}
+
+		for (auto& edge : targetEdges) {
+			edges.erase(std::remove(edges.begin(), edges.end(), edge), edges.end());
+		}
+		targetEdges.clear();
+
+		nodes.erase(std::remove(nodes.begin(), nodes.end(), target), nodes.end());
+		delete target;
+		target = nullptr;
 	}
-	targetEdges.clear();
 }
 
-bool ConnectorPathFinder::isInNodes(GamePoint& point)
+GamePointNode* ConnectorPathFinder::isInNodes(GamePoint& point)
 {
 	for (auto& n : nodes) {
 		vec2f& nXY = n->getXY();
 		if (point.getAbsoluteX() == nXY.x && point.getAbsoluteY() == nXY.y) {
-			return true;
+			return n;
 		}
 	}
-	return false;
+	return nullptr;
 }
 
 void ConnectorPathFinder::addStartTarget(GamePoint& gamePointTarget)
@@ -158,7 +173,10 @@ void ConnectorPathFinder::addStartTarget(GamePoint& gamePointTarget)
 	BoardCells& startB = cellMovingObject->getBoardCells();
 	Cell& startC = cellMovingObject->getCellLocation();
 	GamePoint startPoint(&startB, &startC);
-	if (!isInNodes(startPoint)) {
+	isStartNodeExistingNode = true;
+	start = isInNodes(startPoint);
+	if (!start) {
+		isStartNodeExistingNode = false;
 		start = new GamePointNode(startPoint);
 		for (auto& n : nodes) {
 			if (n->getGameLocation().board != &startB) {
@@ -180,7 +198,10 @@ void ConnectorPathFinder::addStartTarget(GamePoint& gamePointTarget)
 	 */
 	 /* verify start isn't already a node (meaning on a connector) */
 
-	if (!isInNodes(gamePointTarget)) {
+	isTargetNodeExistingNode = true;
+	target = isInNodes(gamePointTarget);
+	if (!target) {
+		isTargetNodeExistingNode = false;
 		target = new GamePointNode(gamePointTarget);
 		for (auto& n : nodes) {
 			if (n->getGameLocation().board != target->getGameLocation().board) {
@@ -249,7 +270,7 @@ stack<GamePoint> ConnectorPathFinder::generatePath()
 {
 	stack<GamePoint> path;
 	GamePointNode* temp = target;
-	while (temp != nullptr)
+	while (temp != nullptr && temp != start)
 	{
 		path.push(temp->getGameLocation());
 		temp = temp->getParent();
@@ -265,6 +286,11 @@ stack<GamePoint> ConnectorPathFinder::getPath(GamePoint &gamePointTarget)
 
 	while (!openSet.empty()) {
 		GamePointNode* lowestF = findNeighborWithLowestFuncValue();
+		if (!lowestF) {
+			cout << "lowestF is null error" << endl;
+			stack<GamePoint> gp;
+			return gp;
+		}
 		openSet.erase(lowestF);
 		lowestF->setIsVisiting(false);
 		closedSet.insert(lowestF);

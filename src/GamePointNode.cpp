@@ -18,6 +18,11 @@ void GamePointNode::addEdge(GamePointEdge& edge)
     edges.push_back(&edge);
 }
 
+void GamePointNode::removeEdge(GamePointEdge& edge)
+{
+    edges.erase(remove(edges.begin(), edges.end(), &edge), edges.end());
+}
+
 vector<GamePointNode*> GamePointNode::getNieghbors()
 {
     vector<GamePointNode*> neighbors;

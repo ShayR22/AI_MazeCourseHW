@@ -3,9 +3,13 @@
 
 unsigned int Projectile::PROJECTILE_ID = 0;
 
+using namespace std;
+
+constexpr auto BULLET_MIN_DAMAGE = 10;
+
 Projectile::Projectile(vec2f location, vec2f startSpeed, vec2f target, float boundingRadius, int damage, Team* teamPtr) 
 	: MovingObject(location, startSpeed, target, boundingRadius), damage(damage), teamPtr(teamPtr), id(PROJECTILE_ID++),
-	initalLocation(location)
+	initalLocation(location), requireCreation(false)
 {
 
 }
@@ -14,9 +18,18 @@ float Projectile::calculatePower()
 {
 	vec2f dist = location - initalLocation;
 	float distance = std::max(dist.length(), 1.0f);
-	return damage / distance;
+	int damagePower = static_cast<int>(damage / distance);
+	damagePower *= damagePower / 2;
+
+	return static_cast<float>(std::max(damagePower, BULLET_MIN_DAMAGE));
 }
 
+void Projectile::creation()
+{
+	/* DO NOTHING 
+	 * should be override if required by drived class
+	 */
+}
 
 void Projectile::update() {
 	if (!isAtTarget()) {

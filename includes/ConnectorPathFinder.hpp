@@ -19,12 +19,15 @@ class Bot;
 
 class ConnectorPathFinder {
 private:
-	std::vector<Team>& teams;
-	std::vector<Room>& rooms;
-	std::vector<Corridor>& corridors;
+	std::vector<Team*>& teams;
+	std::vector<Room*>& rooms;
+	std::vector<Corridor*>& corridors;
+	
 	CellMovingObject* cellMovingObject;
+	bool isStartNodeExistingNode;
 	GamePointNode *start;
 	std::vector<GamePointEdge*> startEdges;
+	bool isTargetNodeExistingNode;
 	GamePointNode *target;
 	std::vector<GamePointEdge*> targetEdges;
 
@@ -50,7 +53,7 @@ private:
 	std::stack<GamePoint> generatePath();
 	void removeStartTarget();
 
-	bool isInNodes(GamePoint &point);
+	GamePointNode* isInNodes(GamePoint &point);
 	void generateNodesAndEdges();
 public:
 	ConnectorPathFinder();

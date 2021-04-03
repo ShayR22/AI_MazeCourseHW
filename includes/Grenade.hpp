@@ -21,13 +21,13 @@ public:
 
 	virtual void draw() override;
 	virtual void update() override;
+	virtual void creation();
+
 
 private:
 	bool explosionTimeoutPassed();
 	void registerFragments();
-	void registerSingleFragment(vec2f speed);
 	void calcTarget(vec2f& location, vec2f& speed, vec2f& myTarget);
-	void dummyCalcTarget(vec2f& location, vec2f& speed, vec2f& myTarget);
 };
 
 #endif

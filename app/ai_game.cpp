@@ -23,6 +23,7 @@ void display()
 
 void idle()
 {
+	game->update();
 	glutPostRedisplay(); // indirect call to display
 }
 

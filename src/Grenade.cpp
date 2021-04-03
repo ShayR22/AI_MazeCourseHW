@@ -20,15 +20,22 @@ void Grenade::update()
 		return;
 	}
 
-	if (explosionTimeoutPassed()) {
-		setTarget(location);
-		registerFragments();
-		wasAlreadyExplode = true;
+	Projectile::update();
+
+	if (explosionTimeoutPassed() || isAtTarget()) {
+		requireCreation = true;
 		return;
 	}
-
-	Projectile::update();
 }
+
+void Grenade::creation()
+{
+	setTarget(location);
+	registerFragments();
+	wasAlreadyExplode = true;
+	requireCreation = false;
+}
+
 
 bool Grenade::explosionTimeoutPassed()
 {
@@ -44,10 +51,8 @@ using namespace std;
 void Grenade::registerFragments()
 {
 	int angleDelta = (int)(360. / numFragments);
-	cout << angleDelta << endl;
 	for (int angle = 0; angle < 360; angle += angleDelta) {
 		vec2f direction((float)cos(angle * M_PI / 180.), (float)sin(angle * M_PI / 180.));
-		// cout << "(" << (float)cos(angle * M_PI / 180.) << ", " << (float)sin(angle * M_PI / 180.) << ")" << endl;
 		vec2f myLocation = location;
 		vec2f mySpeed = maxSpeed;
 		vec2f myTarget;
@@ -55,32 +60,11 @@ void Grenade::registerFragments()
 		calcTarget(myLocation, direction, myTarget);
 		Fragment *f = new Fragment(myLocation, mySpeed, myTarget, boundingRadius / 2.0f, damage, teamPtr);
 		teamPtr->registerProjectile(*f);
-		// registerSingleFragment(speed);
 	}
 }
 
 void Grenade::calcTarget(vec2f& location, vec2f& speed, vec2f& myTarget)
 {
-	/*std::vector<vec2f> points;
-	Game* theGame = Game::getInstance();
-	Room* room = theGame->getRoom(location);
-	if (!room)
-		return;
-
-	float xmin = room->getXYOffset().x;
-	float xmax = xmin + room->getWidth();
-	float ymin = room->getXYOffset().y;
-	float ymax = ymin + room->getHeight();
-
-	points.push_back(vec2f(xmin, ymin));
-	points.push_back(vec2f(xmax, ymin));
-	points.push_back(vec2f(xmax, ymax));
-	points.push_back(vec2f(xmin, ymax));
-
-	room->getShape(points);
-
-	vec2f collisionResult = CollisionLogic::getCollision(location, speed, points);
-	myTarget.set(collisionResult.x, collisionResult.y);*/
 	Game* theGame = Game::getInstance();
 	Room* room = theGame->getRoom(location);
 	vec2f locationRelate2Room = location - room->getXYOffset();
@@ -88,18 +72,6 @@ void Grenade::calcTarget(vec2f& location, vec2f& speed, vec2f& myTarget)
 	// Note: the calculation is based on "room' system' axis"
 	vec2f collisionResult = CollisionLogic::calcCollision(room, locationRelate2Room, speed);
 	myTarget.set(room->getXYOffset().x + collisionResult.x, room->getXYOffset().y + collisionResult.y);
-}
-
-
-void Grenade::dummyCalcTarget(vec2f& location, vec2f& speed, vec2f& myTarget)
-{
-	vec2f dummyDelta = (speed * 500);
-	myTarget = location + dummyDelta;
-}
-
-void Grenade::registerSingleFragment(vec2f speed)
-{
-	// TODO: Create a fragment and register to team
 }
 
 void Grenade::draw()

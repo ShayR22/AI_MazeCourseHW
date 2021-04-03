@@ -60,10 +60,10 @@ vector<vector<vec2i>> Game::generateRoomsOn2DGrid(vec2i& gridOffset, vec2i& maxW
 			vec2f xyOffsets(static_cast<float>(xOffset), static_cast<float>(yOffset));
 			CellMat cells = generateCellMat(width, height);
 
-			Room r = Room(cells, xyOffsets);
+			Room *r = new Room(cells, xyOffsets);
 			rooms.push_back(r);
 
-			CellMat& cellss = rooms.back().getCells();
+			CellMat& cellss = rooms.back()->getCells();
 			vec2i roomWH(width, height);
 			roomsWH[i].push_back(roomWH);
 		}
@@ -87,7 +87,7 @@ vector<vector<vec2i>> Game::generateCorridorsOn2DGrid(vector<vector<vec2i>>& roo
 			vec2f xyOffset(static_cast<float>(xOffset), static_cast<float>(yOffset));
 			CellMat cells = generateCellMat(width, 1);
 
-			corridors.push_back(Corridor(cells, xyOffset));
+			corridors.push_back(new Corridor(cells, xyOffset));
 			corridorsOffsets[0].push_back(vec2i(xOffset, yOffset));
 		}
 	}
@@ -104,7 +104,7 @@ vector<vector<vec2i>> Game::generateCorridorsOn2DGrid(vector<vector<vec2i>>& roo
 			vec2f xyOffset(static_cast<float>(xOffset), static_cast<float>(yOffset));
 			CellMat cells = generateCellMat(1, height);
 
-			corridors.push_back(Corridor(cells, xyOffset));
+			corridors.push_back(new Corridor(cells, xyOffset));
 			corridorsOffsets[1].push_back(vec2i(xOffset, yOffset));
 
 		}
@@ -117,9 +117,9 @@ void Game::connectRoomCorridorLeftToRight(int i, int j, vector<vec2i>& corridors
 {
 	vec2i& offset = corridorsLeftToRight[i * (MAX_ROOM_COLS - 1) + j];
 
-	Room& leftRoom = rooms[i * MAX_ROOM_COLS + j];
-	Room& rightRoom = rooms[i * MAX_ROOM_COLS + j + 1];
-	Corridor& corridor = corridors[i * (MAX_ROOM_COLS - 1) + j];
+	Room& leftRoom = *rooms[i * MAX_ROOM_COLS + j];
+	Room& rightRoom = *rooms[i * MAX_ROOM_COLS + j + 1];
+	Corridor& corridor = *corridors[i * (MAX_ROOM_COLS - 1) + j];
 	int yCell = offset.y - i * gridOffset.y - ROOM_START_OFFSET_Y;
 
 	/* add corridor to left room */
@@ -155,12 +155,12 @@ void Game::connectRoomCorridorTopToBottom(int i, int j, vector<vec2i>& corridors
 {
 	vec2i& offset = corridorsTopToBottom[j * (MAX_ROOM_COLS - 1) + i];
 
-	Room& topRoom = rooms[i * MAX_ROOM_COLS + j];
-	Room& bottomRoom = rooms[(i+1) * MAX_ROOM_COLS + j];
+	Room& topRoom = *rooms[i * MAX_ROOM_COLS + j];
+	Room& bottomRoom = *rooms[(i+1) * MAX_ROOM_COLS + j];
 
 	int numCorridorsLeftToRight = (MAX_ROOM_ROWS * (MAX_ROOM_COLS - 1));
 
-	Corridor& corridor = corridors[numCorridorsLeftToRight + j * (MAX_ROOM_ROWS - 1) + i];
+	Corridor& corridor = *corridors[numCorridorsLeftToRight + j * (MAX_ROOM_ROWS - 1) + i];
 	int xCell = offset.x - j * gridOffset.x - ROOM_START_OFFSET_X;
 
 	/* add corridor to top room */
@@ -228,15 +228,15 @@ void Game::randomizeMap()
 void Game::createTeam(Team& t, int roomRow)
 {
 	constexpr auto NUM_ASSAULT_BOT = 2;
-	constexpr auto NUM_SUPPORT_BOT = 1;
+	constexpr auto NUM_SUPPORT_BOT = 0;
 
 	for (auto i = 0; i < NUM_ASSAULT_BOT; i++) {
 		int roomIndex = roomRow * MAX_ROOM_COLS + i;
-		Room& r = rooms[roomIndex];
+		Room& r = *rooms[roomIndex];
 		vec2f& rXY = r.getXYOffset();
 		/* start location is cell 0, 0 of the cell */
-		vec2f location(rXY.x, rXY.y);
-		vec2f maxSpeed = vec2f(1, 1);
+		vec2f location(rXY.x + 0.5f, rXY.y + 0.5f);
+		vec2f maxSpeed = vec2f(0.01f, 0.01f);
 
 		Bot* bot = new Bot(MAX_HEALTH, MAX_BULLETS, MAX_GRENADES, t, location, maxSpeed, location, 0.9f, r);
 		vector<Bot*> bots = t.getBots();
@@ -247,7 +247,7 @@ void Game::createTeam(Team& t, int roomRow)
 
 	for (auto i = 0; i < NUM_SUPPORT_BOT; i++) {
 		int roomIndex = roomRow * MAX_ROOM_COLS + i + NUM_ASSAULT_BOT;
-		Room& r = rooms[roomIndex];
+		Room& r = *rooms[roomIndex];
 		vec2f& rXY = r.getXYOffset();
 		/* start location is cell 0, 0 of the cell */
 		vec2f location(rXY.x, rXY.y);
@@ -260,6 +260,8 @@ void Game::createTeam(Team& t, int roomRow)
 		t.setBots(bots);
 	}
 
+	collisionLogic = new CollisionLogic();
+
 }
 
 void Game::createTeams()
@@ -268,16 +270,16 @@ void Game::createTeams()
 	int roomRowIndecies[2] = { 0, 2 };
 
 	for (auto& roomRow : roomRowIndecies) {
-		teams.push_back(Team());
-		Team& t = teams.back();
-		createTeam(t, roomRow);
+		teams.push_back(new Team());
+		Team* t = teams.back();
+		createTeam(*t, roomRow);
 	}
 
-	teams[0].setTeamColor(DrawerColor::GREEN);
-	teams[1].setTeamColor(DrawerColor::YELLOW);
+	teams[0]->setTeamColor(DrawerColor::GREEN);
+	teams[1]->setTeamColor(DrawerColor::YELLOW);
 }
 
-Game::Game()
+Game::Game() : collisionLogic(nullptr), gameOver(false)
 {
 	randomizeMap();
 	addConsumbles();
@@ -285,11 +287,27 @@ Game::Game()
 	removeConsumablesOccupation();
 }
 
+Game::~Game()
+{
+	for (auto& team : teams) {
+		delete team;
+	}
+
+	for (auto& room : rooms) {
+		delete room;
+	}
+
+	for (auto& corridor : corridors) {
+		delete corridor;
+	}
+
+}
+
 void Game::removeConsumablesOccupation()
 {
 	for (auto& r : rooms) {
-		vector<Consumable*>& ammoBoxes = r.getAmmoBoxes();
-		vector<Consumable*>& healthBoxes = r.getHealthBoxes();
+		vector<Consumable*>& ammoBoxes = r->getAmmoBoxes();
+		vector<Consumable*>& healthBoxes = r->getHealthBoxes();
 		for (auto& ab : ammoBoxes) {
 			ab->getLocation()->setIsOccupy(false);
 		}
@@ -311,18 +329,18 @@ void Game::addConsumbles()
 
 	for (auto& r : rooms) {
 		do {
-			cellX = rand() % (r.getCells()[0].size() - 3) + 1;
-			cellY = rand() % (r.getCells().size() - 3) + 1;
-		} while (r.getCells()[cellY][cellX].getIsOccupy());
-		r.addAmmoBox(cellX, cellY, numBullets, numGrenades, isHidden);
+			cellX = rand() % (r->getCells()[0].size() - 3) + 1;
+			cellY = rand() % (r->getCells().size() - 3) + 1;
+		} while (r->getCells()[cellY][cellX].getIsOccupy());
+		r->addAmmoBox(cellX, cellY, numBullets, numGrenades, isHidden);
 	}
 
 	for (auto& r : rooms) {
 		do {
-			cellX = rand() % (r.getCells()[0].size() - 3) + 1;
-			cellY = rand() % (r.getCells().size() - 3) + 1;
-		} while (r.getCells()[cellY][cellX].getIsOccupy());
-		r.addHealthBox(cellX, cellY, healthAmmount, isHidden);
+			cellX = rand() % (r->getCells()[0].size() - 3) + 1;
+			cellY = rand() % (r->getCells().size() - 3) + 1;
+		} while (r->getCells()[cellY][cellX].getIsOccupy());
+		r->addHealthBox(cellX, cellY, healthAmmount, isHidden);
 	}
 }
 
@@ -336,16 +354,16 @@ void Game::addObstacles()
 
 	for (auto& r : rooms) {
 		vector<Cell*> cover;
-		int maxWidth = (r.getCells()[0].size() - 1);
-		int maxHeight = (r.getCells().size() - 1);
+		int maxWidth = (r->getCells()[0].size() - 1);
+		int maxHeight = (r->getCells().size() - 1);
 		do {
 			cellX = rand() % (maxWidth - 2) + 1;
 			cellY = rand() % (maxHeight - 2) + 1;
-		} while (r.getCells()[cellY][cellX].getIsOccupy());
+		} while (r->getCells()[cellY][cellX].getIsOccupy());
 
 		if (isHorizontal) {
 			for (int i = cellX; i < maxWidth; i++) {
-				Cell* c = &r.getCells()[cellY][i];
+				Cell* c = &r->getCells()[cellY][i];
 				if (c->getIsOccupy())
 					break;
 				cover.push_back(c);
@@ -353,18 +371,38 @@ void Game::addObstacles()
 		}
 		else {
 			for (int j = cellY; j < maxHeight; j++) {
-				Cell* c = &r.getCells()[j][cellX];
+				Cell* c = &r->getCells()[j][cellX];
 				if (c->getIsOccupy())
 					break;
 				cover.push_back(c);
 			}
 		}
 		
-		r.addWall(healthPoints, destroyFrame,cover);
+		r->addWall(healthPoints, destroyFrame,cover);
 
 		isHorizontal = !isHorizontal;
 	}
 }
+
+void Game::killGameBot(Bot* bot)
+{
+	if (!game) {
+		return;
+	}
+
+	//game->lock.lock();
+	for (auto& t : Game::getGameTeams()) {
+		for (auto& b : t->getBots()) {
+			if (bot == b) {
+				t->removeBot(bot);
+				return;
+			}
+		}
+	}
+	//game->lock.unlock();
+
+}
+
 
 Game* Game::getInstance()
 {
@@ -379,8 +417,8 @@ Game* Game::getInstance()
 Room* Game::getRoom(vec2f& cellLocation)
 {
 	for (auto& room : rooms) {
-		if (room.isRelated2CellLocation(cellLocation))
-			return &room;
+		if (room->isRelated2CellLocation(cellLocation))
+			return room;
 	}
 	return nullptr;
 }
@@ -388,19 +426,49 @@ Room* Game::getRoom(vec2f& cellLocation)
 void Game::draw()
 {
 	for (auto& c : corridors)
-		c.draw();
+		c->draw();
 
 	for (auto& r : rooms)
-		r.draw();
+		r->draw();
 
 	for (auto& t : teams)
-		t.draw();
+		t->draw();
 
 }
 
-void Game::start()
+void Game::updateGameOver()
 {
+	int numAliveTeams = 0;
+	for (auto& t : teams) {
+		if (t->getBots().size() > 0)
+			numAliveTeams++;
+	}
 
+	if (numAliveTeams <= 1) {
+		gameOver = true;
+	}
+}
+
+void Game::update()
+{
+	if (gameOver) {
+		for (auto& t: teams) {
+			if (t->getBots().size() > 0)
+				cout << "Team " <<static_cast<int>(teams[0]->getTeamColor()) << " has Won, ";
+		}
+		cout << "Game Over " << endl;
+		return;
+	}
+
+	for (auto& team : teams) {
+		team->update();
+	}
+
+	if (collisionLogic) {
+		collisionLogic->handleCollisions();
+	}
+
+	updateGameOver();
 }
 
 Game* Game::game = nullptr;

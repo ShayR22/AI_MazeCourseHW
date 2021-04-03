@@ -4,6 +4,7 @@
 #include "Cell.hpp"
 #include "Bot.hpp"
 #include <iostream>
+#include <thread>
 
 using namespace std;
 
@@ -28,11 +29,10 @@ void CollisionLogic::handleCollisions()
 void CollisionLogic::handleCollisionBetweenBots2Consumables()
 {
 	for (auto& team : teams) {
-		for (auto& bot : team.getBots()) {
+		for (auto& bot : team->getBots()) {
 			handleCollisionBetweensingleBot2Consumables(bot);
 		}
-	}
-	
+	}	
 }
 
 void CollisionLogic::handleCollisionBetweensingleBot2Consumables(Bot* bot)
@@ -62,9 +62,16 @@ void CollisionLogic::handleCollisionBetweensingleBot2Consumables(Bot* bot)
 	}
 }
 
+void CollisionLogic::handleCollisionProjectileBetweenTeamsThread(Team* team, Team* enemyTeam, Room* room)
+{
+	vector<Bot*> bots = getBotsInsideRoom(*room, *team);
+	handleCollisionBetweenTeam2EnemyProjectilesInRoom(*room, bots, *enemyTeam);
+}
+
 void CollisionLogic::handleCollisionBetweenBots2Projectiles()
 {
-	vector<Bot*> bots;
+
+	vector<thread> threads;
 	for (auto& room : rooms) {
 		for (auto& enemyTeam : teams) {
 
@@ -73,12 +80,17 @@ void CollisionLogic::handleCollisionBetweenBots2Projectiles()
 				if (&team == &enemyTeam) {
 					continue;
 				}	
-				// TODO:
-
-				bots = getBotsInsideRoom(room, team);
-				handleCollisionBetweenTeam2EnemyProjectilesInRoom(room, bots, enemyTeam);
+				vector<Bot*> bots = getBotsInsideRoom(*room, *team);
+				handleCollisionBetweenTeam2EnemyProjectilesInRoom(*room, bots, *enemyTeam);
+			/*	thread th(&CollisionLogic::handleCollisionProjectileBetweenTeamsThread, this, team, enemyTeam, room);
+				threads.push_back(std::move(th));*/
 			}
 		}
+	}
+
+	for (auto& thread : threads) {
+		if (thread.joinable())
+			thread.join();
 	}
 }
 
@@ -115,7 +127,7 @@ vector<Projectile*> CollisionLogic::extractProjectileInRoom(Room &room, Team &te
 void CollisionLogic::handleCollisionBetweenTeam2EnemyProjectilesInRoom(Room& room, vector<Bot*> bots, Team& enemyTeam)
 {
 	vector<Projectile*> enemyProjectiles;
-
+	vector<Bot*> deadBots;
 	Projectile* projectile;
 
 	for (auto& bot : bots) {
@@ -124,17 +136,26 @@ void CollisionLogic::handleCollisionBetweenTeam2EnemyProjectilesInRoom(Room& roo
 		for (unsigned int pos = 0; pos < enemyProjectiles.size(); pos++) {
 			projectile = enemyProjectiles[pos];
 			if (isBotClose2Projectile(bot, projectile)) {
-				bot->decreaseHealth(static_cast<int>(projectile->calculatePower()));
-				enemyTeam.unregisterProjectile(pos);
+				int damagePower = static_cast<int>(projectile->calculatePower());
+				cout << "damagePower " << damagePower << endl;
+				bot->decreaseHealth(damagePower);
+				cout << "Bot " << static_cast<int>(bot->getTeamColor()) << " has " << bot->getHealth() << " HP" << endl;
 
-
+				if (bot->getHealth() <= 0) {
+					deadBots.push_back(bot);
+				}
+				enemyTeam.unregisterProjectile(projectile);
 			}
 		}
-
-
 		// to be sure it was cleaned
 		enemyProjectiles.clear();
 	}
+
+	for (auto& bot : deadBots) {
+		cout << "Bot " << static_cast<int>(bot->getTeamColor()) << " Died" << endl;
+		Game::killGameBot(bot);
+	}
+	
 }
 
 bool CollisionLogic::isBotClose2Projectile(Bot* bot, Projectile* projectile)
@@ -252,7 +273,6 @@ vector<vec2f> CollisionLogic::extractShape(vector<Cell*>& cover)
 	vector<vec2f> shape = { {minX, maxY}, {maxX, maxY}, {maxX, minY}, {minX, minY} };
 	return shape;
 }
-
 
 bool CollisionLogic::isLineOfSight(Room& r, Cell& src, Cell& tgt)
 {

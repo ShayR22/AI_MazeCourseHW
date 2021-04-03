@@ -40,14 +40,14 @@ Team* PathFinder::getEnemyTeam()
 {
 	for (auto& team : teams) {
 		bool found = false;
-		for (auto& bot : team.getBots()) {
+		for (auto& bot : team->getBots()) {
 			if (bot == cellMovingObject) {
 				found = true;
 			}
 		}
 
 		if (!found) {
-			return &team;
+			return team;
 		}
 	}
 
@@ -68,10 +68,17 @@ Bot* PathFinder::getClosestEnemy(Team& enemyTeam)
 		BoardCells& tb = bot->getBoardCells();
 		Cell& tc = bot->getCellLocation();
 
+		if (!tb.getShootable())
+			continue;
+
 		float tx = tb.getXYOffset().x + tc.getX();
 		float ty = tb.getXYOffset().y + tc.getY();
 
 		float dist = manhattan_distance(sx, sy, tx, ty);
+		/* allow only enemies with at least 1 block distance */
+		if (dist < 1.5f)
+			continue;
+
 		if (dist < minDist) {
 			closestBot = bot;
 			minDist = dist;
@@ -98,6 +105,13 @@ stack<GamePoint> PathFinder::searchClosetEnemy()
 		return s;
 	}
 
+	/* per design if enemy and bot in the same room return target cell and null for board */
+	if (&closetEnemy->getBoardCells() == &cellMovingObject->getBoardCells()) {
+		stack<GamePoint> path;
+		GamePoint gp(nullptr, &closetEnemy->getCellLocation());
+		path.push(gp);
+		return path;
+	}
 	GamePoint targetPoint(&closetEnemy->getBoardCells(), &closetEnemy->getCellLocation());
 
 	return connectorFinder->getPath(targetPoint);
@@ -127,14 +141,14 @@ GamePoint PathFinder::findClosetConsumable(ConsumableType type)
 	vector<Consumable*> consumables;
 	for (auto& r : rooms) {
 		if (type == ConsumableType::AMMO) {
-			consumables = r.getAmmoBoxes();
+			consumables = r->getAmmoBoxes();
 		}
 		else {
-			consumables = r.getHealthBoxes();
+			consumables = r->getHealthBoxes();
 		}
 
 		for (auto& consumable : consumables) {
-			vec2f& tXY = r.getXYOffset();
+			vec2f& tXY = r->getXYOffset();
 			Cell& tc = *consumable->getLocation();
 			float tx = tXY.x + tc.getX();
 			float ty = tXY.y + tc.getY();
@@ -142,10 +156,15 @@ GamePoint PathFinder::findClosetConsumable(ConsumableType type)
 			float dist = manhattan_distance(sx, sy, tx, ty);
 			if (dist < minDist) {
 				minDist = dist;
-				targetBoard = &r;
+				targetBoard = r;
 				targetCell = &tc;
 			}
 		}
+	}
+
+	/* return nullptr if in the same room */
+	if (targetBoard == &sb) {
+		return GamePoint(nullptr, targetCell);
 	}
 
 	return GamePoint(targetBoard, targetCell); 
@@ -213,10 +232,12 @@ vector<Cell*> PathFinder::getCellNeighbors(Cell& cell)
 
 stack<GamePoint> PathFinder::roam()
 {
+	Cell* neighborInAnotherBoard = nullptr;
+	BoardCells* AnotherBoard = nullptr;
+
 	BoardCells& srcBoard = cellMovingObject->getBoardCells();
 	Cell& c = cellMovingObject->getCellLocation();
 	vector<Cell*> neighbors = getCellNeighbors(c);
-
 	BoardCells* targetBoard = &srcBoard;
 
 	/* add connector cell in another board if cell is a conencting cell  */
@@ -228,12 +249,15 @@ stack<GamePoint> PathFinder::roam()
 			if (neighborInAnotherBoard)
 				neighbors.push_back(neighborInAnotherBoard);
 
-			targetBoard = board;
+			AnotherBoard = board;
 			break;
 		}
 	}
 
 	Cell* randomTarget = neighbors[rand() % neighbors.size()];
+	if (randomTarget == neighborInAnotherBoard) {
+		targetBoard = AnotherBoard;
+	}
 
 	GamePoint target(targetBoard, randomTarget);
 	stack<GamePoint> path;

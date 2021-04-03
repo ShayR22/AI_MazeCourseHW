@@ -11,10 +11,16 @@
 
 using namespace std;
 
+constexpr auto GRENADE_TIMEOUT_MS = 2000;
+constexpr auto BULLET_TIMEOUT_MS = 1000;
+constexpr auto FIRE_TIMEOUT_MS = 100;
+
 Bot::Bot(int health, int numBullets, int numGrenades, Team& team, vec2f& location,
 	vec2f& maxSpeed, vec2f& target, float boundingRadius, BoardCells& board)
 	: health(health), numBullets(numBullets), numGrenades(numGrenades), team(team), pathFinder(*this),
-	CellMovingObject(location, maxSpeed, target, boundingRadius, board), teamColor(DrawerColor::WHITE)
+	CellMovingObject(location, maxSpeed, target, boundingRadius, board), teamColor(DrawerColor::WHITE),
+	lastBulletShot(chrono::high_resolution_clock::now()), lastGrenadeShot(chrono::high_resolution_clock::now()),
+	lastFire(chrono::high_resolution_clock::now())
 {
 
 }
@@ -24,52 +30,59 @@ void Bot::roadToTargetAtTheSameRoom(Cell* target)
 	map<Cell*, Cell*> pathToTarget = pathFinder.getRoomPath(target);
 	Cell* mylocation = &getCellLocation();
 	Cell& nextlocation = *pathToTarget[mylocation];
-	setTarget(board,nextlocation);
+	setTarget(*board,nextlocation);
 }
 
 
-void Bot::shootBullet(Cell& t)
+
+bool Bot::canFire(chrono::high_resolution_clock::time_point& shot, double shotTimeoutMs)
 {
-	static chrono::high_resolution_clock::time_point lastShot = chrono::high_resolution_clock::now();
 	chrono::high_resolution_clock::time_point now = chrono::high_resolution_clock::now();
 
-	chrono::duration<double, std::milli> timePassedMS = now - lastShot;
-	if (timePassedMS.count() < 1000) {
+	chrono::duration<double, std::milli> timePassedShotMS = now - shot;
+	chrono::duration<double, std::milli> timePassedFireMS = now - lastFire;
+	if (timePassedShotMS.count() < shotTimeoutMs || timePassedFireMS.count() < FIRE_TIMEOUT_MS) {
+		return false;
+	}
+
+	shot = now;
+	lastFire = now;
+	return true;
+}
+
+void Bot::shootBullet(Cell& t)
+{
+	if (!canFire(lastBulletShot, BULLET_TIMEOUT_MS)) {
 		return;
 	}
-	lastShot = now;
 
-	vec2f src = getCellCenter(board, getCellLocation());
-	vec2f tgt = getCellCenter(board, t);
-	vec2f dir = tgt - src;
-	dir.normalize();
-	vec2f speed = dir * MAX_BULLET_SPEED;
-	float boundingRadius = 0.75;
-	int damage = 10;
+	numBullets--;
+
+	vec2f src = location;
+	vec2f tgt = getCellCenter(*board, t);
+	vec2f maxSpeed(MAX_BULLET_SPEED, MAX_BULLET_SPEED);
+	float boundingRadius = 0.25;
+	int damage = 15;
 	
-	Projectile* p = new Bullet(src, tgt, speed, boundingRadius, damage, &team);
+	Projectile* p = new Bullet(src, maxSpeed, tgt, boundingRadius, damage, &team);
 	team.registerProjectile(*p);
+
 }
 
 void Bot::throwGrenade(Cell& t)
 {
-	static chrono::high_resolution_clock::time_point lastShot = chrono::high_resolution_clock::now();
-	chrono::high_resolution_clock::time_point now = chrono::high_resolution_clock::now();
-
-	chrono::duration<double, std::milli> timePassedMS = now - lastShot;
-	if (timePassedMS.count() < 1000) {
+	if (!canFire(lastGrenadeShot, GRENADE_TIMEOUT_MS)) {
 		return;
 	}
-	lastShot = now;
 
-	vec2f src = getCellCenter(board, getCellLocation());
-	vec2f tgt = getCellCenter(board, t);
-	vec2f dir = tgt - src;
-	dir.normalize();
-	vec2f speed = dir * MAX_GRENADE_SPEED;
-	float boundingRadius = 0.75;
+	numGrenades--;
+
+	vec2f src = getCellCenter(*board, getCellLocation());
+	vec2f tgt = getCellCenter(*board, t);
+	vec2f speed(MAX_GRENADE_SPEED, MAX_GRENADE_SPEED);
+	float boundingRadius = 0.4f;
 	int damage = 1;
-	int exploasionTimeoutMS = 2 * 1000;
+	int exploasionTimeoutMS = 400;
 	int numFragments = 5;
 
 	Projectile* p = new Grenade(src, speed, tgt, boundingRadius, damage, exploasionTimeoutMS, numFragments, &team);
@@ -79,7 +92,7 @@ void Bot::throwGrenade(Cell& t)
 
 void Bot::fight(Cell* target)
 {
-	Room* room = dynamic_cast<Room*>(&board);
+	Room* room = dynamic_cast<Room*>(board);
 	if (!room) {
 		cout << __func__ << "room is a nullptr" << endl;
 		return;
@@ -89,14 +102,14 @@ void Bot::fight(Cell* target)
 		if (numBullets > 0) {
 			shootBullet(*target);
 		}
-		else if (numGrenades > 0 && numBullets < numGrenades) {
+		
+		if (numGrenades > 0) {
 			throwGrenade(*target);
 		}
-		else {
-			cout << "Out of Ammo" << endl;
-		}
 	}
-	roadToTargetAtTheSameRoom(target);
+	else {
+		roadToTargetAtTheSameRoom(target);
+	}
 }
 
 void Bot::roaming(stack<GamePoint>& roamingPath)
@@ -109,7 +122,7 @@ void Bot::roaming(stack<GamePoint>& roamingPath)
 		setTarget(*targetBoard, nextlocation);
 	}
 	else {
-		setTarget(board, nextlocation);
+		setTarget(*board, nextlocation);
 	}
 	roamingPath.pop();
 }
@@ -154,7 +167,7 @@ void Bot::roadToEnemy(stack<GamePoint>& pathToEnemy)
 	pathToEnemy.pop();
 
 	if (isTargetAtTheSameRoom(targetBoard)) {
-		if (targetBoard) {
+		if (!targetBoard) {
 			fight(targetCell);
 		}
 		else {
@@ -185,12 +198,12 @@ void Bot::findEnemy()
 	if (pathToEnemy.empty()) {
 		stack<GamePoint> roamingPath = pathFinder.roam();
 		roaming(roamingPath);
+		return;
 	}
 	roadToEnemy(pathToEnemy);
-
 }
 
-void Bot::updateBot()
+void Bot::update()
 {
 	this->move();
 	this->updateLastLocation();
@@ -213,9 +226,8 @@ void Bot::updateBot()
 
 void Bot::draw()
 {
-	vec2f xy = getCellCenter(board, getCellLocation());
-	float x = xy.x;
-	float y = xy.y;
+	float x = location.x;
+	float y = location.y;
 
 	Drawer::filledCircle(x, y, boundingRadius, DrawerColor::BLACK);
 	Drawer::filledCircle(x, y, boundingRadius / 1.5f, teamColor);

@@ -21,13 +21,13 @@ class GamePointEdge;
 
 class PathFinder {
 private:
-	std::vector<Team>& teams;
-	std::vector<Room>& rooms;
-	std::vector<Corridor>& corridors;
+	std::vector<Team*>& teams;
+	std::vector<Room*>& rooms;
+	std::vector<Corridor*>& corridors;
 	CellMovingObject* cellMovingObject;
 	RoomPathFinder* roomFinder;
 	ConnectorPathFinder* connectorFinder;
-	
+
 	std::vector<Cell*> getCellNeighbors(Cell& cell);
 	GamePoint findClosetConsumable(ConsumableType type);
 	Bot* getClosestEnemy(Team& enemyTeam);

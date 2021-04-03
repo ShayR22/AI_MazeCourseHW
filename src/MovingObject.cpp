@@ -36,12 +36,20 @@ void MovingObject::move()
     vec2f lastLocation(location.x, location.y);
     vec2f diff = target - location;
 
-    if (fabs(diff.x) > fabs(1.5 * speed.x))
+    if (fabs(diff.x) > fabs(speed.x)) {
         location.x += speed.x;
-    if (fabs(diff.y) > fabs(1.5 * speed.y))
+    }
+    else {
+        location.x += diff.x;
+    }
+    if (fabs(diff.y) > fabs(speed.y)) {
         location.y += speed.y;
+    }
+    else {
+        location.y += diff.y;
+    }
 
-    atTarget = (location.x == lastLocation.x) && (location.y == lastLocation.y);
+    atTarget = ((fabs(diff.x) < 0.001) && (fabs(diff.y) < 0.001));
 }
 
 

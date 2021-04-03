@@ -4,7 +4,7 @@
 #include <iostream>
 
 CellMovingObject::CellMovingObject(vec2f& location, vec2f& maxSpeed, vec2f& target, float boundingRadius, BoardCells& board) :
-	MovingObject(location, maxSpeed, target, boundingRadius), board(board), nextBoard(nullptr)
+	MovingObject(location, maxSpeed, target, boundingRadius), board(&board), nextBoard(nullptr)
 {
 
 }
@@ -23,27 +23,31 @@ void CellMovingObject::setTarget(BoardCells& board,Cell& cell)
 
 void CellMovingObject::setLocation(BoardCells& board,Cell& cell)
 {
-	this->board = board;
+	this->board = &board;
 	MovingObject::setLocation(getCellCenter(board,cell));
 }
 
 Cell& CellMovingObject::getCellLocation()
 {
-	CellMat& cells = board.getCells();
-	vec2f boardLocation = board.getXYOffset();
+	CellMat& cells = board->getCells();
+	vec2f boardLocation = board->getXYOffset();
 	vec2f relativeLocation = location - boardLocation;
 	
-	int x = static_cast<int>(round(relativeLocation.x));
-	int y = static_cast<int>(round(relativeLocation.y));
+	int x = static_cast<int>(relativeLocation.x);
+	int y = static_cast<int>(relativeLocation.y);
+	y = std::min(y, static_cast<int>(cells.size() - 1));
+	x = std::min(x, static_cast<int>(cells[0].size() - 1));
+	y = std::max(y, 0);
+	x = std::max(x, 0);
 
-	return cells[x][y];
+	return cells[y][x];
 }
 
 Cell& CellMovingObject::getLastCellLocation()
 {
-	CellMat& cells = board.getCells();
+	CellMat& cells = board->getCells();
 
-	return cells[lastPos.x][lastPos.y];
+	return cells[lastPos.y][lastPos.x];
 }
 
 
@@ -62,6 +66,6 @@ void CellMovingObject::move()
 {
 	MovingObject::move();
 	if (isAtTarget() && nextBoard) {
-		board = *nextBoard;
+		board = nextBoard;
 	}
 }

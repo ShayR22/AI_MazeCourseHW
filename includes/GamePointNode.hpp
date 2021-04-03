@@ -38,6 +38,7 @@ public:
 	inline GamePointNode* getParent() { return parent; }
 	inline void setParent(GamePointNode* p) { parent = p; }
 	void addEdge(GamePointEdge& edge);
+	void removeEdge(GamePointEdge& edge);
 
 	std::vector<GamePointNode*> getNieghbors();
 	inline std::vector<GamePointEdge*>& getEdges() { return edges; }

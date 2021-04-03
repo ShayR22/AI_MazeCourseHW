@@ -141,7 +141,7 @@ map<Cell*, Cell*> RoomPathFinder::setNextInPath()
 	Cell* curParent = parent[curTarget];
 
 	while (curParent != nullptr) {
-		nextInPath[curParent] = curTarget;
+		path[curParent] = curTarget;
 		curTarget = curParent;
 		curParent = parent[curParent];
 	}
@@ -163,6 +163,7 @@ void RoomPathFinder::restorePath()
 
 std::map<Cell*, Cell*> RoomPathFinder::getPath(Cell* target)
 {
+	map<Cell*, Cell*> path;
 	clear(target);
 
 	if (cellMovingObject == nullptr) {
@@ -179,14 +180,14 @@ std::map<Cell*, Cell*> RoomPathFinder::getPath(Cell* target)
 
 		if (lowestF == target) {
 			restorePath();
-			setNextInPath();
+			path = setNextInPath();
 			break;
 		}
 
 		calculateStepInPathFromCurrentCell(lowestF);
 	}
 
-	return nextInPath;
+	return path;
 }
 
 RoomPathFinder::RoomPathFinder() : cellMovingObject(nullptr), target(nullptr), lastSearchBoard(nullptr)

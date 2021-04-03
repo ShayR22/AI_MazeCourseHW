@@ -12,10 +12,12 @@ private:
 	std::vector<Projectile*> projectiles;
 	std::vector<Bot*> bots;
 	DrawerColor teamColor;
+
+	void removeMissedProjectiles();
 public:
 	Team();
 	void registerProjectile(Projectile& projectile);
-	void unregisterProjectile(int position);
+	void unregisterProjectile(Projectile* projectile);
 	Bot* isSupportBotAlive();
 
 	void update();
@@ -28,6 +30,8 @@ public:
 
 	void setTeamColor(DrawerColor teamColor);
 	inline DrawerColor getTeamColor() { return teamColor; }
+
+	void removeBot(Bot* bot);
 
 	void draw();
 };

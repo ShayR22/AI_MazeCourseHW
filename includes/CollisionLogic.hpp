@@ -13,9 +13,11 @@
 
 class CollisionLogic {
 private:
-	std::vector<Team>& teams;
-	std::vector<Room>& rooms;
-	std::vector<Corridor>& corridors;
+	std::vector<Team*>& teams;
+	std::vector<Room*>& rooms;
+	std::vector<Corridor*>& corridors;
+
+	void handleCollisionProjectileBetweenTeamsThread(Team* team, Team* enemyTeam, Room* room);
 public:
 	// CollisionLogic() {};
 	CollisionLogic();
@@ -24,7 +26,7 @@ public:
 	void handleCollisions();
 
 	inline void setTeams() { this->teams = teams; }
-	inline std::vector<Team>& getTeams() { return teams; }
+	inline std::vector<Team*>& getTeams() { return teams; }
 
 	static vec2f getCollision(vec2f& p, vec2f& dir, std::vector<vec2f>& points);
 	static void getCollision(vec2f& p, vec2f& dir, std::vector<vec2f>& points, vec2f& locationResult, float& distanceResult);
