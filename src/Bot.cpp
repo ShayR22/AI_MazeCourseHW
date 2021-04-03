@@ -1,8 +1,10 @@
 #include "Bot.hpp"
+#include "CollisionLogic.hpp"
 #include "Drawer.hpp"
 #include "Cell.hpp"
 #include "GamePoint.hpp"
-#include "CollisionLogic.hpp"
+#include "Bullet.hpp"
+#include "Grenade.hpp"
 #include <iostream>
 #include <stack>
 #include <map>
@@ -26,16 +28,73 @@ void Bot::roadToTargetAtTheSameRoom(Cell* target)
 }
 
 
+void Bot::shootBullet(Cell& t)
+{
+	static chrono::high_resolution_clock::time_point lastShot = chrono::high_resolution_clock::now();
+	chrono::high_resolution_clock::time_point now = chrono::high_resolution_clock::now();
+
+	chrono::duration<double, std::milli> timePassedMS = now - lastShot;
+	if (timePassedMS.count() < 1000) {
+		return;
+	}
+	lastShot = now;
+
+	vec2f src = getCellCenter(board, getCellLocation());
+	vec2f tgt = getCellCenter(board, t);
+	vec2f dir = tgt - src;
+	dir.normalize();
+	vec2f speed = dir * MAX_BULLET_SPEED;
+	float boundingRadius = 0.75;
+	int damage = 10;
+	
+	Projectile* p = new Bullet(src, tgt, speed, boundingRadius, damage, &team);
+	team.registerProjectile(*p);
+}
+
+void Bot::throwGrenade(Cell& t)
+{
+	static chrono::high_resolution_clock::time_point lastShot = chrono::high_resolution_clock::now();
+	chrono::high_resolution_clock::time_point now = chrono::high_resolution_clock::now();
+
+	chrono::duration<double, std::milli> timePassedMS = now - lastShot;
+	if (timePassedMS.count() < 1000) {
+		return;
+	}
+	lastShot = now;
+
+	vec2f src = getCellCenter(board, getCellLocation());
+	vec2f tgt = getCellCenter(board, t);
+	vec2f dir = tgt - src;
+	dir.normalize();
+	vec2f speed = dir * MAX_GRENADE_SPEED;
+	float boundingRadius = 0.75;
+	int damage = 1;
+	int exploasionTimeoutMS = 2 * 1000;
+	int numFragments = 5;
+
+	Projectile* p = new Grenade(src, speed, tgt, boundingRadius, damage, exploasionTimeoutMS, numFragments, &team);
+	team.registerProjectile(*p);
+}
+
+
 void Bot::fight(Cell* target)
 {
-	BoardCells& boardCells = this->board;
-	Cell& mylocation = getCellLocation();
-
-	Room* room = dynamic_cast<Room*>(&boardCells);
-
+	Room* room = dynamic_cast<Room*>(&board);
 	if (!room) {
-		// if the fight was activated in 
+		cout << __func__ << "room is a nullptr" << endl;
 		return;
+	}
+	Cell& mylocation = getCellLocation();
+	if (CollisionLogic::isLineOfSight(*room, mylocation,*target)) {
+		if (numBullets > 0) {
+			shootBullet(*target);
+		}
+		else if (numGrenades > 0 && numBullets < numGrenades) {
+			throwGrenade(*target);
+		}
+		else {
+			cout << "Out of Ammo" << endl;
+		}
 	}
 	roadToTargetAtTheSameRoom(target);
 }

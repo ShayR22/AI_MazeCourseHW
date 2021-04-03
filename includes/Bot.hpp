@@ -6,6 +6,8 @@
 #include "PathFinder.hpp"
 #include "Drawer.hpp"
 
+#define MAX_BULLET_SPEED 0.1f
+#define MAX_GRENADE_SPEED 0.1f
 #define MAX_BULLETS 20
 #define MAX_GRENADES 20
 #define MAX_HEALTH 100
@@ -38,6 +40,9 @@ public:
 	Bot(int health, int numBullets, int numGrenades, Team& team, vec2f& location, vec2f& maxSpeed, vec2f& target, float boundingRadius, BoardCells& board);
 
 	void updateBot();
+	void shootBullet(Cell& target);
+	void throwGrenade(Cell& target);
+	//void createProjectile(Cell& target);
 
 	inline int getHealth() { return health; }
 	inline int getNumBullets() { return numBullets; }
