@@ -12,7 +12,7 @@ private:
 	bool wasAlreadyExplode;
 
 public:
-	Grenade(vec2f location, vec2f startSpeed, vec2f target, float boundingRadius, int damage, int exploasionTimeoutMS, int numFragments, Team* teamPtr);
+	Grenade(vec2f location, vec2f startSpeed, vec2f target, float boundingDiameter, int damage, int exploasionTimeoutMS, int numFragments, Team* teamPtr);
 	
 	inline void setExplosionTimeoutMS(int exploasionTimeoutMS) { this->explosionTimeoutMS = exploasionTimeoutMS; }
 	inline int getExplosionTimeoutMS() { return explosionTimeoutMS; }

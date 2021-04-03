@@ -15,7 +15,7 @@ protected:
 	bool requireCreation;
 
 public:
-	Projectile(vec2f location, vec2f startSpeed, vec2f target, float boundingRadius, int damage, Team* teamPtr);
+	Projectile(vec2f location, vec2f startSpeed, vec2f target, float boundingDiameter, int damage, Team* teamPtr);
 	virtual void update();
 	virtual void draw() = 0;
 	virtual void creation();

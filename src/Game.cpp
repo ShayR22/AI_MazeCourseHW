@@ -236,7 +236,7 @@ void Game::createTeam(Team& t, int roomRow)
 		vec2f& rXY = r.getXYOffset();
 		/* start location is cell 0, 0 of the cell */
 		vec2f location(rXY.x + 0.5f, rXY.y + 0.5f);
-		vec2f maxSpeed = vec2f(0.01f, 0.01f);
+		vec2f maxSpeed = vec2f(0.07f, 0.07f);
 
 		Bot* bot = new Bot(MAX_HEALTH, MAX_BULLETS, MAX_GRENADES, t, location, maxSpeed, location, 0.9f, r);
 		vector<Bot*> bots = t.getBots();

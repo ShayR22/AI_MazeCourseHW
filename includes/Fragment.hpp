@@ -7,7 +7,7 @@ class Team;
 
 class Fragment : public Projectile {
 public:
-	Fragment(vec2f location, vec2f startSpeed, vec2f target, float boundingRadius, int damage, Team* teamPtr);
+	Fragment(vec2f location, vec2f startSpeed, vec2f target, float boundingDiameter, int damage, Team* teamPtr);
 	virtual void draw() override;
 };
 

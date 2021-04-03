@@ -7,8 +7,8 @@
 #include "Drawer.hpp"
 #include "CollisionLogic.hpp"
 
-Grenade::Grenade(vec2f location, vec2f startSpeed, vec2f target, float boundingRadius, int damage, int explosionTimeoutMS, int numFragments, Team *teamPtr)
-	: Projectile(location, startSpeed, target, boundingRadius, damage, teamPtr), explosionTimeoutMS(explosionTimeoutMS), 
+Grenade::Grenade(vec2f location, vec2f startSpeed, vec2f target, float boundingDiameter, int damage, int explosionTimeoutMS, int numFragments, Team *teamPtr)
+	: Projectile(location, startSpeed, target, boundingDiameter, damage, teamPtr), explosionTimeoutMS(explosionTimeoutMS), 
 	numFragments(numFragments), startTime(std::chrono::high_resolution_clock::now()), wasAlreadyExplode(false)
 {
 
@@ -58,7 +58,7 @@ void Grenade::registerFragments()
 		vec2f myTarget;
 
 		calcTarget(myLocation, direction, myTarget);
-		Fragment *f = new Fragment(myLocation, mySpeed, myTarget, boundingRadius / 2.0f, damage, teamPtr);
+		Fragment *f = new Fragment(myLocation, mySpeed, myTarget, boundingDiameter / 2.0f, damage, teamPtr);
 		teamPtr->registerProjectile(*f);
 	}
 }
@@ -77,8 +77,8 @@ void Grenade::calcTarget(vec2f& location, vec2f& speed, vec2f& myTarget)
 void Grenade::draw()
 {
 	if (!wasAlreadyExplode) {
-		Drawer::filledCircle(getLocation().x, getLocation().y, getBoundingRadius() * 2, DrawerColor::RED);
-		Drawer::filledCircle(getLocation().x, getLocation().y, getBoundingRadius(), DrawerColor::BLACK);
+		Drawer::filledCircle(getLocation().x, getLocation().y, getBoundingDiameter() * 2, DrawerColor::RED);
+		Drawer::filledCircle(getLocation().x, getLocation().y, getBoundingDiameter(), DrawerColor::BLACK);
 	}
 }
 

@@ -160,8 +160,9 @@ void CollisionLogic::handleCollisionBetweenTeam2EnemyProjectilesInRoom(Room& roo
 
 bool CollisionLogic::isBotClose2Projectile(Bot* bot, Projectile* projectile)
 {
-	vec2f v = projectile->getLocation();
-	return bot->getLocation().dist(v) <= BOT_RADIUS + projectile->getBoundingRadius();
+	vec2f projectileLocation = projectile->getLocation();
+	float minCollisionDistance = (bot->getBoundingDiameter() / 2.0f) + (projectile->getBoundingDiameter() / 2.0f);
+	return bot->getLocation().dist(projectileLocation) <= minCollisionDistance;
 }
 
 vec2f CollisionLogic::getCollision(vec2f& p, vec2f& dir, std::vector<vec2f>& points) {
@@ -247,7 +248,7 @@ void CollisionLogic::getCollisionTilLine(vec2f& point, vec2f& dir, Line2D& line,
 	distanceResult = point.dist(intersectPoint);
 }
 
-vector<vec2f> CollisionLogic::extractShape(vector<Cell*>& cover)
+vector<vec2f> CollisionLogic::extractShape(vector<Cell*>& cover, float diameter)
 {
 	float minX = 1000;
 	float minY = 1000;
@@ -270,11 +271,19 @@ vector<vec2f> CollisionLogic::extractShape(vector<Cell*>& cover)
 	maxX += 1;
 	maxY += 1;
 
-	vector<vec2f> shape = { {minX, maxY}, {maxX, maxY}, {maxX, minY}, {minX, minY} };
+	float safeRadius = diameter;
+
+	// enlarge the obstacle in purpose, for better GUI,
+	// for example when bots shoot on one each other
+	vector<vec2f> shape = { {minX - safeRadius, maxY + safeRadius},
+							{maxX + safeRadius, maxY + safeRadius},
+							{maxX + safeRadius, minY - safeRadius},
+							{minX - safeRadius, minY - safeRadius} };
 	return shape;
 }
 
-bool CollisionLogic::isLineOfSight(Room& r, Cell& src, Cell& tgt)
+// obstacleSafeDiameter: extra parameter for calculation with line-sight
+bool CollisionLogic::isLineOfSight(Room& r, Cell& src, Cell& tgt, float obstacleSafeDiameter)
 {
 	vec2f srcP(static_cast<float>(src.getX()), static_cast<float>(src.getY()));
 	vec2f dir(static_cast<float>(tgt.getX() - src.getX()),
@@ -283,7 +292,7 @@ bool CollisionLogic::isLineOfSight(Room& r, Cell& src, Cell& tgt)
 	vector<vector<vec2f>> shapes;
 	for (auto& o : r.getObstacles()) {
 		vector<Cell*> cover = o->getCover();
-		vector<vec2f> shape = CollisionLogic::extractShape(cover);
+		vector<vec2f> shape = CollisionLogic::extractShape(cover, obstacleSafeDiameter);
 		shapes.push_back(shape);
 	}
 

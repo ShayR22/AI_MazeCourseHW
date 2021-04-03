@@ -15,7 +15,6 @@
 #define MAX_HEALTH 100
 #define HEALTH_THRESHOLD 50
 #define AMMO_THRESHOLD 10
-#define BOT_RADIUS 0.5f
 
 class Bot : public CellMovingObject {
 private:
@@ -46,7 +45,7 @@ private:
 	void fight(Cell* target);
 
 public:
-	Bot(int health, int numBullets, int numGrenades, Team& team, vec2f& location, vec2f& maxSpeed, vec2f& target, float boundingRadius, BoardCells& board);
+	Bot(int health, int numBullets, int numGrenades, Team& team, vec2f& location, vec2f& maxSpeed, vec2f& target, float boundingDiameter, BoardCells& board);
 
 	void update();
 	void shootBullet(Cell& target);

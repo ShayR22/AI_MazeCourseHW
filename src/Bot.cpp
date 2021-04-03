@@ -13,12 +13,12 @@ using namespace std;
 
 constexpr auto GRENADE_TIMEOUT_MS = 2000;
 constexpr auto BULLET_TIMEOUT_MS = 1000;
-constexpr auto FIRE_TIMEOUT_MS = 100;
+constexpr auto FIRE_TIMEOUT_MS = 500;
 
 Bot::Bot(int health, int numBullets, int numGrenades, Team& team, vec2f& location,
-	vec2f& maxSpeed, vec2f& target, float boundingRadius, BoardCells& board)
+	vec2f& maxSpeed, vec2f& target, float boundingDiameter, BoardCells& board)
 	: health(health), numBullets(numBullets), numGrenades(numGrenades), team(team), pathFinder(*this),
-	CellMovingObject(location, maxSpeed, target, boundingRadius, board), teamColor(DrawerColor::WHITE),
+	CellMovingObject(location, maxSpeed, target, boundingDiameter, board), teamColor(DrawerColor::WHITE),
 	lastBulletShot(chrono::high_resolution_clock::now()), lastGrenadeShot(chrono::high_resolution_clock::now()),
 	lastFire(chrono::high_resolution_clock::now())
 {
@@ -61,10 +61,10 @@ void Bot::shootBullet(Cell& t)
 	vec2f src = location;
 	vec2f tgt = getCellCenter(*board, t);
 	vec2f maxSpeed(MAX_BULLET_SPEED, MAX_BULLET_SPEED);
-	float boundingRadius = 0.25;
+	float boundingDiameter = 0.25;
 	int damage = 15;
 	
-	Projectile* p = new Bullet(src, maxSpeed, tgt, boundingRadius, damage, &team);
+	Projectile* p = new Bullet(src, maxSpeed, tgt, boundingDiameter, damage, &team);
 	team.registerProjectile(*p);
 
 }
@@ -80,12 +80,12 @@ void Bot::throwGrenade(Cell& t)
 	vec2f src = getCellCenter(*board, getCellLocation());
 	vec2f tgt = getCellCenter(*board, t);
 	vec2f speed(MAX_GRENADE_SPEED, MAX_GRENADE_SPEED);
-	float boundingRadius = 0.4f;
-	int damage = 1;
-	int exploasionTimeoutMS = 400;
-	int numFragments = 5;
+	float boundingDiameter = 0.4f;
+	int damage = 2;
+	int exploasionTimeoutMS = 3000;
+	int numFragments = 30;
 
-	Projectile* p = new Grenade(src, speed, tgt, boundingRadius, damage, exploasionTimeoutMS, numFragments, &team);
+	Projectile* p = new Grenade(src, speed, tgt, boundingDiameter, damage, exploasionTimeoutMS, numFragments, &team);
 	team.registerProjectile(*p);
 }
 
@@ -98,7 +98,7 @@ void Bot::fight(Cell* target)
 		return;
 	}
 	Cell& mylocation = getCellLocation();
-	if (CollisionLogic::isLineOfSight(*room, mylocation,*target)) {
+	if (CollisionLogic::isLineOfSight(*room, mylocation,*target, boundingDiameter)) {
 		if (numBullets > 0) {
 			shootBullet(*target);
 		}
@@ -229,6 +229,12 @@ void Bot::draw()
 	float x = location.x;
 	float y = location.y;
 
-	Drawer::filledCircle(x, y, boundingRadius, DrawerColor::BLACK);
-	Drawer::filledCircle(x, y, boundingRadius / 1.5f, teamColor);
+	Drawer::filledCircle(x, y, boundingDiameter, DrawerColor::BLACK);
+	Drawer::filledCircle(x, y, boundingDiameter / 1.5f, teamColor);
+
+	float healthPrecents = static_cast<float>(health / static_cast<float>(MAX_HEALTH));
+	float maxWidth = 1.5f;
+	float w = healthPrecents * maxWidth;
+	float h = 0.2f;
+	Drawer::rect(x - (maxWidth/2.f), y - boundingDiameter, w, h, DrawerColor::RED);
 }

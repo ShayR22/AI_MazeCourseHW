@@ -8,7 +8,7 @@ private:
 	int ammoRefreshTimeOutMs;
 	int healthRefreshTimeOutMs;
 public:
-	SupportBot(int health, int numBullets, int numGrenades, Team& team, vec2f& location, vec2f& maxSpeed, vec2f& target, float boundingRadius, BoardCells& board);
+	SupportBot(int health, int numBullets, int numGrenades, Team& team, vec2f& location, vec2f& maxSpeed, vec2f& target, float boundingDiameter, BoardCells& board);
 
 	inline int getAmmoRefreshTimeOutMs() { return ammoRefreshTimeOutMs; }
 	inline int getHealthRefreshTimeOutMs() { return healthRefreshTimeOutMs; }

@@ -3,8 +3,8 @@
 #include "vec2.h"
 #include <iostream>
 
-CellMovingObject::CellMovingObject(vec2f& location, vec2f& maxSpeed, vec2f& target, float boundingRadius, BoardCells& board) :
-	MovingObject(location, maxSpeed, target, boundingRadius), board(&board), nextBoard(nullptr)
+CellMovingObject::CellMovingObject(vec2f& location, vec2f& maxSpeed, vec2f& target, float boundingDiameter, BoardCells& board) :
+	MovingObject(location, maxSpeed, target, boundingDiameter), board(&board), nextBoard(nullptr)
 {
 
 }

@@ -13,7 +13,7 @@ protected:
 
 	vec2f getCellCenter(BoardCells& board, Cell& cell);
 public:
-	CellMovingObject(vec2f& location, vec2f& maxSpeed, vec2f& target, float boundingRadius, BoardCells& board);
+	CellMovingObject(vec2f& location, vec2f& maxSpeed, vec2f& target, float boundingDiameter, BoardCells& board);
 
 	inline void setLastPos(vec2i& lastPos) { this->lastPos = lastPos; }
 	inline vec2i& getLastPos() { return this->lastPos; }

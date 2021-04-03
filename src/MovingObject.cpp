@@ -13,8 +13,8 @@ void MovingObject::calculateDxDy()
     speed = maxSpeed * relativePath;
 }
 
-MovingObject::MovingObject(vec2f location,vec2f maxSpeed, vec2f target, float boundingRadius) :
-	location(location), maxSpeed(maxSpeed), target(target), boundingRadius(boundingRadius)
+MovingObject::MovingObject(vec2f location,vec2f maxSpeed, vec2f target, float boundingDiameter) :
+	location(location), maxSpeed(maxSpeed), target(target), boundingDiameter(boundingDiameter)
 {
     calculateDxDy();
 }

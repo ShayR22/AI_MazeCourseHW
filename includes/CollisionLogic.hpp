@@ -30,9 +30,9 @@ public:
 
 	static vec2f getCollision(vec2f& p, vec2f& dir, std::vector<vec2f>& points);
 	static void getCollision(vec2f& p, vec2f& dir, std::vector<vec2f>& points, vec2f& locationResult, float& distanceResult);
-	static std::vector<vec2f> extractShape(std::vector<Cell*>& cover);
+	static std::vector<vec2f> extractShape(std::vector<Cell*>& cover, float diameter = 0);
 	static bool isCollision(vec2f& p, vec2f& dir, std::vector<vec2f>& points);
-	static bool isLineOfSight(Room& r, Cell& src, Cell& tgt);
+	static bool isLineOfSight(Room& r, Cell& src, Cell& tgt, float obstacleSafeDiameter);
 
 	static vec2f calcCollision(Room* room, vec2f& location, vec2f& speed);
 
@@ -45,6 +45,7 @@ private:
 
 	void handleCollisionBetweenBots2Projectiles();
 	std::vector<Projectile*> extractProjectileInRoom(Room& room, Team& team);
+
 	void handleCollisionBetweenTeam2EnemyProjectilesInRoom(Room& room, std::vector<Bot*> bots, Team& enemyTeam);
 	bool isBotClose2Projectile(Bot* bot, Projectile* projectile);
 	std::vector<Bot*> getBotsInsideRoom(Room& room, Team& team);
