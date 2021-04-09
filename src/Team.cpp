@@ -9,18 +9,14 @@ Team::Team() : teamColor(DrawerColor::WHITE)
 
 #include <iostream>
 using namespace std;
-static int counter = 0;
 
 void Team::registerProjectile(Projectile& projectile)
 {
-	cout << __func__ << ": " << counter++ << endl;
-	fflush(stdout);
 	projectiles.push_back(&projectile);
 }
 
 void Team::unregisterProjectile(Projectile* projectile)
 {
-	cout << __func__ << ": " << counter-- << endl;
 	bool found = std::find(projectiles.begin(), projectiles.end(), projectile) != projectiles.end();
 
 	if (found) {
