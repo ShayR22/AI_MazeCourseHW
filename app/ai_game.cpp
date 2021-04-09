@@ -3,6 +3,7 @@
 #include "Game.hpp"
 #include "Drawer.hpp"
 #include <iostream>
+#include <chrono>
 #include "PathFinder.hpp"
 #include "GamePoint.hpp"
 #include "GamePointEdge.hpp"
@@ -10,7 +11,12 @@
 
 using namespace std;
 
+constexpr auto FRAME_RATE = 200;
+constexpr int MILLI_PER_FRAME = 1000 / FRAME_RATE;
+
+auto lastTick = chrono::high_resolution_clock::now();
 Game *game = nullptr;
+
 
 void display()
 {
@@ -21,9 +27,22 @@ void display()
 	glutSwapBuffers(); // show all
 }
 
+static void keepFrameRate()
+{
+	chrono::high_resolution_clock::time_point now = chrono::high_resolution_clock::now();
+	chrono::duration<double, std::milli> diffTime = now - lastTick;
+	int amountToSleepMS = MILLI_PER_FRAME - static_cast<int>(diffTime.count());
+	if (amountToSleepMS > 0) {
+		this_thread::sleep_for(chrono::milliseconds(amountToSleepMS));
+	}
+
+	lastTick = chrono::high_resolution_clock::now();
+}
+
 void idle()
 {
 	game->update();
+	keepFrameRate();
 	glutPostRedisplay(); // indirect call to display
 }
 
