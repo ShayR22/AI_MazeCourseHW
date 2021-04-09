@@ -15,6 +15,9 @@
 
 using namespace std;
 
+constexpr auto MIN_FIGHT_DIST = 3.0f;
+constexpr auto CORRIDOR_IGNORE_RADIUS = 10;
+
 PathFinder::PathFinder() : cellMovingObject(nullptr), teams(Game::getGameTeams()),
 rooms(Game::getGameRooms()), corridors(Game::getGameCorridors()) 
 {
@@ -54,12 +57,13 @@ Team* PathFinder::getEnemyTeam()
 	return nullptr;
 }
 
-Bot* PathFinder::getClosestEnemy(Team& enemyTeam)
+Bot* PathFinder::getClosestEnemy(Team& enemyTeam, bool& closeEnemy)
 {
 	float minDist = FLT_MAX;
 	Bot* closestBot = nullptr;
 	BoardCells& sb = cellMovingObject->getBoardCells();
 	Cell& sc = cellMovingObject->getCellLocation();
+	closeEnemy = false;
 
 	float sx = sb.getXYOffset().x + sc.getX();
 	float sy = sb.getXYOffset().y + sc.getY();
@@ -68,16 +72,20 @@ Bot* PathFinder::getClosestEnemy(Team& enemyTeam)
 		BoardCells& tb = bot->getBoardCells();
 		Cell& tc = bot->getCellLocation();
 
-		if (!tb.getShootable())
-			continue;
-
 		float tx = tb.getXYOffset().x + tc.getX();
 		float ty = tb.getXYOffset().y + tc.getY();
 
 		float dist = manhattan_distance(sx, sy, tx, ty);
-		/* allow only enemies with at least 1 block distance */
-		if (dist < 1.5f)
+		/* if enemy found in small radius return nullptr to activate roam*/
+		if (dist < MIN_FIGHT_DIST) {
+			cout << "found enemy at dist " << dist << endl;
+			closeEnemy = true;
+			return bot;
+		}
+
+		if (!tb.getShootable() && dist < CORRIDOR_IGNORE_RADIUS)
 			continue;
+
 
 		if (dist < minDist) {
 			closestBot = bot;
@@ -88,9 +96,42 @@ Bot* PathFinder::getClosestEnemy(Team& enemyTeam)
 	return closestBot;
 }
 
+stack<GamePoint> PathFinder::roamWithDistancing(Bot& closetEnemy)
+{
+	BoardCells* b_ptr = &cellMovingObject->getBoardCells();
+	Cell& c = cellMovingObject->getCellLocation();
+	vector<Cell*> neighbors = getCellNeighbors(c);
+
+	if (neighbors.size() <= 1) {
+		return roam();
+	}
+	
+	Cell& enemyCell = closetEnemy.getCellLocation();
+	float minDist = FLT_MAX;
+	Cell* closestCell = nullptr;
+
+	for (auto& n : neighbors) {
+		float distance = manhattan_distance(n, &enemyCell);
+		if (distance < minDist) {
+			minDist = distance;
+			closestCell = n;
+		}
+	}
+
+	neighbors.erase(remove(neighbors.begin(), neighbors.end(), closestCell), neighbors.end());
+	Cell* randomCell = neighbors[rand() % neighbors.size()];
+
+	GamePoint target(b_ptr, randomCell);
+	stack<GamePoint> path;
+	path.push(target);
+
+	return path;
+}
+
+
 stack<GamePoint> PathFinder::searchClosetEnemy()
 {
-	
+	bool isEnemyTooClose;
 	Team* enemyTeam = getEnemyTeam();
 	if (enemyTeam == nullptr) {
 		cout << __func__ << " something went wrong couldn't getEnemyTeam" << endl;
@@ -98,11 +139,12 @@ stack<GamePoint> PathFinder::searchClosetEnemy()
 		return s;
 	}
 
-	Bot* closetEnemy = getClosestEnemy(*enemyTeam);
+	Bot* closetEnemy = getClosestEnemy(*enemyTeam, isEnemyTooClose);
 	if (closetEnemy == nullptr) {
-		cout << __func__ << " something went wrong couldn't find getClosestEnemy" << endl;
-		stack<GamePoint> s;
-		return s;
+		return roam();
+	}
+	else if (isEnemyTooClose) {
+		return roamWithDistancing(*closetEnemy);
 	}
 
 	/* per design if enemy and bot in the same room return target cell and null for board */

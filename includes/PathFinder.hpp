@@ -30,7 +30,9 @@ private:
 
 	std::vector<Cell*> getCellNeighbors(Cell& cell);
 	GamePoint findClosetConsumable(ConsumableType type);
-	Bot* getClosestEnemy(Team& enemyTeam);
+	Bot* getClosestEnemy(Team& enemyTeam, bool& closeEnemy);
+	std::stack<GamePoint> roamWithDistancing(Bot& closetEnemy);
+
 	Team* getEnemyTeam();
 public:
 	PathFinder();
