@@ -15,7 +15,7 @@
 
 using namespace std;
 
-constexpr auto MIN_FIGHT_DIST = 4.0f;
+constexpr auto MIN_FIGHT_DIST = 2;
 constexpr auto CORRIDOR_IGNORE_RADIUS = 10;
 
 PathFinder::PathFinder() : cellMovingObject(nullptr), teams(Game::getGameTeams()),
@@ -77,8 +77,7 @@ Bot* PathFinder::getClosestEnemy(Team& enemyTeam, bool& closeEnemy)
 
 		float dist = manhattan_distance(sx, sy, tx, ty);
 		/* if enemy found in small radius return nullptr to activate roam*/
-		if (dist < MIN_FIGHT_DIST) {
-			cout << "found enemy at dist " << dist << endl;
+		if (dist < (rand() % (MIN_FIGHT_DIST + 1))) {
 			closeEnemy = true;
 			return bot;
 		}
@@ -119,7 +118,7 @@ stack<GamePoint> PathFinder::roamWithDistancing(Bot& closetEnemy)
 	}
 
 	/* allow for some randomness to avoid obstacle distance / closing routine*/
-	if (rand() % 2 == 0) {
+	if (rand() % 4 == 0) {
 		neighbors.erase(remove(neighbors.begin(), neighbors.end(), closestCell), neighbors.end());
 	}
 
