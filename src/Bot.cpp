@@ -157,6 +157,20 @@ void Bot::roadToConsumable(stack<GamePoint>& pathToConsumable)
 			pathToTeammate.pop();
 		}
 	}
+	else {
+		GamePoint consumableLocation = pathToConsumable.top();
+		pathToConsumable.pop();
+
+		BoardCells* tb = consumableLocation.board;
+		Cell* tc = consumableLocation.cell;
+
+		if (isTargetAtTheSameRoom(tb)) {
+			roadToTargetAtTheSameRoom(tc);
+		}
+		else {
+			setTarget(*tb, *tc);
+		}
+	}
 }
 
 void Bot::roadToEnemy(stack<GamePoint>& pathToEnemy)
@@ -218,7 +232,6 @@ void Bot::update()
 	else if (numBullets + numGrenades <= AMMO_THRESHOLD) {
 		findAmmo();
 	}
-
 	else {
 		findEnemy();
 	}
