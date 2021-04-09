@@ -62,7 +62,7 @@ void Bot::shootBullet(Cell& t)
 	vec2f tgt = getCellCenter(*board, t);
 	vec2f maxSpeed(MAX_BULLET_SPEED, MAX_BULLET_SPEED);
 	float boundingDiameter = 0.25;
-	int damage = 15;
+	int damage = 30;
 	
 	Projectile* p = new Bullet(src, maxSpeed, tgt, boundingDiameter, damage, &team);
 	team.registerProjectile(*p);
