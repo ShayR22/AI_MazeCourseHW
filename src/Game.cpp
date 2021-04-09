@@ -452,11 +452,17 @@ void Game::updateGameOver()
 void Game::update()
 {
 	if (gameOver) {
+		string winingTeam("");
 		for (auto& t: teams) {
-			if (t->getBots().size() > 0)
-				cout << "Team " <<static_cast<int>(teams[0]->getTeamColor()) << " has Won, ";
+			if (t->getBots().size() > 0) {
+				winingTeam = "Team " + std::to_string(static_cast<int>(teams[0]->getTeamColor())) + " has Won, ";
+			}
 		}
-		cout << "Game Over " << endl;
+		if (winingTeam.empty()) {
+			winingTeam = "Its a Draw";
+		}
+
+		cout << "Game Over " << winingTeam << endl;
 		return;
 	}
 
