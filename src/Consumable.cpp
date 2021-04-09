@@ -5,31 +5,3 @@ Consumable::Consumable(Cell* location, ConsumableType type, bool isHidden) : loc
 {
 
 }
-
-bool Consumable::canConsume(Bot& p)
-{
-	if (type == ConsumableType::AMMO)
-	{
-		if (p.isAmmoFull())
-			return false;
-		else
-			return true;
-	}
-	else if (type == ConsumableType::HEALTH)
-	{
-		if (p.isFullHealth())
-			return false;
-		else
-			return true;
-	}
-	else {
-		return false;
-	}
-}
-
-void Consumable::consume(Bot& p)
-{
-	if (canConsume(p))
-		this->setHidden(true);
-}
-

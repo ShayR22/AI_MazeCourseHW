@@ -18,8 +18,8 @@ protected:
 public:
 	Consumable(Cell* location, ConsumableType type, bool isHidden);
 
-	virtual bool canConsume(Bot& p);
-	virtual void consume(Bot& p);
+	virtual bool canConsume(Bot& p) = 0;
+	virtual void consume(Bot& p) = 0;
 	virtual void draw(float offsetX, float offsetY) = 0;
 
 	inline void setlocation(Cell* location) { this->location = location; }
