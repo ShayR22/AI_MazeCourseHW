@@ -8,8 +8,8 @@
 #include <iostream>
 #include <chrono>
 
-#define MAX_BULLET_SPEED 0.025f
-#define MAX_GRENADE_SPEED 0.01f
+#define MAX_BULLET_SPEED 0.05f
+#define MAX_GRENADE_SPEED 0.02f
 #define MAX_BULLETS 20
 #define MAX_GRENADES 2
 #define MAX_HEALTH 100
@@ -18,6 +18,7 @@
 
 class Bot : public CellMovingObject {
 private:
+	vec2f lookingAt;
 	int health;
 	int numBullets;
 	int numGrenades;
@@ -31,6 +32,9 @@ private:
 
 
 	bool canFire(std::chrono::high_resolution_clock::time_point& fire, double shotTimeoutMS);
+
+	void updateEyeDireciton(vec2f& lookAt);
+	void setTargetAndEyesDirection(BoardCells& board, Cell& nextLocation);
 
 	/*pathfinder returns nullptr board if the target is at the same boardcell with the player*/
 	inline bool isTargetAtTheSameRoom(BoardCells* targetBoard) { return !targetBoard || (board->getShootable() && targetBoard->getShootable());}
@@ -50,7 +54,6 @@ public:
 	void update();
 	void shootBullet(Cell& target);
 	void throwGrenade(Cell& target);
-	//void createProjectile(Cell& target);
 
 	inline int getHealth() { return health; }
 	inline int getNumBullets() { return numBullets; }

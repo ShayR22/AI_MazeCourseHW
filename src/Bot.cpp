@@ -25,12 +25,24 @@ Bot::Bot(int health, int numBullets, int numGrenades, Team& team, vec2f& locatio
 
 }
 
+void Bot::updateEyeDireciton(vec2f& lookAt)
+{
+	lookingAt = (lookAt - location).normalize() / 20.0f;
+}
+
+void Bot::setTargetAndEyesDirection(BoardCells& board, Cell& nextLocation)
+{
+	vec2f targetLocation = getCellCenter(board, nextLocation);
+	updateEyeDireciton(targetLocation);
+	setTarget(board, nextLocation);
+}
+
 void Bot::roadToTargetAtTheSameRoom(Cell* target)
 {
 	map<Cell*, Cell*> pathToTarget = pathFinder.getRoomPath(target);
 	Cell* mylocation = &getCellLocation();
 	Cell& nextlocation = *pathToTarget[mylocation];
-	setTarget(*board,nextlocation);
+	setTargetAndEyesDirection(*board, nextlocation);
 }
 
 
@@ -66,7 +78,7 @@ void Bot::shootBullet(Cell& t)
 	
 	Projectile* p = new Bullet(src, maxSpeed, tgt, boundingDiameter, damage, &team);
 	team.registerProjectile(*p);
-
+	updateEyeDireciton(tgt);
 }
 
 void Bot::throwGrenade(Cell& t)
@@ -82,11 +94,13 @@ void Bot::throwGrenade(Cell& t)
 	vec2f speed(MAX_GRENADE_SPEED, MAX_GRENADE_SPEED);
 	float boundingDiameter = 0.4f;
 	int damage = 2;
-	int exploasionTimeoutMS = 3000;
+	/* grenade timeout is 1 - 3 seconds*/
+	int exploasionTimeoutMS = (rand() % 2000) + 1000;
 	int numFragments = 30;
 
 	Projectile* p = new Grenade(src, speed, tgt, boundingDiameter, damage, exploasionTimeoutMS, numFragments, &team);
 	team.registerProjectile(*p);
+	updateEyeDireciton(tgt);
 }
 
 
@@ -119,10 +133,10 @@ void Bot::roaming(stack<GamePoint>& roamingPath)
 	Cell* targetCell = destLocation.cell;
 	Cell& nextlocation = *targetCell;
 	if (targetBoard) {
-		setTarget(*targetBoard, nextlocation);
+		setTargetAndEyesDirection(*targetBoard, nextlocation);
 	}
 	else {
-		setTarget(*board, nextlocation);
+		setTargetAndEyesDirection(*board, nextlocation);
 	}
 	roamingPath.pop();
 }
@@ -136,7 +150,7 @@ void Bot::roadToTeammate(GamePoint& destLocation)
 		roadToTargetAtTheSameRoom(targetCell);
 	}
 	else {
-		setTarget(*targetBoard,*targetCell);
+		setTargetAndEyesDirection(*targetBoard,*targetCell);
 	}
 }
 
@@ -168,7 +182,7 @@ void Bot::roadToConsumable(stack<GamePoint>& pathToConsumable)
 			roadToTargetAtTheSameRoom(tc);
 		}
 		else {
-			setTarget(*tb, *tc);
+			setTargetAndEyesDirection(*tb, *tc);
 		}
 	}
 }
@@ -189,7 +203,7 @@ void Bot::roadToEnemy(stack<GamePoint>& pathToEnemy)
 		}
 	}
 	else {
-		setTarget(*targetBoard ,*targetCell);
+		setTargetAndEyesDirection(*targetBoard ,*targetCell);
 	}
 }
 
@@ -244,6 +258,7 @@ void Bot::draw()
 
 	Drawer::filledCircle(x, y, boundingDiameter, DrawerColor::BLACK);
 	Drawer::filledCircle(x, y, boundingDiameter / 1.5f, teamColor);
+	Drawer::filledCircle(x + lookingAt.x, y + lookingAt.y, boundingDiameter / 2.0f, DrawerColor::BLACK);
 
 	float healthPrecents = static_cast<float>(health / static_cast<float>(MAX_HEALTH));
 	float maxWidth = 1.5f;
