@@ -10,8 +10,8 @@
 #include <map>
 #include <vector>
 
-constexpr auto ROOM_WIDTH_MIN = 5;
-constexpr auto ROOM_HEIGHT_MIN = 5;
+constexpr auto ROOM_WIDTH_MIN = 8;
+constexpr auto ROOM_HEIGHT_MIN = 8;
 constexpr auto CORRIDOR_MIN_LEGTH = 2;
 
 constexpr auto MAX_ROOM_ROWS = 3;
