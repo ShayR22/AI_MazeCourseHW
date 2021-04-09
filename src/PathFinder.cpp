@@ -176,8 +176,10 @@ GamePoint PathFinder::findClosetConsumable(ConsumableType type)
 	BoardCells& sb = cellMovingObject->getBoardCells();
 	Cell& sc = cellMovingObject->getCellLocation();
 
-	float sx = sb.getXYOffset().x + sc.getX();
-	float sy = sb.getXYOffset().y + sc.getY();
+	vec2f srcLocation = cellMovingObject->getLocation();
+
+	float sx = srcLocation.x;
+	float sy = srcLocation.y;
 
 	/* iterate on all room and all consumables based on type in each room*/
 	vector<Consumable*> consumables;
@@ -190,10 +192,14 @@ GamePoint PathFinder::findClosetConsumable(ConsumableType type)
 		}
 
 		for (auto& consumable : consumables) {
+			if (consumable->getHidden())
+				continue;
+
 			vec2f& tXY = r->getXYOffset();
 			Cell& tc = *consumable->getLocation();
-			float tx = tXY.x + tc.getX();
-			float ty = tXY.y + tc.getY();
+
+			float tx = tXY.x + tc.getX() + 0.5f;
+			float ty = tXY.y + tc.getY() + 0.5f;
 
 			float dist = manhattan_distance(sx, sy, tx, ty);
 			if (dist < minDist) {
@@ -212,26 +218,32 @@ GamePoint PathFinder::findClosetConsumable(ConsumableType type)
 	return GamePoint(targetBoard, targetCell); 
 }
 
-stack<GamePoint> PathFinder::searchClosetAmmo()
+stack<GamePoint> PathFinder::searchClosetConsumable(ConsumableType type)
 {
-	GamePoint closestAmmo = findClosetConsumable(ConsumableType::AMMO);
-	if (!closestAmmo.board || !closestAmmo.cell) {
-		stack<GamePoint> empty;
-		return empty;
+	stack<GamePoint> path;
+	GamePoint closestConsumable = findClosetConsumable(type);
+	if (closestConsumable.board && closestConsumable.cell) {
+		return connectorFinder->getPath(closestConsumable);
 	}
 
-	return connectorFinder->getPath(closestAmmo);
+	/* board nullptr and cell exist means consumable is at the same room */
+	if (!closestConsumable.board && closestConsumable.cell) {
+		path.push(closestConsumable);
+	}
+
+	return path;
 }
+
+stack<GamePoint> PathFinder::searchClosetAmmo()
+{
+	return searchClosetConsumable(ConsumableType::AMMO);
+}
+
 
 stack<GamePoint> PathFinder::searchClosetHealth()
 {
-	GamePoint closestAmmo = findClosetConsumable(ConsumableType::AMMO);
-	if (!closestAmmo.board || !closestAmmo.cell) {
-		stack<GamePoint> empty;
-		return empty;
-	}
+	return searchClosetConsumable(ConsumableType::HEALTH);
 
-	return connectorFinder->getPath(closestAmmo);
 }
 
 vector<Cell*> PathFinder::getCellNeighbors(Cell& cell)
