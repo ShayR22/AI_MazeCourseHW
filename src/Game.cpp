@@ -446,14 +446,9 @@ void Game::updateGameOver()
 
 	if (numAliveTeams <= 1) {
 		gameOver = true;
-	}
-}
 
-void Game::update()
-{
-	if (gameOver) {
 		string winingTeam("");
-		for (auto& t: teams) {
+		for (auto& t : teams) {
 			if (t->getBots().size() > 0) {
 				winingTeam = "Team " + std::to_string(static_cast<int>(teams[0]->getTeamColor())) + " has Won, ";
 			}
@@ -463,6 +458,12 @@ void Game::update()
 		}
 
 		cout << "Game Over " << winingTeam << endl;
+	}
+}
+
+void Game::update()
+{
+	if (gameOver) {
 		return;
 	}
 
