@@ -54,7 +54,10 @@ void Grenade::registerFragments()
 	for (int angle = 0; angle < 360; angle += angleDelta) {
 		vec2f direction((float)cos(angle * M_PI / 180.), (float)sin(angle * M_PI / 180.));
 		vec2f myLocation = location;
-		vec2f mySpeed = maxSpeed;
+		/* generate rand speed between 0.15 - 0.29 for creation good spread*/
+		float randSpeed = ((rand() % 15) + 15) / 100.0f;
+
+		vec2f mySpeed(randSpeed, randSpeed);
 		vec2f myTarget;
 
 		calcTarget(myLocation, direction, myTarget);
