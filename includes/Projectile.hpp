@@ -13,6 +13,8 @@ protected:
 	unsigned int id;
 	static unsigned int PROJECTILE_ID;
 	bool requireCreation;
+	/* if projectile can spawn other projectiles this flag would force spawn upon death */
+	bool createOnDeath;
 
 public:
 	Projectile(vec2f location, vec2f startSpeed, vec2f target, float boundingDiameter, int damage, Team* teamPtr);
@@ -30,6 +32,10 @@ public:
 
 	inline bool getRequireCeation() { return requireCreation; }
 	inline void setRequireCreation(bool requireCreation) { this->requireCreation = requireCreation; };
+
+	inline bool getCreateOnDeath() { return createOnDeath; }
+	inline void setCreateOnDeath(bool createOnDeath) { this->createOnDeath = createOnDeath; }
+
 };
 
 #endif

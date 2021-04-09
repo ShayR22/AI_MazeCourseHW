@@ -11,7 +11,7 @@ Grenade::Grenade(vec2f location, vec2f startSpeed, vec2f target, float boundingD
 	: Projectile(location, startSpeed, target, boundingDiameter, damage, teamPtr), explosionTimeoutMS(explosionTimeoutMS), 
 	numFragments(numFragments), startTime(std::chrono::high_resolution_clock::now()), wasAlreadyExplode(false)
 {
-
+	createOnDeath = true;
 }
 
 void Grenade::update()

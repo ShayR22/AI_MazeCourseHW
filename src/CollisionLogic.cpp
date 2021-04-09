@@ -144,6 +144,11 @@ void CollisionLogic::handleCollisionBetweenTeam2EnemyProjectilesInRoom(Room& roo
 				if (bot->getHealth() <= 0) {
 					deadBots.push_back(bot);
 				}
+
+				/* supporte projectile that create other projectiles on death*/
+				if (projectile->getCreateOnDeath())
+					projectile->creation();
+
 				enemyTeam.unregisterProjectile(projectile);
 			}
 		}
