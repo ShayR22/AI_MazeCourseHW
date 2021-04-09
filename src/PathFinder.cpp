@@ -15,7 +15,7 @@
 
 using namespace std;
 
-constexpr auto MIN_FIGHT_DIST = 3.0f;
+constexpr auto MIN_FIGHT_DIST = 4.0f;
 constexpr auto CORRIDOR_IGNORE_RADIUS = 10;
 
 PathFinder::PathFinder() : cellMovingObject(nullptr), teams(Game::getGameTeams()),

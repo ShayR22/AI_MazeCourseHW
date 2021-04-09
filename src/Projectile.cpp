@@ -5,7 +5,7 @@ unsigned int Projectile::PROJECTILE_ID = 0;
 
 using namespace std;
 
-constexpr auto BULLET_MIN_DAMAGE = 10;
+constexpr auto BULLET_MIN_DAMAGE = 5;
 
 Projectile::Projectile(vec2f location, vec2f startSpeed, vec2f target, float boundingDiameter, int damage, Team* teamPtr) 
 	: MovingObject(location, startSpeed, target, boundingDiameter), damage(damage), teamPtr(teamPtr), id(PROJECTILE_ID++),

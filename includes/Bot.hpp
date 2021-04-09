@@ -11,10 +11,10 @@
 #define MAX_BULLET_SPEED 0.025f
 #define MAX_GRENADE_SPEED 0.01f
 #define MAX_BULLETS 20
-#define MAX_GRENADES 20
+#define MAX_GRENADES 2
 #define MAX_HEALTH 100
 #define HEALTH_THRESHOLD 50
-#define AMMO_THRESHOLD 10
+#define AMMO_THRESHOLD_BULLET 10
 
 class Bot : public CellMovingObject {
 private:

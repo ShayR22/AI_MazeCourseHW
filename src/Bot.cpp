@@ -229,7 +229,7 @@ void Bot::update()
 	if (health < HEALTH_THRESHOLD) {
 		findHealth();
 	}
-	else if (numBullets + numGrenades <= AMMO_THRESHOLD) {
+	else if (numBullets < AMMO_THRESHOLD_BULLET) {
 		findAmmo();
 	}
 	else {
