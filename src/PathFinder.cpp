@@ -105,7 +105,7 @@ stack<GamePoint> PathFinder::roamWithDistancing(Bot& closetEnemy)
 	if (neighbors.size() <= 1) {
 		return roam();
 	}
-	
+
 	Cell& enemyCell = closetEnemy.getCellLocation();
 	float minDist = FLT_MAX;
 	Cell* closestCell = nullptr;
@@ -118,7 +118,11 @@ stack<GamePoint> PathFinder::roamWithDistancing(Bot& closetEnemy)
 		}
 	}
 
-	neighbors.erase(remove(neighbors.begin(), neighbors.end(), closestCell), neighbors.end());
+	/* allow for some randomness to avoid obstacle distance / closing routine*/
+	if (rand() % 2 == 0) {
+		neighbors.erase(remove(neighbors.begin(), neighbors.end(), closestCell), neighbors.end());
+	}
+
 	Cell* randomCell = neighbors[rand() % neighbors.size()];
 
 	GamePoint target(b_ptr, randomCell);
@@ -299,12 +303,12 @@ stack<GamePoint> PathFinder::roam()
 	for (auto& board : connectedBoards) {
 		Cell* connector = srcBoard.getConnectingCell(*board);
 		if (&c == connector) {
-			Cell* neighborInAnotherBoard = board->getConnectingCell(srcBoard);
-			if (neighborInAnotherBoard)
+			neighborInAnotherBoard = board->getConnectingCell(srcBoard);
+			if (neighborInAnotherBoard) {
 				neighbors.push_back(neighborInAnotherBoard);
-
-			AnotherBoard = board;
-			break;
+				AnotherBoard = board;
+				break;
+			}
 		}
 	}
 
