@@ -19,8 +19,6 @@ float Projectile::calculatePower()
 	vec2f dist = location - initalLocation;
 	float distance = std::max(dist.length(), 1.0f);
 	int damagePower = static_cast<int>(damage / distance);
-	damagePower *= damagePower / 2;
-
 	return static_cast<float>(std::max(damagePower, BULLET_MIN_DAMAGE));
 }
 
