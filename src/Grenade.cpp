@@ -54,8 +54,8 @@ void Grenade::registerFragments()
 	for (int angle = 0; angle < 360; angle += angleDelta) {
 		vec2f direction((float)cos(angle * M_PI / 180.), (float)sin(angle * M_PI / 180.));
 		vec2f myLocation = location;
-		/* generate rand speed between 0.15 - 0.29 for creation good spread*/
-		float randSpeed = ((rand() % 15) + 15) / 100.0f;
+		/* generate rand speed between 0.1 - 0.5 for creation good spread*/
+		float randSpeed = ((rand() % 41) + 10) / 100.0f;
 
 		vec2f mySpeed(randSpeed, randSpeed);
 		vec2f myTarget;
@@ -83,5 +83,10 @@ void Grenade::draw()
 		Drawer::filledCircle(getLocation().x, getLocation().y, getBoundingDiameter() * 2, DrawerColor::RED);
 		Drawer::filledCircle(getLocation().x, getLocation().y, getBoundingDiameter(), DrawerColor::BLACK);
 	}
+}
+
+float Grenade::calculatePower()
+{
+	return static_cast<float>(damage);
 }
 

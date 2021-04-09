@@ -1,6 +1,9 @@
 #include "Fragment.hpp"
 #include "Drawer.hpp"
 #include <stdio.h>
+#include <iostream>
+
+using namespace std;
 
 Fragment::Fragment(vec2f location, vec2f startSpeed, vec2f target, float boundingDiameter, int damage, Team* teamPtr)
 	: Projectile(location, startSpeed, target, boundingDiameter, damage, teamPtr)
@@ -10,10 +13,17 @@ Fragment::Fragment(vec2f location, vec2f startSpeed, vec2f target, float boundin
 
 void Fragment::draw()
 {
-	// printf("x: %lf, y: %lf\n", location.x, location.y);
 	Drawer::filledCircle(location.x, location.y, boundingDiameter, DrawerColor::BLACK);
-	// Drawer::rect(getLocation().x, getLocation().y, getBoundingRadius() * 2, getBoundingRadius() * 2, DrawerColor::RED);
 }
+
+float Fragment::calculatePower()
+{
+	float speedMagnitude = speed.length();
+	float speedPower = speedMagnitude * 10;
+	float power = std::min(std::max(speedPower, 1.0f), 10.0f);
+	return power;
+}
+
 
 
 

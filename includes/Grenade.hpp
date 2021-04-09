@@ -23,6 +23,8 @@ public:
 	virtual void update() override;
 	virtual void creation();
 
+	virtual float calculatePower();
+
 
 private:
 	bool explosionTimeoutPassed();

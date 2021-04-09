@@ -22,7 +22,7 @@ public:
 	virtual void draw() = 0;
 	virtual void creation();
 
-	float calculatePower();
+	virtual float calculatePower() = 0;
 
 	inline int getDamage() { return damage; }
 	inline void setDamage(int damage) { this->damage = damage; };
