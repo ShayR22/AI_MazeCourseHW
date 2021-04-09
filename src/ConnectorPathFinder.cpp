@@ -297,7 +297,6 @@ stack<GamePoint> ConnectorPathFinder::getPath(GamePoint &gamePointTarget)
 		lowestF->setVisited(true);
 
 		if (lowestF == target) {
-			std::cout << "solved" << std::endl;
 			break;
 		}
 
