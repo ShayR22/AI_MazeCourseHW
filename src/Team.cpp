@@ -103,11 +103,11 @@ void Team::setTeamColor(DrawerColor teamColor)
 
 void Team::draw()
 {
-	for (auto& bot : bots) {
-		bot->draw();
-	}
-
 	for (auto& p : projectiles) {
 		p->draw();
+	}
+
+	for (auto& bot : bots) {
+		bot->draw();
 	}
 }
