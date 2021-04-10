@@ -25,12 +25,13 @@ void Team::unregisterProjectile(Projectile* projectile)
 	}
 }
 
-Bot* Team::isSupportBotAlive()
+SupportBot* Team::isSupportBotAlive(Bot& callingBot)
 {
 	for (auto& bot : bots) {
 		SupportBot* supportBot = dynamic_cast<SupportBot*>(bot);
-		if (supportBot && supportBot->getHealth() > 0) {
-			return bot;
+		/* check bot is an actual support bot, not the calling bot and alive */
+		if (supportBot && supportBot != &callingBot  && supportBot->getHealth() > 0) {
+			return supportBot;
 		}
 	}
 
@@ -99,11 +100,11 @@ void Team::setTeamColor(DrawerColor teamColor)
 
 void Team::draw()
 {
-	for (auto& p : projectiles) {
-		p->draw();
-	}
-
 	for (auto& bot : bots) {
 		bot->draw();
+	}
+
+	for (auto& p : projectiles) {
+		p->draw();
 	}
 }

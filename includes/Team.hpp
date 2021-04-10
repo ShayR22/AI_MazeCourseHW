@@ -6,6 +6,7 @@
 #include "Drawer.hpp"
 
 class Bot;
+class SupportBot;
 
 class Team {
 private:
@@ -18,7 +19,7 @@ public:
 	Team();
 	void registerProjectile(Projectile& projectile);
 	void unregisterProjectile(Projectile* projectile);
-	Bot* isSupportBotAlive();
+	SupportBot* isSupportBotAlive(Bot& callingBot);
 
 	void update();
 

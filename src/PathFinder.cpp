@@ -176,6 +176,13 @@ stack<GamePoint> PathFinder::searchTeammate(Bot& teammate)
 {
 	GamePoint targetPoint(&teammate.getBoardCells(), &teammate.getCellLocation());
 
+	if (&teammate.getBoardCells() == &cellMovingObject->getBoardCells()) {
+		stack<GamePoint> path;
+		targetPoint.board = nullptr;
+		path.push(targetPoint);
+		return path;
+	}
+
 	return connectorFinder->getPath(targetPoint);
 }
 
@@ -333,8 +340,14 @@ stack<GamePoint> PathFinder::roam()
 	return path;
 }
 
-std::map<Cell*, Cell*> PathFinder::getRoomPath(Cell* target)
+map<Cell*, Cell*> PathFinder::getRoomPath(Cell* target)
 {
+	if (target == &cellMovingObject->getCellLocation()) {
+		map<Cell*, Cell*> path;
+		path[target] = target;
+		return path;
+	}
+
 	return roomFinder->getPath(target);
 }
 

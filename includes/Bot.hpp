@@ -8,7 +8,7 @@
 #include <iostream>
 #include <chrono>
 
-#define MAX_BULLET_SPEED 0.075f
+#define MAX_BULLET_SPEED 0.15f
 #define MAX_GRENADE_SPEED 0.02f
 #define MAX_BULLETS 20
 #define MAX_GRENADES 2
@@ -17,7 +17,7 @@
 #define AMMO_THRESHOLD_BULLET 10
 
 class Bot : public CellMovingObject {
-private:
+protected:
 	vec2f lookingAt;
 	int health;
 	int numBullets;
@@ -47,12 +47,12 @@ private:
 	void findAmmo();
 	void findEnemy();
 	void fight(Cell* target);
-	void calcEdgeTarget(vec2f& location, vec2f& speed, vec2f& myTarget);
+	void calcEdgeTarget(vec2f& location, vec2f& speed, vec2f& myTarget, float boundingRadius);
 
 public:
 	Bot(int health, int numBullets, int numGrenades, Team& team, vec2f& location, vec2f& maxSpeed, vec2f& target, float boundingDiameter, BoardCells& board);
 
-	void update();
+	virtual void update();
 	void shootBullet(Cell& target);
 	void throwGrenade(Cell& target);
 

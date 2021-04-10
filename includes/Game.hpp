@@ -28,6 +28,7 @@ private:
 	void randomizeMap();
 
 	void createTeam(Team& t, int roomRow);
+	void rollConsumables(ConsumableType type);
 	void addConsumbles();
 	void addObstacles();
 	void removeConsumablesOccupation();

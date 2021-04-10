@@ -5,6 +5,8 @@
 #include "GamePoint.hpp"
 #include "Bullet.hpp"
 #include "Grenade.hpp"
+#include "SupportBot.hpp"
+#include "heruistics.h"
 #include <iostream>
 #include <stack>
 #include <map>
@@ -64,6 +66,9 @@ bool Bot::canFire(chrono::high_resolution_clock::time_point& shot, double shotTi
 
 void Bot::shootBullet(Cell& t)
 {
+	float boundingBulletDiameter = 0.25;
+	int damage = 30;
+
 	if (!canFire(lastBulletShot, BULLET_TIMEOUT_MS)) {
 		return;
 	}
@@ -73,29 +78,30 @@ void Bot::shootBullet(Cell& t)
 	vec2f src = location;
 	vec2f tgt = getCellCenter(*board, t);
 	vec2f dir = tgt - src;
-	calcEdgeTarget(src, dir, tgt);
+	calcEdgeTarget(src, dir, tgt, boundingBulletDiameter / 2.f);
 	
 	vec2f maxSpeed(MAX_BULLET_SPEED, MAX_BULLET_SPEED);
-	float boundingDiameter = 0.25;
-	int damage = 30;
 	
-	Projectile* p = new Bullet(src, maxSpeed, tgt, boundingDiameter, damage, &team);
+	Projectile* p = new Bullet(src, maxSpeed, tgt, boundingBulletDiameter, damage, &team);
 	team.registerProjectile(*p);
 	updateEyeDireciton(tgt);
 }
 
-void Bot::calcEdgeTarget(vec2f& location, vec2f& direction, vec2f& myTarget)
+void Bot::calcEdgeTarget(vec2f& location, vec2f& direction, vec2f& myTarget, float boundingRadius)
 {
 	Room* room = static_cast<Room*>(board);
 	vec2f locationRelate2Room = location - room->getXYOffset();
 
 	// Note: the calculation is based on "room' system' axis"
-	vec2f collisionResult = CollisionLogic::calcCollision(room, locationRelate2Room, direction);
+	vec2f collisionResult = CollisionLogic::calcCollision(room, locationRelate2Room, direction, boundingRadius);
 	myTarget.set(room->getXYOffset().x + collisionResult.x, room->getXYOffset().y + collisionResult.y);
 }
 
 void Bot::throwGrenade(Cell& t)
 {
+	float boundingGrenadeDiameter = 0.25f;
+	int damage = 1;
+
 	if (!canFire(lastGrenadeShot, GRENADE_TIMEOUT_MS)) {
 		return;
 	}
@@ -104,17 +110,16 @@ void Bot::throwGrenade(Cell& t)
 
 	vec2f src = getCellCenter(*board, getCellLocation());
 	vec2f tgt = getCellCenter(*board, t);
-	vec2f dir = tgt - src;
-	calcEdgeTarget(src, dir, tgt);
+	/*vec2f dir = tgt - src;
+	calcEdgeTarget(src, dir, tgt, boundingGrenadeDiameter / 2.f);*/
 
 	vec2f speed(MAX_GRENADE_SPEED, MAX_GRENADE_SPEED);
-	float boundingDiameter = 0.4f;
-	int damage = 2;
+	
 	/* grenade timeout is 1 - 3 seconds*/
 	int exploasionTimeoutMS = (rand() % 2000) + 1000;
 	int numFragments = 30;
 
-	Projectile* p = new Grenade(src, speed, tgt, boundingDiameter, damage, exploasionTimeoutMS, numFragments, &team);
+	Projectile* p = new Grenade(src, speed, tgt, boundingGrenadeDiameter, damage, exploasionTimeoutMS, numFragments, &team);
 	team.registerProjectile(*p);
 	updateEyeDireciton(tgt);
 }
@@ -173,7 +178,7 @@ void Bot::roadToTeammate(GamePoint& destLocation)
 void Bot::roadToConsumable(stack<GamePoint>& pathToConsumable)
 {
 	if (pathToConsumable.empty()) {
-		Bot* supportBot = team.isSupportBotAlive();
+		SupportBot* supportBot = team.isSupportBotAlive(*this);
 		if (supportBot == nullptr) {
 			findEnemy();
 		}
@@ -183,6 +188,13 @@ void Bot::roadToConsumable(stack<GamePoint>& pathToConsumable)
 				cout << __func__ << " Path to teammate is empty although teammate is alive" << endl;
 			}
 			GamePoint destLocation = pathToTeammate.top();
+			float distanceFromSupportBot = manhattan_distance(destLocation.cell, &getCellLocation());
+			/* if bot is close to the support bot and support bot cant give health go find enemies instead */
+			if (distanceFromSupportBot < MAX_DIST_FOR_SUPPORTING && !supportBot->getCanGiveHealth()) {
+				findEnemy();
+				return;
+			}
+
 			roadToTeammate(destLocation);
 			pathToTeammate.pop();
 		}

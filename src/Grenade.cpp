@@ -56,24 +56,25 @@ void Grenade::registerFragments()
 		vec2f myLocation = location;
 		/* generate rand speed between 0.1 - 0.5 for creation good spread*/
 		float randSpeed = ((rand() % 41) + 10) / 100.0f;
+		float fragDiamater = boundingDiameter / (((randSpeed - 0.1f) * 2.5f) + 1.f);
 
 		vec2f mySpeed(randSpeed, randSpeed);
 		vec2f myTarget;
 
-		calcTarget(myLocation, direction, myTarget);
-		Fragment *f = new Fragment(myLocation, mySpeed, myTarget, boundingDiameter / 2.0f, damage, teamPtr);
+		calcTarget(myLocation, direction, myTarget, fragDiamater / 2.f);
+		Fragment *f = new Fragment(myLocation, mySpeed, myTarget, fragDiamater, damage, teamPtr);
 		teamPtr->registerProjectile(*f);
 	}
 }
 
-void Grenade::calcTarget(vec2f& location, vec2f& speed, vec2f& myTarget)
+void Grenade::calcTarget(vec2f& location, vec2f& speed, vec2f& myTarget, float boundingRadius)
 {
 	Game* theGame = Game::getInstance();
 	Room* room = theGame->getRoom(location);
 	vec2f locationRelate2Room = location - room->getXYOffset();
 
 	// Note: the calculation is based on "room' system' axis"
-	vec2f collisionResult = CollisionLogic::calcCollision(room, locationRelate2Room, speed);
+	vec2f collisionResult = CollisionLogic::calcCollision(room, locationRelate2Room, speed, boundingRadius);
 	myTarget.set(room->getXYOffset().x + collisionResult.x, room->getXYOffset().y + collisionResult.y);
 }
 
@@ -87,6 +88,7 @@ void Grenade::draw()
 
 float Grenade::calculatePower()
 {
+	cout << typeid(*this).name() << " damagePower " << damage << endl;
 	return static_cast<float>(damage);
 }
 

@@ -165,11 +165,16 @@ GamePointNode* ConnectorPathFinder::isInNodes(GamePoint& point)
 void ConnectorPathFinder::addStartTarget(GamePoint& gamePointTarget)
 {
 	/*
-	 * if startPoint isn't an existing 
+	 * if startPoint isn't an existing node
 	 * create start
 	 * create edges from start
 	 * add edges to nodes from the start
 	 */
+
+	if (gamePointTarget.board == nullptr) {
+		cout << __func__ << " ERROR target has no board" << endl;
+	}
+
 	BoardCells& startB = cellMovingObject->getBoardCells();
 	Cell& startC = cellMovingObject->getCellLocation();
 	GamePoint startPoint(&startB, &startC);

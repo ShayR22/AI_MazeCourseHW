@@ -10,14 +10,16 @@
 #include <limits>
 #include <math.h>
 #include <vector>
+#include <thread>
 
 class CollisionLogic {
 private:
+	std::vector<std::thread> projectilesCollisionThreads;
 	std::vector<Team*>& teams;
 	std::vector<Room*>& rooms;
 	std::vector<Corridor*>& corridors;
 
-	void handleCollisionProjectileBetweenTeamsThread(Team* team, Team* enemyTeam, Room* room);
+	void handleCollisionProjectileBetweenTeamsThread(Team* team, Team* enemyTeam);
 public:
 	// CollisionLogic() {};
 	CollisionLogic();
@@ -34,7 +36,7 @@ public:
 	static bool isCollision(vec2f& p, vec2f& dir, std::vector<vec2f>& points);
 	static bool isLineOfSight(Room& r, Cell& src, Cell& tgt, float obstacleSafeDiameter);
 
-	static vec2f calcCollision(Room* room, vec2f& location, vec2f& speed);
+	static vec2f calcCollision(Room* room, vec2f& location, vec2f& speed, float radius);
 
 
 private:

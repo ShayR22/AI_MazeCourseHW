@@ -21,6 +21,8 @@ float Fragment::calculatePower()
 	float speedMagnitude = speed.length();
 	float speedPower = speedMagnitude * 10;
 	float power = std::min(std::max(speedPower, 1.0f), 10.0f);
+	cout << typeid(*this).name() << " damagePower " << power << endl;
+
 	return power;
 }
 

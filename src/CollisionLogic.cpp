@@ -5,12 +5,14 @@
 #include "Bot.hpp"
 #include <iostream>
 #include <thread>
+#include <set>
 
 using namespace std;
 
-CollisionLogic::CollisionLogic() : teams(Game::getGameTeams()), rooms(Game::getGameRooms()), corridors(Game::getGameCorridors())
+CollisionLogic::CollisionLogic() : teams(Game::getGameTeams()), rooms(Game::getGameRooms()),
+corridors(Game::getGameCorridors())
 {
-
+	projectilesCollisionThreads.resize(2);
 }
 
 void CollisionLogic::handleCollisions()
@@ -62,33 +64,32 @@ void CollisionLogic::handleCollisionBetweensingleBot2Consumables(Bot* bot)
 	}
 }
 
-void CollisionLogic::handleCollisionProjectileBetweenTeamsThread(Team* team, Team* enemyTeam, Room* room)
+void CollisionLogic::handleCollisionProjectileBetweenTeamsThread(Team* team, Team* enemyTeam)
 {
-	vector<Bot*> bots = getBotsInsideRoom(*room, *team);
-	handleCollisionBetweenTeam2EnemyProjectilesInRoom(*room, bots, *enemyTeam);
+
+	for (auto& room : rooms) {
+		vector<Bot*> bots = getBotsInsideRoom(*room, *team);
+		handleCollisionBetweenTeam2EnemyProjectilesInRoom(*room, bots, *enemyTeam);
+	}
 }
 
 void CollisionLogic::handleCollisionBetweenBots2Projectiles()
 {
+	int threadID = 0;
 
-	vector<thread> threads;
-	for (auto& room : rooms) {
-		for (auto& enemyTeam : teams) {
+	for (auto& enemyTeam : teams) {
 
-			for (auto& team : teams) {
-				// check only in teams which are NOT the same team of enemy projectiles
-				if (&team == &enemyTeam) {
-					continue;
-				}	
-				vector<Bot*> bots = getBotsInsideRoom(*room, *team);
-				handleCollisionBetweenTeam2EnemyProjectilesInRoom(*room, bots, *enemyTeam);
-			/*	thread th(&CollisionLogic::handleCollisionProjectileBetweenTeamsThread, this, team, enemyTeam, room);
-				threads.push_back(std::move(th));*/
+		for (auto& team : teams) {
+			// check only in teams which are NOT the same team of enemy projectiles
+			if (&team == &enemyTeam) {
+				continue;
 			}
+			projectilesCollisionThreads[threadID++] = thread(&CollisionLogic::handleCollisionProjectileBetweenTeamsThread,
+																this, team, enemyTeam);;
 		}
 	}
 
-	for (auto& thread : threads) {
+	for (auto& thread : projectilesCollisionThreads) {
 		if (thread.joinable())
 			thread.join();
 	}
@@ -127,7 +128,7 @@ vector<Projectile*> CollisionLogic::extractProjectileInRoom(Room &room, Team &te
 void CollisionLogic::handleCollisionBetweenTeam2EnemyProjectilesInRoom(Room& room, vector<Bot*> bots, Team& enemyTeam)
 {
 	vector<Projectile*> enemyProjectiles;
-	vector<Bot*> deadBots;
+	set<Bot*> deadBots;
 	Projectile* projectile;
 
 	for (auto& bot : bots) {
@@ -137,19 +138,19 @@ void CollisionLogic::handleCollisionBetweenTeam2EnemyProjectilesInRoom(Room& roo
 			projectile = enemyProjectiles[pos];
 			if (isBotClose2Projectile(bot, projectile)) {
 				int damagePower = static_cast<int>(projectile->calculatePower());
-				cout << "damagePower " << damagePower << endl;
 				bot->decreaseHealth(damagePower);
 				cout << "Bot " << static_cast<int>(bot->getTeamColor()) << " has " << bot->getHealth() << " HP" << endl;
-
-				if (bot->getHealth() <= 0) {
-					deadBots.push_back(bot);
-				}
 
 				/* supporte projectile that create other projectiles on death*/
 				if (projectile->getCreateOnDeath())
 					projectile->creation();
 
 				enemyTeam.unregisterProjectile(projectile);
+
+				if (bot->getHealth() <= 0) {
+					deadBots.insert(bot);
+					break;
+				}
 			}
 		}
 		// to be sure it was cleaned
@@ -309,22 +310,22 @@ bool CollisionLogic::isLineOfSight(Room& r, Cell& src, Cell& tgt, float obstacle
 	return true;
 }
 
-vec2f CollisionLogic::calcCollision(Room *room, vec2f& location, vec2f& speed)
+vec2f CollisionLogic::calcCollision(Room *room, vec2f& location, vec2f& speed, float radius)
 {
+	radius *= 0.5;
 	float curMinDist = FLT_MAX;
 	vec2f curMinLoc;
 	vector<vec2f> roomShape;
 	vec2f locationResult;
 	float distanceResult;
-	
 
 	// understand if there is collision with the room itself:
 	float w = room->getWidth();
 	float h = room->getHeight();
-	roomShape.push_back(vec2f(0, 0));
-	roomShape.push_back(vec2f(w, 0));
-	roomShape.push_back(vec2f(w, h));
-	roomShape.push_back(vec2f(0, h));
+	roomShape.push_back(vec2f(0 + radius, 0 + radius));
+	roomShape.push_back(vec2f(w - radius, 0 + radius));
+	roomShape.push_back(vec2f(w - radius, h - radius));
+	roomShape.push_back(vec2f(0 + radius, h - radius));
 	
 	CollisionLogic::getCollision(location, speed, roomShape, curMinLoc, curMinDist);
 

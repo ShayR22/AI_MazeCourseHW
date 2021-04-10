@@ -29,7 +29,7 @@ public:
 private:
 	bool explosionTimeoutPassed();
 	void registerFragments();
-	void calcTarget(vec2f& location, vec2f& speed, vec2f& myTarget);
+	void calcTarget(vec2f& location, vec2f& speed, vec2f& myTarget, float boundingRadius);
 };
 
 #endif

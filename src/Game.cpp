@@ -228,10 +228,16 @@ void Game::randomizeMap()
 void Game::createTeam(Team& t, int roomRow)
 {
 	constexpr auto NUM_ASSAULT_BOT = 2;
-	constexpr auto NUM_SUPPORT_BOT = 0;
+	constexpr auto NUM_SUPPORT_BOT = 1;
+
+	vector<int> roomIndices;
+	for (auto i = 0; i < (NUM_ASSAULT_BOT + NUM_SUPPORT_BOT); i++) {
+		roomIndices.push_back(roomRow * MAX_ROOM_COLS + i);
+	}
 
 	for (auto i = 0; i < NUM_ASSAULT_BOT; i++) {
-		int roomIndex = roomRow * MAX_ROOM_COLS + i;
+		int roomIndex = roomIndices[rand() % roomIndices.size()];
+		roomIndices.erase(remove(roomIndices.begin(), roomIndices.end(), roomIndex), roomIndices.end());
 		Room& r = *rooms[roomIndex];
 		vec2f& rXY = r.getXYOffset();
 		/* start location is cell 0, 0 of the cell */
@@ -246,12 +252,13 @@ void Game::createTeam(Team& t, int roomRow)
 	}
 
 	for (auto i = 0; i < NUM_SUPPORT_BOT; i++) {
-		int roomIndex = roomRow * MAX_ROOM_COLS + i + NUM_ASSAULT_BOT;
+		int roomIndex = roomIndices[rand() % roomIndices.size()];
+		roomIndices.erase(remove(roomIndices.begin(), roomIndices.end(), roomIndex), roomIndices.end());
 		Room& r = *rooms[roomIndex];
 		vec2f& rXY = r.getXYOffset();
 		/* start location is cell 0, 0 of the cell */
-		vec2f location(rXY.x, rXY.y);
-		vec2f maxSpeed = vec2f(1, 1);
+		vec2f location(rXY.x + 0.5f, rXY.y + 0.5f);
+		vec2f maxSpeed = vec2f(0.07f, 0.07f);
 
 		Bot* bot = new SupportBot(MAX_HEALTH, MAX_BULLETS, MAX_GRENADES, t, location, maxSpeed, location, 0.9f, r);
 		vector<Bot*> bots = t.getBots();
@@ -318,30 +325,40 @@ void Game::removeConsumablesOccupation()
 	}
 }
 
-void Game::addConsumbles()
+
+void Game::rollConsumables(ConsumableType type)
 {
 	int cellX;
 	int cellY;
 	constexpr bool isHidden = false;
-	constexpr int numBullets = 20;
-	constexpr int numGrenades = 20;
-	constexpr int healthAmmount = 100;
 
 	for (auto& r : rooms) {
+		if (rand() % 2 == 0) {
+			continue;
+		}
 		do {
 			cellX = rand() % (r->getCells()[0].size() - 3) + 1;
 			cellY = rand() % (r->getCells().size() - 3) + 1;
 		} while (r->getCells()[cellY][cellX].getIsOccupy());
-		r->addAmmoBox(cellX, cellY, numBullets, numGrenades, isHidden);
-	}
 
-	for (auto& r : rooms) {
-		do {
-			cellX = rand() % (r->getCells()[0].size() - 3) + 1;
-			cellY = rand() % (r->getCells().size() - 3) + 1;
-		} while (r->getCells()[cellY][cellX].getIsOccupy());
-		r->addHealthBox(cellX, cellY, healthAmmount, isHidden);
+		switch (type) {
+		case ConsumableType::HEALTH:
+			r->addHealthBox(cellX, cellY, MAX_HEALTH, isHidden);
+			break;
+		case ConsumableType::AMMO:
+			r->addAmmoBox(cellX, cellY, MAX_BULLETS, MAX_GRENADES, isHidden);
+			break;
+		default:
+			cout << "Error unknown consumable type " << static_cast<int>(type) << endl;
+			break;
+		}
 	}
+}
+
+void Game::addConsumbles()
+{
+	rollConsumables(ConsumableType::AMMO);
+	rollConsumables(ConsumableType::HEALTH);
 }
 
 void Game::addObstacles()
