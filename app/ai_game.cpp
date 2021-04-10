@@ -9,14 +9,59 @@
 #include "GamePointEdge.hpp"
 #include "Bot.hpp"
 
+constexpr auto SCREEN_WIDTH = 1000;
+constexpr auto SCREEN_HEIGHT = 1000;
+
+
 using namespace std;
 
-constexpr auto FRAME_RATE = 200;
+constexpr auto FRAME_RATE = 144;
 constexpr int MILLI_PER_FRAME = 1000 / FRAME_RATE;
+
+auto frameCounterTime = chrono::high_resolution_clock::now();
+long lastFrameCounter = 0;
+long frameCounter = 0;
+long fps = 0;
 
 auto lastTick = chrono::high_resolution_clock::now();
 Game *game = nullptr;
 
+void drawText(const std::string& text, const unsigned int x, const unsigned int y, const float r, const float g, const float b)
+{
+	void* m_glutFont = GLUT_BITMAP_9_BY_15;
+
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+	glLoadIdentity();
+	glOrtho(0, SCREEN_WIDTH, 0, SCREEN_HEIGHT, 0, 1);
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+	glLoadIdentity();
+	glColor3f(r, g, b);
+	glRasterPos2i(x, y);
+	for (const char c : text)
+		glutBitmapCharacter(m_glutFont, (int)c);
+	glPopMatrix();
+	glMatrixMode(GL_PROJECTION);
+	glPopMatrix();
+	glMatrixMode(GL_MODELVIEW);
+}
+
+void updateFrameRateDrawing()
+{
+	frameCounter++;
+	chrono::high_resolution_clock::time_point now = chrono::high_resolution_clock::now();
+	chrono::duration<double, std::milli> diffTime = now - frameCounterTime;
+
+	if (diffTime.count() >= 1000) {
+		fps = frameCounter - lastFrameCounter;
+		lastFrameCounter = frameCounter;
+		frameCounterTime = now;
+	}
+
+	string fpsStr(std::to_string(fps));
+	drawText(fpsStr, 0, 0, 0, 0, 0);
+}
 
 void display()
 {
@@ -24,6 +69,7 @@ void display()
 	if (game)
 		game->draw();
 
+	updateFrameRateDrawing();
 	glutSwapBuffers(); // show all
 }
 
@@ -46,9 +92,10 @@ void idle()
 	glutPostRedisplay(); // indirect call to display
 }
 
-void menu(int choice)
+void restartGame()
 {
-	
+	delete game;
+	game = Game::getInstance();
 }
 
 void init()
@@ -75,18 +122,6 @@ int main(int argc, char* argv[])
 
 	glutDisplayFunc(display);
 	glutIdleFunc(idle);
-	// menu
-	glutCreateMenu(menu);
-	glutAddMenuEntry("Restart", 0);
-	glutAddMenuEntry("Graph", 1);
-	glutAddMenuEntry("Maze", 2);
-	glutAddMenuEntry("MAZE_BFS", 3);
-	glutAddMenuEntry("MAZE_BFS BI", 4);
-	glutAddMenuEntry("MAZE_A_STAR", 5);
-	glutAddMenuEntry("GRAPH_A_STAR", 6);
-	glutAddMenuEntry("GRAPH_BEST_FIRST_SEARCH", 7);
-	glutAddMenuEntry("MAZE_GAME", 8);
-	glutAttachMenu(GLUT_RIGHT_BUTTON);
 
 	init();
 	glutMainLoop();
