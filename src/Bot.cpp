@@ -72,6 +72,9 @@ void Bot::shootBullet(Cell& t)
 
 	vec2f src = location;
 	vec2f tgt = getCellCenter(*board, t);
+	vec2f dir = tgt - src;
+	calcEdgeTarget(src, dir, tgt);
+	
 	vec2f maxSpeed(MAX_BULLET_SPEED, MAX_BULLET_SPEED);
 	float boundingDiameter = 0.25;
 	int damage = 30;
@@ -79,6 +82,16 @@ void Bot::shootBullet(Cell& t)
 	Projectile* p = new Bullet(src, maxSpeed, tgt, boundingDiameter, damage, &team);
 	team.registerProjectile(*p);
 	updateEyeDireciton(tgt);
+}
+
+void Bot::calcEdgeTarget(vec2f& location, vec2f& direction, vec2f& myTarget)
+{
+	Room* room = static_cast<Room*>(board);
+	vec2f locationRelate2Room = location - room->getXYOffset();
+
+	// Note: the calculation is based on "room' system' axis"
+	vec2f collisionResult = CollisionLogic::calcCollision(room, locationRelate2Room, direction);
+	myTarget.set(room->getXYOffset().x + collisionResult.x, room->getXYOffset().y + collisionResult.y);
 }
 
 void Bot::throwGrenade(Cell& t)
@@ -91,6 +104,9 @@ void Bot::throwGrenade(Cell& t)
 
 	vec2f src = getCellCenter(*board, getCellLocation());
 	vec2f tgt = getCellCenter(*board, t);
+	vec2f dir = tgt - src;
+	calcEdgeTarget(src, dir, tgt);
+
 	vec2f speed(MAX_GRENADE_SPEED, MAX_GRENADE_SPEED);
 	float boundingDiameter = 0.4f;
 	int damage = 2;

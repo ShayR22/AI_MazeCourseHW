@@ -47,6 +47,7 @@ private:
 	void findAmmo();
 	void findEnemy();
 	void fight(Cell* target);
+	void calcEdgeTarget(vec2f& location, vec2f& speed, vec2f& myTarget);
 
 public:
 	Bot(int health, int numBullets, int numGrenades, Team& team, vec2f& location, vec2f& maxSpeed, vec2f& target, float boundingDiameter, BoardCells& board);
