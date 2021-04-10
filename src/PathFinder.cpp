@@ -57,7 +57,7 @@ Team* PathFinder::getEnemyTeam()
 	return nullptr;
 }
 
-Bot* PathFinder::getClosestEnemy(Team& enemyTeam, bool& closeEnemy)
+Bot* PathFinder::getClosestEnemy(Team& enemyTeam, bool& closeEnemy, float& minFireRange)
 {
 	float minDist = FLT_MAX;
 	Bot* closestBot = nullptr;
@@ -77,7 +77,10 @@ Bot* PathFinder::getClosestEnemy(Team& enemyTeam, bool& closeEnemy)
 
 		float dist = manhattan_distance(sx, sy, tx, ty);
 		/* if enemy found in small radius return nullptr to activate roam*/
-		if (dist < (rand() % (MIN_FIGHT_DIST + 1))) {
+
+		float randMinFireDist = static_cast<float>((rand() % MIN_FIGHT_DIST) + 1);
+
+		if (dist < randMinFireDist) {
 			closeEnemy = true;
 			return bot;
 		}
@@ -89,6 +92,7 @@ Bot* PathFinder::getClosestEnemy(Team& enemyTeam, bool& closeEnemy)
 		if (dist < minDist) {
 			closestBot = bot;
 			minDist = dist;
+			minFireRange = randMinFireDist;
 		}
 	}
 
@@ -134,6 +138,7 @@ stack<GamePoint> PathFinder::roamWithDistancing(Bot& closetEnemy)
 
 stack<GamePoint> PathFinder::searchClosetEnemy()
 {
+	float minDistFire = 0;
 	bool isEnemyTooClose;
 	Team* enemyTeam = getEnemyTeam();
 	if (enemyTeam == nullptr) {
@@ -142,7 +147,7 @@ stack<GamePoint> PathFinder::searchClosetEnemy()
 		return s;
 	}
 
-	Bot* closetEnemy = getClosestEnemy(*enemyTeam, isEnemyTooClose);
+	Bot* closetEnemy = getClosestEnemy(*enemyTeam, isEnemyTooClose, minDistFire);
 	if (closetEnemy == nullptr) {
 		return roam();
 	}
@@ -154,6 +159,11 @@ stack<GamePoint> PathFinder::searchClosetEnemy()
 	if (&closetEnemy->getBoardCells() == &cellMovingObject->getBoardCells()) {
 		stack<GamePoint> path;
 		GamePoint gp(nullptr, &closetEnemy->getCellLocation());
+		float dist = manhattan_distance(cellMovingObject, static_cast<CellMovingObject*>(closetEnemy));
+		float midRangeAllowedDist = static_cast<float>((rand() % 10) + 2);
+		if (dist > minDistFire + midRangeAllowedDist) {
+			gp.board = &cellMovingObject->getBoardCells();
+		}
 		path.push(gp);
 		return path;
 	}

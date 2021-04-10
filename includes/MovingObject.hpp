@@ -21,6 +21,9 @@ public:
 
 	inline vec2f getLocation() { return this->location; }
 
+	inline float getX() { return location.x; }
+	inline float getY() { return location.y; }
+
 	inline void setSpeed(vec2f speed) { this->speed = speed; }
 	inline vec2f getSpeed() { return this->speed; }
 
