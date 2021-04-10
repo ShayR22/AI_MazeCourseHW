@@ -8,7 +8,7 @@
 #include <iostream>
 #include <chrono>
 
-#define MAX_BULLET_SPEED 0.05f
+#define MAX_BULLET_SPEED 0.075f
 #define MAX_GRENADE_SPEED 0.02f
 #define MAX_BULLETS 20
 #define MAX_GRENADES 2
