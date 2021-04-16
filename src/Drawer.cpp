@@ -35,6 +35,29 @@ void Drawer::setColor(DrawerColor color)
 	}
 }
 
+string Drawer::drawerColorToString(DrawerColor color)
+{
+	switch (color) {
+	case DrawerColor::WHITE:
+		return "White";
+	case DrawerColor::BLACK:
+		return "Black";
+	case DrawerColor::RED:
+		return "Red";
+	case DrawerColor::BLUE:
+		return "Blue";
+	case DrawerColor::GREEN:
+		return "Green";
+	case DrawerColor::PURPULE:
+		return "Purpule";
+	case DrawerColor::YELLOW:
+		return "Yellow";
+	default:
+		return "";
+	}
+}
+
+
 void Drawer::drawRect(float xGL, float yGL, float wGL, float hGL)
 {
 	glBegin(GL_POLYGON);

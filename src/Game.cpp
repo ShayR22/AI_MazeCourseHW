@@ -467,7 +467,7 @@ void Game::updateGameOver()
 		string winingTeam("");
 		for (auto& t : teams) {
 			if (t->getBots().size() > 0) {
-				winingTeam = "Team " + std::to_string(static_cast<int>(teams[0]->getTeamColor())) + " has Won, ";
+				winingTeam = "Team " + Drawer::drawerColorToString(t->getTeamColor()) + " has Won, ";
 			}
 		}
 		if (winingTeam.empty()) {

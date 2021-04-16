@@ -2,6 +2,7 @@
 #define __DRAWER__
 
 #include "glut.h"
+#include <string>
 
 enum class DrawerColor{
 	WHITE,
@@ -25,6 +26,7 @@ public:
 	static float cubeW;
 	static float cubeH;
 
+	static std::string drawerColorToString(DrawerColor color);
 
 	static void rect(float x, float y, float w, float h, DrawerColor color);
 	static void rectWithGrid(float x, float y, float w, float h, DrawerColor color);
