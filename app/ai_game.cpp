@@ -15,7 +15,7 @@ constexpr auto SCREEN_HEIGHT = 1000;
 
 using namespace std;
 
-constexpr auto FRAME_RATE = 144;
+constexpr auto FRAME_RATE = 60;
 constexpr int MILLI_PER_FRAME = 1000 / FRAME_RATE;
 
 auto frameCounterTime = chrono::high_resolution_clock::now();
