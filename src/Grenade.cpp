@@ -34,6 +34,7 @@ void Grenade::creation()
 	registerFragments();
 	wasAlreadyExplode = true;
 	requireCreation = false;
+	atTarget = true;
 }
 
 
