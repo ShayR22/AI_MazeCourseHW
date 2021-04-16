@@ -9,8 +9,8 @@
 #include "GamePointEdge.hpp"
 #include "Bot.hpp"
 
-constexpr auto SCREEN_WIDTH = 1000;
-constexpr auto SCREEN_HEIGHT = 1000;
+constexpr auto SCREEN_WIDTH = 1500;
+constexpr auto SCREEN_HEIGHT = 1500;
 
 
 using namespace std;
