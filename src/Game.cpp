@@ -413,7 +413,6 @@ void Game::killGameBot(Bot* bot)
 		return;
 	}
 
-	//game->lock.lock();
 	for (auto& t : Game::getGameTeams()) {
 		for (auto& b : t->getBots()) {
 			if (bot == b) {
@@ -422,8 +421,6 @@ void Game::killGameBot(Bot* bot)
 			}
 		}
 	}
-	//game->lock.unlock();
-
 }
 
 
