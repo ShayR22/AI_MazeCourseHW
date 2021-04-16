@@ -326,39 +326,45 @@ void Game::removeConsumablesOccupation()
 }
 
 
-void Game::rollConsumables(ConsumableType type)
+void Game::rollConsumables(ConsumableType type, int numRollsPerRoom, float rollChance)
 {
 	int cellX;
 	int cellY;
 	constexpr bool isHidden = false;
+	int rollPrecent = static_cast<int>(rollChance * 100);
 
 	for (auto& r : rooms) {
-		if (rand() % 2 == 0) {
-			continue;
-		}
-		do {
-			cellX = rand() % (r->getCells()[0].size() - 3) + 1;
-			cellY = rand() % (r->getCells().size() - 3) + 1;
-		} while (r->getCells()[cellY][cellX].getIsOccupy());
+		for (int i = 0; i < numRollsPerRoom; i++) {
+			int roll = rand() % 100;
+			/* if roll is above chance we failed and continue */
+			if (roll > rollPrecent) {
+				continue;
+			}
 
-		switch (type) {
-		case ConsumableType::HEALTH:
-			r->addHealthBox(cellX, cellY, MAX_HEALTH, isHidden);
-			break;
-		case ConsumableType::AMMO:
-			r->addAmmoBox(cellX, cellY, MAX_BULLETS, MAX_GRENADES, isHidden);
-			break;
-		default:
-			cout << "Error unknown consumable type " << static_cast<int>(type) << endl;
-			break;
+			do {
+				cellX = rand() % (r->getCells()[0].size() - 3) + 1;
+				cellY = rand() % (r->getCells().size() - 3) + 1;
+			} while (r->getCells()[cellY][cellX].getIsOccupy());
+
+			switch (type) {
+			case ConsumableType::HEALTH:
+				r->addHealthBox(cellX, cellY, MAX_HEALTH, isHidden);
+				break;
+			case ConsumableType::AMMO:
+				r->addAmmoBox(cellX, cellY, MAX_BULLETS, MAX_GRENADES, isHidden);
+				break;
+			default:
+				cout << "Error unknown consumable type " << static_cast<int>(type) << endl;
+				break;
+			}
 		}
 	}
 }
 
 void Game::addConsumbles()
 {
-	rollConsumables(ConsumableType::AMMO);
-	rollConsumables(ConsumableType::HEALTH);
+	rollConsumables(ConsumableType::AMMO, 1, 1.0f);
+	rollConsumables(ConsumableType::HEALTH, 3, 0.3f);
 }
 
 void Game::addObstacles()
