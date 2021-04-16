@@ -78,7 +78,7 @@ Bot* PathFinder::getClosestEnemy(Team& enemyTeam, bool& closeEnemy, float& minFi
 		float dist = manhattan_distance(sx, sy, tx, ty);
 		/* if enemy found in small radius return nullptr to activate roam*/
 
-		float randMinFireDist = static_cast<float>((rand() % MIN_FIGHT_DIST) + 1);
+		float randMinFireDist = static_cast<float>((rand() % MIN_FIGHT_DIST) + 0.75);
 
 		if (dist < randMinFireDist) {
 			closeEnemy = true;
