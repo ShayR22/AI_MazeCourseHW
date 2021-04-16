@@ -24,7 +24,6 @@ public:
 	// CollisionLogic() {};
 	CollisionLogic();
 	CollisionLogic(const CollisionLogic& collisionLogic);
-	void operator=(const CollisionLogic& collisionLogic);
 	void handleCollisions();
 
 	inline void setTeams() { this->teams = teams; }
