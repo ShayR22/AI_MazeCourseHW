@@ -112,7 +112,7 @@ int main(int argc, char* argv[])
 {
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE);
-	glutInitWindowSize(1000, 1000);
+	glutInitWindowSize(SCREEN_WIDTH, SCREEN_HEIGHT);
 	glutInitWindowPosition(400, 0);
 	glutCreateWindow("First Example");
 
